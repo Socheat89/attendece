@@ -262,14 +262,34 @@
                         </div>
                         <div class="flex-1 pt-0.5">
                             <h3 class="text-sm font-bold text-orange-800">Subscription Expiring Soon</h3>
-                            <p class="text-sm font-medium text-orange-700 mt-1">Your company's subscription will expire in <strong>{{ floor($daysLeft) }} {{ floor($daysLeft) == 1 ? 'day' : 'days' }}</strong> (on {{ $currentCompany->expiry_date->format('M d, Y') }}). Please renew your plan to avoid service interruption.</p>
-                            <div class="mt-3">
-                                <a href="https://t.me/SOCHEAT_DOEM" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-lg transition-all shadow-sm">
-                                    <i class="fa-brands fa-telegram text-sm"></i>
-                                    Renew via Telegram
+                            <p class="text-sm font-medium text-orange-700 mt-1 leading-relaxed">Your company's subscription will expire in <strong>{{ floor($daysLeft) }} {{ floor($daysLeft) == 1 ? 'day' : 'days' }}</strong> (on {{ $currentCompany->expiry_date->format('M d, Y') }}). Please renew your plan to avoid service interruption.</p>
+                            <div class="mt-4 flex flex-wrap gap-3">
+                                <a href="https://t.me/SOCHEAT_DOEM" target="_blank" 
+                                   class="relative inline-flex items-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-extrabold rounded-xl transition-all shadow-[0_8px_20px_-6px_rgba(37,99,235,0.5)] hover:shadow-[0_12px_25px_-4px_rgba(37,99,235,0.6)] hover:-translate-y-0.5 active:translate-y-0 group overflow-hidden">
+                                    <!-- Animated glow background -->
+                                    <div class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-[-20deg]"></div>
+                                    
+                                    <i class="fa-brands fa-telegram text-base animate-bounce-slow"></i>
+                                    <span class="relative z-10 tracking-wide uppercase">Renew via Telegram</span>
+                                    <i class="fa-solid fa-arrow-right text-[10px] opacity-70 group-hover:translate-x-1 transition-transform"></i>
                                 </a>
+                                
+                                <button type="button" class="px-5 py-2.5 bg-white/50 hover:bg-white text-orange-700 text-xs font-bold rounded-xl border border-orange-200 transition-all">
+                                    Dismiss
+                                </button>
                             </div>
                         </div>
+
+                        <style>
+                            @keyframes bounce-slow {
+                                0%, 100% { transform: translateY(0); }
+                                50% { transform: translateY(-3px); }
+                            }
+                            .animate-bounce-slow {
+                                animation: bounce-slow 2s infinite;
+                            }
+                        </style>
+
                     </div>
                 @endif
 
