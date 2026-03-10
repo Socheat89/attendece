@@ -46,8 +46,8 @@ class RegistrationController extends Controller
         $method = $request->input('method', 'Unknown');
         $name = $request->input('name', 'Unknown User');
         $contact = $request->input('contact', 'No Contact');
-        $amount = number_format($plan->price, 2);
-
+        $months = $request->input('months', 1);
+        $amount = $request->input('total_amount', number_format($plan->price, 2));
         $token = \Illuminate\Support\Str::random(40);
 
         \App\Models\PaymentRequest::create([
@@ -57,6 +57,8 @@ class RegistrationController extends Controller
             'method' => $method,
             'status' => 'pending',
             'access_token' => $token,
+            'months' => $months,
+            'amount' => $amount,
         ]);
 
         if ($botToken && $chatId) {
@@ -64,6 +66,7 @@ class RegistrationController extends Controller
             $message .= "🏢 *Business:* {$name}\n";
             $message .= "💰 *Amount:* \${$amount}\n";
             $message .= "📦 *Plan:* {$plan->name}\n";
+            $message .= "⏳ *Duration:* {$months} Months\n";
             $message .= "💳 *Method:* {$method}\n";
             $message .= "🔑 *Ref:* `{$token}`\n";
             $message .= "⏰ *Time:* " . now()->format('Y-m-d H:i:s') . "\n\n";
@@ -234,12 +237,23 @@ class RegistrationController extends Controller
                 $expiryDate = now()->addDays(7);
                 $billingCycle = 'trial';
             } else {
-                // Paid plans
-                if ($billingCycle === 'yearly') {
-                    $expiryDate = now()->addYear();
+                // Paid plans - Check if we have a payment request status
+                $paymentRequest = null;
+                if ($request->query('token')) {
+                    $paymentRequest = \App\Models\PaymentRequest::where('access_token', $request->query('token'))->first();
+                }
+
+                if ($paymentRequest) {
+                    $months = $paymentRequest->months ?? 1;
+                    $expiryDate = now()->addMonths($months);
+                    $billingCycle = ($months >= 12) ? 'yearly' : 'monthly';
                 } else {
-                    $expiryDate = now()->addMonth();
-                    $billingCycle = 'monthly'; // Ensure default
+                    if ($billingCycle === 'yearly') {
+                        $expiryDate = now()->addYear();
+                    } else {
+                        $expiryDate = now()->addMonth();
+                        $billingCycle = 'monthly';
+                    }
                 }
             }
             

@@ -539,15 +539,14 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
       <h2 class="section-title">Transparent <span class="grad">Plans</span></h2>
       <p class="section-sub" style="margin:0 auto;text-align:center">No hidden fees, no surprises. Start for free.</p>
       
-      <!-- Pricing Toggle -->
-      <div class="mt-10 flex items-center justify-center gap-4">
-        <span class="text-sm font-bold text-slate-400" id="monthly-label">Monthly</span>
-        <button type="button" onclick="togglePricing()" class="relative w-14 h-7 bg-slate-800 rounded-full border border-blue-500/30 transition-colors focus:outline-none group">
-          <div id="toggle-circle" class="absolute left-1 top-1 w-5 h-5 bg-blue-500 rounded-full transition-transform"></div>
+      <!-- Pricing Grid Selector -->
+      <div class="mt-8 flex flex-wrap justify-center gap-2">
+        <button type="button" onclick="setLandingMonths(1)" class="landing-month-btn px-6 py-2 rounded-full border border-blue-500/30 bg-blue-500 text-white font-bold text-sm transition-all" data-months="1">1 Month</button>
+        <button type="button" onclick="setLandingMonths(3)" class="landing-month-btn px-6 py-2 rounded-full border border-blue-500/30 bg-slate-800 text-slate-400 font-bold text-sm transition-all" data-months="3">3 Months</button>
+        <button type="button" onclick="setLandingMonths(6)" class="landing-month-btn px-6 py-2 rounded-full border border-blue-500/30 bg-slate-800 text-slate-400 font-bold text-sm transition-all" data-months="6">6 Months</button>
+        <button type="button" onclick="setLandingMonths(12)" class="landing-month-btn px-6 py-2 rounded-full border border-blue-500/30 bg-slate-800 text-slate-400 font-bold text-sm transition-all" data-months="12">
+            1 Year <span class="bg-blue-500/20 text-blue-400 text-[9px] px-1.5 py-0.5 rounded-full ml-1">-10%</span>
         </button>
-        <span class="text-sm font-medium text-slate-500 flex items-center gap-2" id="yearly-label">
-          Yearly <span class="bg-blue-500/20 text-blue-400 text-[10px] px-2 py-0.5 rounded-full font-bold">Save 10%</span>
-        </span>
       </div>
     </div>
     <div class="pricing-grid">
@@ -673,35 +672,41 @@ for(let i=0;i<120;i++){
   starsEl.appendChild(s);
 }
 
-// Pricing Toggle Logic
-let isYearly = false;
-function togglePricing() {
-  isYearly = !isYearly;
-  const circle = document.getElementById('toggle-circle');
-  const monthLabel = document.getElementById('monthly-label');
-  const yearLabel = document.getElementById('yearly-label');
+// Pricing Selection Logic
+let currentLandingMonths = 1;
+function setLandingMonths(months) {
+  currentLandingMonths = months;
+  const buttons = document.querySelectorAll('.landing-month-btn');
   const prices = document.querySelectorAll('.plan-price');
+  const periods = document.querySelectorAll('.price-period');
   
-  if (isYearly) {
-    circle.style.transform = 'translateX(28px)';
-    monthLabel.classList.replace('text-slate-400', 'text-slate-600');
-    yearLabel.classList.replace('text-slate-500', 'text-slate-100');
-    prices.forEach(el => {
-      el.innerHTML = `<sub>$</sub>${el.dataset.yearly}`;
-      const periodEl = document.getElementById(`period-${el.parentElement.parentElement.querySelector('.price-name').innerText.toLowerCase().replace(/\s/g, '-')}`);
-      // Special case for period elements which use ID dynamically based on plan ID or name
-    });
-    // Simpler way to update all periods
-    document.querySelectorAll('.price-period').forEach(el => el.innerText = 'per year / company');
-  } else {
-    circle.style.transform = 'translateX(0)';
-    monthLabel.classList.replace('text-slate-600', 'text-slate-400');
-    yearLabel.classList.replace('text-slate-100', 'text-slate-500');
-    prices.forEach(el => {
-      el.innerHTML = `<sub>$</sub>${el.dataset.monthly}`;
-    });
-    document.querySelectorAll('.price-period').forEach(el => el.innerText = 'per month / company');
-  }
+  buttons.forEach(btn => {
+    if (parseInt(btn.dataset.months) === months) {
+      btn.classList.replace('bg-slate-800', 'bg-blue-500');
+      btn.classList.replace('text-slate-400', 'text-white');
+    } else {
+      btn.classList.replace('bg-blue-500', 'bg-slate-800');
+      btn.classList.replace('text-white', 'text-slate-400');
+    }
+  });
+
+  prices.forEach(el => {
+    const monthlyVal = parseFloat(el.dataset.monthly.replace(/,/g, ''));
+    const yearlyVal = parseFloat(el.dataset.yearly.replace(/,/g, ''));
+    
+    let total;
+    if (months >= 12) {
+      total = (yearlyVal / 12) * months;
+    } else {
+      total = monthlyVal * months;
+    }
+    
+    el.innerHTML = `<sub>$</sub>${total.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+  });
+
+  periods.forEach(el => {
+    el.innerText = `per ${months} ${months > 1 ? 'months' : 'month'} / company`;
+  });
 }
 
 // Reveal on scroll

@@ -58,18 +58,36 @@
                 <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Complete your purchase</h1>
                 <p class="text-slate-500 mb-6 font-medium">You are upgrading to the <span class="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-md">{{ $plan->name }}</span> plan.</p>
 
-                <!-- Billing Cycle Selector -->
-                <div class="bg-white rounded-2xl p-2 border border-slate-200 shadow-sm flex gap-2 mb-8">
-                    <button type="button" onclick="setBillingCycle('monthly')" id="cycle-monthly" 
-                        class="flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 bg-blue-600 text-white shadow-md">
-                        <i class="fa-regular fa-calendar"></i> Monthly
-                    </button>
-                    <button type="button" onclick="setBillingCycle('yearly')" id="cycle-yearly" 
-                        class="flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-50 group">
-                        <i class="fa-solid fa-calendar-check text-slate-400 group-hover:text-blue-500"></i> 
-                        Yearly 
-                        <span class="bg-emerald-100 text-emerald-600 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-tighter">-10%</span>
-                    </button>
+                <!-- Duration Selector -->
+                <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm mb-8">
+                    <label class="block text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                        <i class="fa-regular fa-calendar-check text-blue-500"></i> Select Subscription Duration
+                    </label>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center border-2 border-slate-100 rounded-xl overflow-hidden bg-slate-50">
+                            <button type="button" onclick="changeMonths(-1)" class="px-4 py-3 hover:bg-slate-100 text-slate-500 transition-colors border-r border-slate-100">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <input type="number" id="input-months" value="1" min="1" max="60" readonly
+                                class="w-16 text-center bg-transparent font-extrabold text-slate-900 border-none focus:ring-0">
+                            <button type="button" onclick="changeMonths(1)" class="px-4 py-3 hover:bg-slate-100 text-slate-500 transition-colors border-l border-slate-100">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="flex-1">
+                            <span class="text-sm font-medium text-slate-500" id="duration-text">1 Month</span>
+                            <div id="discount-badge" class="hidden mt-1">
+                                <span class="bg-emerald-100 text-emerald-600 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-tighter">Yearly Discount -10% Applied</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-4 gap-2 mt-4">
+                        <button type="button" onclick="setMonths(1)" class="preset-btn py-2 rounded-lg text-xs font-bold border border-slate-200 hover:border-blue-500 transition-all bg-blue-50 text-blue-600 border-blue-500" data-months="1">1m</button>
+                        <button type="button" onclick="setMonths(3)" class="preset-btn py-2 rounded-lg text-xs font-bold border border-slate-200 hover:border-blue-500 transition-all text-slate-600" data-months="3">3m</button>
+                        <button type="button" onclick="setMonths(6)" class="preset-btn py-2 rounded-lg text-xs font-bold border border-slate-200 hover:border-blue-500 transition-all text-slate-600" data-months="6">6m</button>
+                        <button type="button" onclick="setMonths(12)" class="preset-btn py-2 rounded-lg text-xs font-bold border border-slate-200 hover:border-blue-500 transition-all text-slate-600" data-months="12">12m</button>
+                    </div>
                 </div>
                 
                 <div class="card-bg rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
@@ -279,32 +297,57 @@
     </style>
 
     <script>
-        let currentBillingCycle = 'monthly';
+        let selectedMonths = 1;
         const monthlyPrice = {{ $plan->price }};
-        const yearlyPrice = {{ $plan->price * 12 * 0.9 }}; // 10% discount
+        const baseYearlyPrice = {{ $plan->yearly_price ?? ($plan->price * 12 * 0.9) }};
+        const monthlyPriceForYear = baseYearlyPrice / 12;
 
-        function setBillingCycle(cycle) {
-            currentBillingCycle = cycle;
+        function changeMonths(delta) {
+            let val = parseInt(document.getElementById('input-months').value);
+            val += delta;
+            if (val < 1) val = 1;
+            if (val > 60) val = 60;
+            setMonths(val);
+        }
+
+        function setMonths(months) {
+            selectedMonths = months;
+            document.getElementById('input-months').value = months;
             
-            const btnMonthly = document.getElementById('cycle-monthly');
-            const btnYearly = document.getElementById('cycle-yearly');
+            // Update UI text
+            const durationText = document.getElementById('duration-text');
+            durationText.innerText = months + (months > 1 ? ' Months' : ' Month');
+            
+            // Update summary cycle
             const summaryCycle = document.getElementById('summary-cycle');
-            const priceElements = document.querySelectorAll('.summary-price');
+            summaryCycle.innerText = months + (months > 1 ? ' Months' : ' Month');
+
+            // Handle discount logic
+            const discountBadge = document.getElementById('discount-badge');
+            let unitPrice = monthlyPrice;
             
-            const activeClass = 'flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 bg-blue-600 text-white shadow-md';
-            const inactiveClass = 'flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:bg-slate-50 group';
-            
-            if (cycle === 'monthly') {
-                btnMonthly.className = activeClass;
-                btnYearly.className = inactiveClass;
-                summaryCycle.innerText = 'Monthly';
-                priceElements.forEach(el => el.innerText = '$' + monthlyPrice.toFixed(2));
+            if (months >= 12) {
+                discountBadge.classList.remove('hidden');
+                unitPrice = monthlyPriceForYear;
             } else {
-                btnMonthly.className = inactiveClass;
-                btnYearly.className = activeClass;
-                summaryCycle.innerText = 'Yearly';
-                priceElements.forEach(el => el.innerText = '$' + yearlyPrice.toFixed(2));
+                discountBadge.classList.add('hidden');
             }
+
+            const totalPrice = unitPrice * months;
+            
+            // Update all price elements
+            document.querySelectorAll('.summary-price').forEach(el => {
+                el.innerText = '$' + totalPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            });
+
+            // Update preset buttons styling
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                if (parseInt(btn.dataset.months) === months) {
+                    btn.className = 'preset-btn py-2 rounded-lg text-xs font-bold border transition-all bg-blue-50 text-blue-600 border-blue-500';
+                } else {
+                    btn.className = 'preset-btn py-2 rounded-lg text-xs font-bold border border-slate-200 hover:border-blue-500 transition-all text-slate-600';
+                }
+            });
         }
 
         function switchMethod(method) {
@@ -391,8 +434,9 @@
                     method: method, 
                     name: name, 
                     contact: contact,
-                    billing_cycle: currentBillingCycle,
-                    amount: currentBillingCycle === 'monthly' ? monthlyPrice : yearlyPrice
+                    billing_cycle: selectedMonths >= 12 ? 'yearly' : 'monthly',
+                    months: selectedMonths,
+                    total_amount: document.querySelector('.summary-price').innerText.replace('$', '').replace(',', '')
                 })
             }).then(response => response.json())
             .then(data => {

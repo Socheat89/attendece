@@ -12,6 +12,8 @@ class PaymentRequest extends Model
         'subscription_plan_id',
         'method',
         'status',
-        'access_token'
+        'access_token',
+        'months',
+        'amount'
     ];
 }
