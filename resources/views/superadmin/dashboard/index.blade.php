@@ -29,10 +29,17 @@
             </div>
             <div class="flex items-baseline gap-3">
                 <p class="text-5xl font-extrabold tracking-tight text-[#0F172A]">{{ $companiesCount }}</p>
-                <div class="flex items-center text-emerald-500 text-sm font-semibold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+                @if($companiesGrowth >= 0)
+                <div class="flex items-center text-emerald-500 text-sm font-semibold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100" title="Compared to last month">
                     <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                    0%
+                    +{{ number_format($companiesGrowth, 1) }}%
                 </div>
+                @else
+                <div class="flex items-center text-rose-500 text-sm font-semibold bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100" title="Compared to last month">
+                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path></svg>
+                    {{ number_format($companiesGrowth, 1) }}%
+                </div>
+                @endif
             </div>
             <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
                 <span class="text-xs text-slate-400 font-medium">Platform instances</span>
@@ -84,9 +91,12 @@
             <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center">
                 <span class="text-xs text-slate-400 font-medium">Across all tenants</span>
                 <div class="flex -space-x-2">
-                    <div class="w-6 h-6 rounded-full bg-indigo-100 border-2 border-white flex justify-center items-center text-[10px] font-bold text-indigo-700">A</div>
-                    <div class="w-6 h-6 rounded-full bg-pink-100 border-2 border-white flex justify-center items-center text-[10px] font-bold text-pink-700">J</div>
-                    <div class="w-6 h-6 rounded-full bg-emerald-100 border-2 border-white flex justify-center items-center text-[10px] font-bold text-emerald-700">M</div>
+                    @php $colors = ['indigo', 'pink', 'emerald']; @endphp
+                    @foreach($recentUsers as $index => $user)
+                        <div class="w-6 h-6 rounded-full bg-{{ $colors[$index % 3] }}-100 border-2 border-white flex justify-center items-center text-[10px] font-bold text-{{ $colors[$index % 3] }}-700" title="{{ $user->name }}">
+                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
