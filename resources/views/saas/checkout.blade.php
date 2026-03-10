@@ -66,8 +66,16 @@
                     <div class="relative">
                         <select id="billing-cycle-select" onchange="updateCycleSelection()" 
                                 class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3.5 font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none outline-none">
-                            <option value="monthly" selected>Monthly Billing</option>
-                            <option value="yearly">Yearly Billing (Save 10%)</option>
+                            <optgroup label="Monthly Options">
+                                <option value="1" selected>1 Month Plan</option>
+                                <option value="3">3 Months Plan</option>
+                                <option value="6">6 Months Plan</option>
+                            </optgroup>
+                            <optgroup label="Yearly Options (Discounted)">
+                                <option value="12">1 Year Plan (-10%)</option>
+                                <option value="24">2 Years Plan (-10%)</option>
+                                <option value="36">3 Years Plan (-10%)</option>
+                            </optgroup>
                         </select>
                         <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                             <i class="fa-solid fa-chevron-down"></i>
@@ -282,19 +290,24 @@
     </style>
 
     <script>
-        let currentCycle = 'monthly';
+        let selectedMonths = 1;
         const monthlyPrice = {{ $plan->price }};
-        const yearlyPrice = {{ $plan->yearly_price ?? ($plan->price * 12 * 0.9) }};
+        const baseYearlyPrice = {{ $plan->yearly_price ?? ($plan->price * 12 * 0.9) }};
+        const monthlyRateForYearly = baseYearlyPrice / 12;
 
         function updateCycleSelection() {
             const select = document.getElementById('billing-cycle-select');
-            currentCycle = select.value;
+            selectedMonths = parseInt(select.value);
             
             // Update summary cycle text
             const summaryCycle = document.getElementById('summary-cycle');
-            summaryCycle.innerText = currentCycle.charAt(0).toUpperCase() + currentCycle.slice(1);
+            if (selectedMonths === 12) summaryCycle.innerText = "1 Year";
+            else if (selectedMonths === 24) summaryCycle.innerText = "2 Years";
+            else if (selectedMonths === 36) summaryCycle.innerText = "3 Years";
+            else summaryCycle.innerText = selectedMonths + " Months";
 
-            const totalPrice = (currentCycle === 'monthly') ? monthlyPrice : yearlyPrice;
+            let unitPrice = (selectedMonths >= 12) ? monthlyRateForYearly : monthlyPrice;
+            const totalPrice = unitPrice * selectedMonths;
             
             // Update all price elements
             document.querySelectorAll('.summary-price').forEach(el => {
@@ -386,7 +399,8 @@
                     method: method, 
                     name: name, 
                     contact: contact,
-                    billing_cycle: currentCycle,
+                    billing_cycle: selectedMonths >= 12 ? 'yearly' : 'monthly',
+                    months: selectedMonths,
                     amount: document.querySelector('.summary-price').innerText.replace('$', '').replace(',', '')
                 })
             }).then(response => response.json())

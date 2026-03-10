@@ -539,15 +539,23 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
       <h2 class="section-title">Transparent <span class="grad">Plans</span></h2>
       <p class="section-sub" style="margin:0 auto;text-align:center">No hidden fees, no surprises. Start for free.</p>
       
-      <!-- Pricing Type Selector -->
+      <!-- Pricing Type Selector (Range Choose) -->
       <div class="mt-8 flex justify-center">
-        <div class="relative w-full max-w-[200px]">
-          <select onchange="updateLandingCycle(this.value)" 
-                  class="w-full bg-slate-800 border-2 border-blue-500/30 rounded-full px-6 py-2.5 font-bold text-slate-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none outline-none cursor-pointer text-sm">
-            <option value="1" selected>Monthly Plan</option>
-            <option value="12">Yearly Plan (-10%)</option>
+        <div class="relative w-full max-w-[240px]">
+          <select id="landing-cycle-select" onchange="updateLandingCycle(this.value)" 
+                  class="w-full bg-slate-800 border-2 border-blue-500/30 rounded-full px-6 py-3.5 font-bold text-slate-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none outline-none cursor-pointer text-sm">
+            <optgroup label="Monthly Plans">
+              <option value="1" selected>1 Month Plan</option>
+              <option value="3">3 Months Plan</option>
+              <option value="6">6 Months Plan</option>
+            </optgroup>
+            <optgroup label="Yearly Plans (Discounted)">
+              <option value="12">1 Year Plan (-10%)</option>
+              <option value="24">2 Years Plan (-10%)</option>
+              <option value="36">3 Years Plan (-10%)</option>
+            </optgroup>
           </select>
-          <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-blue-400">
+          <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-blue-400">
             <i class="fa-solid fa-chevron-down text-xs"></i>
           </div>
         </div>
@@ -678,19 +686,32 @@ for(let i=0;i<120;i++){
 
 // Pricing Selection Logic
 function updateLandingCycle(months) {
+  const selectedMonths = parseInt(months);
   const prices = document.querySelectorAll('.plan-price');
   const periods = document.querySelectorAll('.price-period');
   
   prices.forEach(el => {
-    if (parseInt(months) === 12) {
-      el.innerHTML = `<sub>$</sub>${el.dataset.yearly}`;
+    const monthlyVal = parseFloat(el.dataset.monthly.replace(/,/g, ''));
+    const yearlyVal = parseFloat(el.dataset.yearly.replace(/,/g, ''));
+    
+    let total;
+    if (selectedMonths >= 12) {
+      // Use the yearly price as the base rate for 12+ months
+      total = (yearlyVal / 12) * selectedMonths;
     } else {
-      el.innerHTML = `<sub>$</sub>${el.dataset.monthly}`;
+      total = monthlyVal * selectedMonths;
     }
+    
+    el.innerHTML = `<sub>$</sub>${total.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
   });
 
   periods.forEach(el => {
-    el.innerText = parseInt(months) === 12 ? 'per year / company' : 'per month / company';
+    let text = "";
+    if (selectedMonths === 12) text = "per year / company";
+    else if (selectedMonths === 24) text = "per 2 years / company";
+    else if (selectedMonths === 36) text = "per 3 years / company";
+    else text = `per ${selectedMonths} ${selectedMonths > 1 ? 'months' : 'month'} / company`;
+    el.innerText = text;
   });
 }
 

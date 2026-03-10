@@ -52,13 +52,21 @@
                 <p class="text-lg md:text-xl text-slate-400 font-medium">
                     Choose the perfect plan for your business. Upgrade or downgrade at any time as your team grows.
                 </p>
-                <!-- Pricing Type Selector (Type Choose) -->
+                <!-- Pricing Type Selector (Range Choose) -->
                 <div class="mt-8 flex justify-center">
-                    <div class="relative w-full max-w-[240px]">
+                    <div class="relative w-full max-w-[280px]">
                         <select onchange="setSaasMonths(this.value)" 
                                 class="w-full bg-slate-800/50 border-2 border-blue-500/30 rounded-2xl px-6 py-3.5 font-bold text-slate-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none outline-none cursor-pointer">
-                            <option value="1" selected>Monthly Billing</option>
-                            <option value="12">Yearly Billing (-10%)</option>
+                            <optgroup label="Monthly Plans">
+                                <option value="1" selected>1 Month Plan</option>
+                                <option value="3">3 Months Plan</option>
+                                <option value="6">6 Months Plan</option>
+                            </optgroup>
+                            <optgroup label="Yearly Plans (Discounted)">
+                                <option value="12">1 Year Plan (-10%)</option>
+                                <option value="24">2 Years Plan (-10%)</option>
+                                <option value="36">3 Years Plan (-10%)</option>
+                            </optgroup>
                         </select>
                         <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-blue-400">
                             <i class="fa-solid fa-chevron-down"></i>
@@ -184,18 +192,31 @@
 
     <script>
         function setSaasMonths(months) {
+            const selectedMonths = parseInt(months);
             @foreach($plans as $plan)
                 @if($plan->price > 0)
                     const price{{ $plan->id }} = document.querySelector('.price-display-{{ $plan->id }}');
                     const period{{ $plan->id }} = document.querySelector('.period-display-{{ $plan->id }}');
                     
-                    if (parseInt(months) === 12) {
-                        price{{ $plan->id }}.innerText = '$' + price{{ $plan->id }}.dataset.yearly;
-                        period{{ $plan->id }}.innerText = '/ year';
+                    const monthlyVal = parseFloat(price{{ $plan->id }}.dataset.monthly.replace(/,/g, ''));
+                    const yearlyVal = parseFloat(price{{ $plan->id }}.dataset.yearly.replace(/,/g, ''));
+                    
+                    let total;
+                    if (selectedMonths >= 12) {
+                        total = (yearlyVal / 12) * selectedMonths;
                     } else {
-                        price{{ $plan->id }}.innerText = '$' + price{{ $plan->id }}.dataset.monthly;
-                        period{{ $plan->id }}.innerText = '/ month';
+                        total = monthlyVal * selectedMonths;
                     }
+                    
+                    price{{ $plan->id }}.innerText = '$' + total.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
+                    
+                    let periodText = "";
+                    if (selectedMonths === 12) periodText = "/ year";
+                    else if (selectedMonths === 24) periodText = "/ 2 years";
+                    else if (selectedMonths === 36) periodText = "/ 3 years";
+                    else periodText = `/ ${selectedMonths} ${selectedMonths > 1 ? 'months' : 'month'}`;
+                    
+                    period{{ $plan->id }}.innerText = periodText;
                 @endif
             @endforeach
         }
