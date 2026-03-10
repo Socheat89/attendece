@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-[#030712]">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,245 +7,230 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        :root {
+            --blue: #3b82f6; --indigo: #6366f1; --purple: #8b5cf6;
+            --dark: #040d1a; --dark2: #071428; --dark3: #0c1f38;
+            --card: #0e1e35; --border: rgba(59,130,246,0.18);
+            --text: #94a3b8; --white: #f0f6ff;
+        }
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            margin: 0; min-height: 100vh;
+        }
+        .num { font-family: 'Outfit', sans-serif; }
         
-        .main-container {
-            background-color: #030712;
-            background-image: 
-                radial-gradient(at 0% 0%, hsla(217,100%,13%,1) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, hsla(224,71%,18%,1) 0, transparent 50%), 
-                radial-gradient(at 50% 100%, hsla(217,100%,13%,1) 0, transparent 50%);
-            min-height: 100vh;
+        .grad-text {
+            background: linear-gradient(90deg, var(--blue), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .glass-container {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(24px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        .input-field {
+            background: rgba(12, 31, 56, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--white);
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            width: 100%;
+            transition: all 0.3s;
+            outline: none;
+        }
+        .input-field:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+            background: rgba(12, 31, 56, 0.8);
+        }
+        
+        .label-text {
+            color: var(--text);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: block;
         }
 
-        .input-v2 {
-            background: rgba(3, 7, 18, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .btn-submit {
+            background: linear-gradient(135deg, var(--blue), var(--indigo));
             color: white;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .input-v2:focus {
-            background: rgba(3, 7, 18, 0.8);
-            border-color: #3B82F6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .grad-blue {
-            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-        }
-
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .step-badge {
-            background: rgba(59, 130, 246, 0.1);
-            color: #60A5FA;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            font-size: 10px;
+            padding: 1rem;
+            border-radius: 12px;
             font-weight: 800;
-            padding: 4px 12px;
-            border-radius: 99px;
             text-transform: uppercase;
             letter-spacing: 0.1em;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s;
         }
-        
-        /* Custom radio styling */
-        .plan-radio:checked + .plan-label {
-            border-color: #3B82F6;
-            background: rgba(59, 130, 246, 0.05);
-            box-shadow: 0 0 0 1px #3B82F6, 0 10px 15px -3px rgba(59, 130, 246, 0.1);
-        }
-        
-        .plan-radio:checked + .plan-label .radio-circle {
-            background: #3B82F6;
-            border-color: #3B82F6;
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
         }
 
-        .plan-radio:checked + .plan-label .radio-dot {
-            opacity: 1;
-            transform: scale(1);
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .left-panel {
+            background: radial-gradient(circle at top left, var(--dark2), var(--dark));
+        }
+        
+        .step-circle {
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--blue);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 800;
+        }
+        
+        /* Custom Radio */
+        .plan-option input:checked + .plan-box {
+            border-color: var(--blue);
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .plan-box {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem;
+            transition: all 0.2s;
+            cursor: pointer;
         }
     </style>
 </head>
-<body class="h-full antialiased text-slate-300 main-container overflow-x-hidden">
-    
-    <div class="fixed inset-0 pointer-events-none z-0">
-        <div class="absolute top-[20%] left-[10%] w-[400px] h-[400px] bg-blue-600/10 blur-[120px] rounded-full"></div>
-        <div class="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] bg-indigo-600/10 blur-[150px] rounded-full"></div>
-    </div>
+<body class="antialiased">
 
-    <div class="relative z-10 max-w-7xl mx-auto px-6 py-12 lg:py-20 h-full flex flex-col lg:flex-row gap-16 items-center">
+    <div class="min-h-screen flex flex-col lg:flex-row">
         
-        <!-- Left: Experience Section -->
-        <div class="w-full lg:w-5/12 text-center lg:text-left">
-            <a href="/" class="inline-flex items-center gap-3 group mb-12">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-2xl shadow-blue-500/20 group-hover:scale-110 transition-transform duration-300">
-                    <i class="fa-solid fa-microchip text-xl"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="font-black text-2xl tracking-tight leading-none text-white">Mekong</span>
-                    <span class="font-bold text-xs tracking-[0.3em] uppercase text-blue-400">CyberUnit</span>
-                </div>
-            </a>
+        <!-- Left Visual -->
+        <div class="hidden lg:flex lg:w-5/12 left-panel relative flex-col justify-between p-12 overflow-hidden border-r border-white/5">
+            <!-- Glows -->
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/10 blur-[100px] rounded-full"></div>
+            <div class="absolute bottom-0 right-0 w-80 h-80 bg-purple-600/10 blur-[100px] rounded-full"></div>
 
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-8">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                </span>
-                Automated Infrastructure
+            <div class="relative z-10">
+                <a href="/" class="logo" style="text-decoration:none">
+                    <div style="display:flex;align-items:center;gap:0.75rem">
+                        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--indigo));display:flex;align-items:center;justify-content:center;color:white;box-shadow:0 0 20px rgba(59,130,246,.4)">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <span style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:var(--white)">Mekong <span class="grad-text">CyberUnit</span></span>
+                    </div>
+                </a>
             </div>
 
-            <h1 class="text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tight mb-8">
-                Deploy your <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">workspace</span> <br>
-                in seconds.
-            </h1>
+            <div class="relative z-10">
+                <div class="inline-block px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-6">
+                    Autonomous Deployment Ready
+                </div>
+                <h1 class="text-5xl font-black text-white leading-tight mb-8">
+                    Elevate your <br><span class="grad-text">Workforce</span> <br>Intelligence.
+                </h1>
+                
+                <div class="bg-white/5 border border-white/5 backdrop-blur-md rounded-2xl p-6 mb-12 flex items-start gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold text-sm mb-1">Configuration: {{ $plan->name }}</h4>
+                        <p class="text-slate-400 text-xs leading-relaxed">System parameters are optimized for high-scale enterprise operations.</p>
+                    </div>
+                </div>
 
-            <div class="glass-container rounded-3xl p-6 mb-12 border-l-[6px] border-l-blue-500 max-w-md mx-auto lg:mx-0">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400">
-                        <i class="fa-solid fa-layer-group text-xl"></i>
+                    <div class="flex -space-x-2">
+                        <img src="https://ui-avatars.com/api/?name=JS&background=3b82f6&color=fff" class="w-10 h-10 rounded-full border-2 border-dark shadow-xl">
+                        <img src="https://ui-avatars.com/api/?name=MK&background=6366f1&color=fff" class="w-10 h-10 rounded-full border-2 border-dark shadow-xl">
+                        <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-dark flex items-center justify-center text-[10px] font-bold text-white">1k+</div>
                     </div>
-                    <div class="text-left">
-                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Current Selection</p>
-                        <h4 class="text-white font-black text-lg">{{ $plan->name }} Tier</h4>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
-                <div class="flex -space-x-3">
-                    <img src="https://ui-avatars.com/api/?name=JS&background=random" class="w-12 h-12 rounded-full border-4 border-[#030712] shadow-xl" alt="User">
-                    <img src="https://ui-avatars.com/api/?name=AK&background=random" class="w-12 h-12 rounded-full border-4 border-[#030712] shadow-xl" alt="User">
-                    <img src="https://ui-avatars.com/api/?name=MB&background=random" class="w-12 h-12 rounded-full border-4 border-[#030712] shadow-xl" alt="User">
-                </div>
-                <div class="text-slate-400 font-bold text-xs leading-relaxed text-center lg:text-left">
-                    "The fastest onboarding experience we've<br>ever seen in HRM software."
+                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Trusted by Industry Leaders</p>
                 </div>
             </div>
         </div>
 
-        <!-- Right: Registration Form Card -->
-        <div class="w-full lg:w-7/12">
-            <div class="glass-container rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 opacity-50"></div>
-                
-                <div class="mb-12">
-                    <h2 class="text-3xl font-black text-white mb-2 tracking-tight">Organization Profile</h2>
-                    <p class="text-slate-400 font-medium">Please provide your operational details to begin provisioning.</p>
+        <!-- Right Side: Form -->
+        <div class="flex-1 p-6 md:p-12 lg:p-20 overflow-y-auto flex items-center justify-center">
+            <div class="w-full max-w-2xl mx-auto">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-black text-white mb-2">Create Workspace</h2>
+                    <p class="text-slate-400 font-medium">Provision your dedicated HRM environment below.</p>
                 </div>
 
                 @if(session('error'))
-                <div class="mb-10 p-5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-start gap-4">
-                    <i class="fa-solid fa-circle-exclamation text-xl mt-1"></i>
-                    <div class="flex-1">
-                        <h5 class="font-black text-sm uppercase mb-1">Provisioning Error</h5>
-                        <p class="text-xs font-semibold leading-relaxed opacity-80">{{ session('error') }}</p>
-                    </div>
+                <div class="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs font-bold">
+                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> {{ session('error') }}
                 </div>
                 @endif
 
-                <form action="{{ route('register.company.store', $plan->id) }}" method="POST" class="space-y-10">
+                <form action="{{ route('register.company.store', $plan->id) }}" method="POST" class="space-y-8">
                     @csrf
 
-                    <!-- Section 1 -->
+                    <!-- Group 1: Company -->
                     <div class="space-y-6">
-                        <div class="flex items-center gap-3 mb-8">
-                            <span class="step-badge">Phase 01</span>
-                            <h3 class="text-xs font-black text-white uppercase tracking-[0.2em]">Company Identity</h3>
+                        <div class="flex items-center gap-3">
+                            <div class="step-circle">1</div>
+                            <h3 class="text-xs font-black text-white uppercase tracking-widest">Company Protocol</h3>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
-                                <label for="company_name" class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-2">Company Name <span class="text-blue-500">*</span></label>
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors">
-                                        <i class="fa-solid fa-building"></i>
-                                    </div>
-                                    <input type="text" name="company_name" id="company_name" value="{{ old('company_name') }}" required autofocus
-                                        class="block w-full pl-12 pr-6 py-4 rounded-2xl input-v2 font-bold text-sm outline-none placeholder:text-slate-700"
-                                        placeholder="e.g. Mekong CyberUnit Co., Ltd">
+                                <label class="label-text">Company Name <span class="text-blue-500">*</span></label>
+                                <div class="relative">
+                                    <i class="fa-solid fa-building absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                    <input type="text" name="company_name" value="{{ old('company_name') }}" required autofocus class="input-field" placeholder="Full Legal Name">
                                 </div>
-                                @error('company_name')<span class="text-rose-500 text-[10px] mt-2 ml-2 block font-black uppercase tracking-widest">{{ $message }}</span>@enderror
+                                @error('company_name')<p class="text-red-500 text-[10px] mt-1 font-bold">{{ $message }}</p>@enderror
                             </div>
 
                             <div>
-                                <label for="company_email" class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-2">Official Email</label>
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors">
-                                        <i class="fa-solid fa-at"></i>
-                                    </div>
-                                    <input type="email" name="company_email" id="company_email" value="{{ old('company_email') }}"
-                                        class="block w-full pl-12 pr-6 py-4 rounded-2xl input-v2 font-bold text-sm outline-none placeholder:text-slate-700"
-                                        placeholder="contact@hq.com">
+                                <label class="label-text">Business Email</label>
+                                <div class="relative">
+                                    <i class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                    <input type="email" name="company_email" value="{{ old('company_email') }}" class="input-field" placeholder="hq@company.com">
                                 </div>
                             </div>
 
                             <div>
-                                <label for="phone" class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-2">Phone System</label>
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors">
-                                        <i class="fa-solid fa-phone-volume"></i>
-                                    </div>
-                                    <input type="text" name="phone" id="phone" value="{{ old('phone') }}"
-                                        class="block w-full pl-12 pr-6 py-4 rounded-2xl input-v2 font-bold text-sm outline-none placeholder:text-slate-700"
-                                        placeholder="+855 ...">
+                                <label class="label-text">Contact Link</label>
+                                <div class="relative">
+                                    <i class="fa-solid fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                    <input type="text" name="phone" value="{{ old('phone') }}" class="input-field" placeholder="+855...">
                                 </div>
                             </div>
                         </div>
 
                         @if($plan->price > 0)
-                        <div class="pt-6">
-                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 ml-2">Subscription Protocol <span class="text-blue-500">*</span></label>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <label class="relative cursor-pointer group">
-                                    <input type="radio" name="billing_cycle" value="monthly" checked class="sr-only plan-radio">
-                                    <div class="plan-label border border-white/5 rounded-2xl p-5 bg-white/5 transition-all flex items-center gap-4">
-                                        <div class="radio-circle w-6 h-6 rounded-full border-2 border-white/10 flex items-center justify-center transition-all">
-                                            <div class="radio-dot w-2 h-2 rounded-full bg-white opacity-0 transform scale-50 transition-all"></div>
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="text-white font-black text-sm uppercase tracking-tight">Monthly</div>
-                                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${{ number_format($plan->price, 2) }} / Month</div>
-                                        </div>
+                        <div>
+                            <label class="label-text">Billing Frequency</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <label class="plan-option">
+                                    <input type="radio" name="billing_cycle" value="monthly" checked class="hidden">
+                                    <div class="plan-box flex flex-col items-center text-center">
+                                        <span class="text-xs font-black text-white mb-1 uppercase">Monthly</span>
+                                        <span class="num text-blue-400 font-bold text-sm">${{ number_format($plan->price, 2) }}</span>
                                     </div>
                                 </label>
-                                
-                                <label class="relative cursor-pointer group">
-                                    <input type="radio" name="billing_cycle" value="yearly" class="sr-only plan-radio">
-                                    <div class="plan-label border border-white/5 rounded-2xl p-5 bg-white/5 transition-all flex items-center gap-4">
-                                        <div class="radio-circle w-6 h-6 rounded-full border-2 border-white/10 flex items-center justify-center transition-all">
-                                            <div class="radio-dot w-2 h-2 rounded-full bg-white opacity-0 transform scale-50 transition-all"></div>
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="flex items-center gap-2">
-                                                <div class="text-white font-black text-sm uppercase tracking-tight">Yearly</div>
-                                                <span class="bg-emerald-500/10 text-emerald-400 text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase">Save 10%</span>
-                                            </div>
-                                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${{ number_format($plan->yearly_price ?? ($plan->price * 12 * 0.9), 2) }} / Year</div>
-                                        </div>
+                                <label class="plan-option">
+                                    <input type="radio" name="billing_cycle" value="yearly" class="hidden">
+                                    <div class="plan-box flex flex-col items-center text-center relative">
+                                        <span class="absolute -top-2 -right-2 bg-blue-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase">Value</span>
+                                        <span class="text-xs font-black text-white mb-1 uppercase">Yearly</span>
+                                        <span class="num text-blue-400 font-bold text-sm">${{ number_format($plan->yearly_price ?? ($plan->price * 12 * 0.9), 2) }}</span>
                                     </div>
                                 </label>
                             </div>
@@ -255,88 +240,62 @@
                         @endif
                     </div>
 
-                    <!-- Section 2 -->
+                    <!-- Group 2: Admin -->
                     <div class="space-y-6 pt-6 border-t border-white/5">
-                        <div class="flex items-center gap-3 mb-8">
-                            <span class="step-badge">Phase 02</span>
-                            <h3 class="text-xs font-black text-white uppercase tracking-[0.2em]">Administrative Control</h3>
+                        <div class="flex items-center gap-3">
+                            <div class="step-circle">2</div>
+                            <h3 class="text-xs font-black text-white uppercase tracking-widest">Access Credentials</h3>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
-                                <label for="name" class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-2">Full Name <span class="text-blue-500">*</span></label>
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors">
-                                        <i class="fa-solid fa-user-shield"></i>
-                                    </div>
-                                    <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                                        class="block w-full pl-12 pr-6 py-4 rounded-2xl input-v2 font-bold text-sm outline-none placeholder:text-slate-700"
-                                        placeholder="Fleet Admiral Name">
+                                <label class="label-text">Administrator Full Name <span class="text-blue-500">*</span></label>
+                                <div class="relative">
+                                    <i class="fa-solid fa-user-tie absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                    <input type="text" name="name" value="{{ old('name') }}" required class="input-field" placeholder="Primary System Admin">
                                 </div>
-                                @error('name')<span class="text-rose-500 text-[10px] mt-2 ml-2 block font-black uppercase tracking-widest">{{ $message }}</span>@enderror
                             </div>
 
                             <div class="md:col-span-2">
-                                <label for="email" class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-2">Login Identifier <span class="text-blue-500">*</span></label>
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors">
-                                        <i class="fa-solid fa-key"></i>
-                                    </div>
-                                    <input type="email" name="email" id="email" value="{{ old('email') }}" required
-                                        class="block w-full pl-12 pr-6 py-4 rounded-2xl input-v2 font-bold text-sm outline-none placeholder:text-slate-700"
-                                        placeholder="admin@instance.com">
+                                <label class="label-text">Authentication Email <span class="text-blue-500">*</span></label>
+                                <div class="relative">
+                                    <i class="fa-solid fa-at absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                    <input type="email" name="email" value="{{ old('email') }}" required class="input-field" placeholder="admin@domain.com">
                                 </div>
-                                @error('email')<span class="text-rose-500 text-[10px] mt-2 ml-2 block font-black uppercase tracking-widest">{{ $message }}</span>@enderror
                             </div>
 
                             <div>
-                                <label for="password" class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-2">Access Key <span class="text-blue-500">*</span></label>
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors">
-                                        <i class="fa-solid fa-lock"></i>
-                                    </div>
-                                    <input type="password" name="password" id="password" required
-                                        class="block w-full pl-12 pr-6 py-4 rounded-2xl input-v2 font-bold text-sm outline-none placeholder:text-slate-700"
-                                        placeholder="••••••••">
+                                <label class="label-text">Password <span class="text-blue-500">*</span></label>
+                                <div class="relative">
+                                    <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                    <input type="password" name="password" required class="input-field" placeholder="••••••••">
                                 </div>
-                                @error('password')<span class="text-rose-500 text-[10px] mt-2 ml-2 block font-black uppercase tracking-widest">{{ $message }}</span>@enderror
                             </div>
 
                             <div>
-                                <label for="password_confirmation" class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-2">Verify Key <span class="text-blue-500">*</span></label>
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors">
-                                        <i class="fa-solid fa-shield-halved"></i>
-                                    </div>
-                                    <input type="password" name="password_confirmation" id="password_confirmation" required
-                                        class="block w-full pl-12 pr-6 py-4 rounded-2xl input-v2 font-bold text-sm outline-none placeholder:text-slate-700"
-                                        placeholder="••••••••">
+                                <label class="label-text">Verify Password <span class="text-blue-500">*</span></label>
+                                <div class="relative">
+                                    <i class="fa-solid fa-shield-check absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                                    <input type="password" name="password_confirmation" required class="input-field" placeholder="••••••••">
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="pt-10">
-                        <button type="submit" class="w-full relative group">
-                            <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
-                            <div class="relative h-16 w-full flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white font-black rounded-2xl text-base tracking-widest uppercase shadow-xl transition-all active:scale-95">
-                                Initialize System Deployment
-                                <i class="fa-solid fa-chevron-right ml-4 group-hover:translate-x-2 transition-transform"></i>
-                            </div>
+                        <button type="submit" class="btn-submit">
+                            Initialize Deployment
                         </button>
-                        
-                        <p class="text-[9px] text-slate-500 font-bold text-center mt-8 uppercase tracking-[0.2em] leading-relaxed">
-                            Secured and Encrypted Lifecycle End-to-End. By proceeding, you agree to the <br>
-                            <a href="#" class="text-blue-500 hover:text-blue-400 underline underline-offset-4">Governance Protocol</a> and <a href="#" class="text-blue-500 hover:text-blue-400 underline underline-offset-4">Security Policy</a>
+                        <p class="text-[9px] text-center text-slate-600 font-bold uppercase tracking-widest mt-6">
+                            By proceeding, you authorize system provisioning under the MCU Governance framework.
                         </p>
                     </div>
+
                 </form>
             </div>
         </div>
-    </div>
 
-    <!-- Background Decoration -->
-    <div class="fixed bottom-0 left-0 right-0 h-[30vh] bg-gradient-to-t from-blue-600/5 to-transparent pointer-events-none z-0"></div>
+    </div>
 
 </body>
 </html>
