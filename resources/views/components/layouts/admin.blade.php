@@ -262,7 +262,13 @@
                         </div>
                         <div class="flex-1 pt-0.5">
                             <h3 class="text-sm font-bold text-orange-800">Subscription Expiring Soon</h3>
-                            <p class="text-sm font-medium text-orange-700 mt-1">Your company's subscription will expire in <strong>{{ floor($daysLeft) }} {{ floor($daysLeft) == 1 ? 'day' : 'days' }}</strong> (on {{ $currentCompany->expiry_date->format('M d, Y') }}). Please contact system administrator or support to renew your plan to avoid service interruption.</p>
+                            <p class="text-sm font-medium text-orange-700 mt-1">Your company's subscription will expire in <strong>{{ floor($daysLeft) }} {{ floor($daysLeft) == 1 ? 'day' : 'days' }}</strong> (on {{ $currentCompany->expiry_date->format('M d, Y') }}). Please renew your plan to avoid service interruption.</p>
+                            <div class="mt-3">
+                                <a href="https://t.me/SOCHEAT_DOEM" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-lg transition-all shadow-sm">
+                                    <i class="fa-brands fa-telegram text-sm"></i>
+                                    Renew via Telegram
+                                </a>
+                            </div>
                         </div>
                     </div>
                 @endif

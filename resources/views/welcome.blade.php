@@ -363,7 +363,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
       <li><a href="#features">Features</a></li>
       <li><a href="#how">How it Works</a></li>
       <li><a href="#pricing">Pricing</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><a href="https://t.me/SOCHEAT_DOEM" target="_blank">Contact Support</a></li>
     </ul>
     <div class="nav-actions">
       @auth
@@ -585,7 +585,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
     <p class="cta-sub">Join hundreds of growing companies using Mekong CyberUnit</p>
     <div class="cta-btns">
       <a href="{{ route('register') }}" class="btn-hero btn-hero-primary"><i class="fa-solid fa-rocket"></i> Register Now</a>
-      <a href="#" class="btn-hero btn-hero-outline">Free Consultation</a>
+      <a href="https://t.me/SOCHEAT_DOEM" target="_blank" class="btn-hero btn-hero-outline"><i class="fa-brands fa-telegram"></i> Contact Support</a>
     </div>
   </div>
 </section>
@@ -601,10 +601,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
         </a>
         <p>Smart business operation management system. Transform tedious tasks into modern efficiency.</p>
         <div class="social-row">
-          <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#" class="social-btn"><i class="fa-brands fa-twitter"></i></a>
-          <a href="#" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
-          <a href="#" class="social-btn"><i class="fa-brands fa-telegram"></i></a>
+          <a href="https://t.me/SOCHEAT_DOEM" target="_blank" class="social-btn"><i class="fa-brands fa-telegram"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -622,7 +619,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
           <li><a href="#">About Us</a></li>
           <li><a href="#">News</a></li>
           <li><a href="#">Careers</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="https://t.me/SOCHEAT_DOEM" target="_blank">Contact Support</a></li>
         </ul>
       </div>
       <div class="footer-col">
