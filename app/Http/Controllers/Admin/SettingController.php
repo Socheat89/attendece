@@ -54,7 +54,10 @@ class SettingController extends Controller
             'telegram_scan_enabled' => $request->boolean('telegram_scan_enabled'),
         ]);
 
-        Cache::forget('ui_company_setting');
+        // Clear the correct cache key (must match AppServiceProvider)
+        $companyId = auth()->user()->company_id ?? 1;
+        Cache::forget('ui_company_setting_' . $companyId);
+        Cache::forget('ui_company_setting_default');
 
         return back()->with('status', 'Company settings updated.');
     }

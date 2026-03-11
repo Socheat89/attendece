@@ -48,13 +48,13 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view): void {
             if (Auth::check() && Auth::user()->company_id) {
                 $companyId = Auth::user()->company_id;
-                $setting = Cache::remember('ui_company_setting_' . $companyId, 300, static function () use ($companyId) {
+                $setting = Cache::remember('ui_company_setting_' . $companyId, 60, static function () use ($companyId) {
                     return CompanySetting::where('company_id', $companyId)->first();
                 });
                 $view->with('uiCompanySetting', $setting);
             } else {
                 // For super admins or pages without auth context, use the first global setting or null
-                $setting = Cache::remember('ui_company_setting_default', 300, static function () {
+                $setting = Cache::remember('ui_company_setting_default', 60, static function () {
                     return CompanySetting::first();
                 });
                 $view->with('uiCompanySetting', $setting);

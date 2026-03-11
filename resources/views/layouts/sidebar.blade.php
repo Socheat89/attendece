@@ -4,7 +4,7 @@
             <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-900/50">
                 <i class="fa-solid fa-bolt-lightning text-lg"></i>
             </div>
-            <span class="font-extrabold text-2xl tracking-tight text-white"><?php echo config('company_name'); ?><span class="text-blue-500"></span></span>
+            <span class="font-extrabold text-2xl tracking-tight text-white">{{ $uiCompanySetting?->company_name ?? config('app.name', 'MekongCyberUnit') }}</span>
         </div>
     </div>
     
