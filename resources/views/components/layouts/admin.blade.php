@@ -203,14 +203,14 @@
                     </button>
 
                     <!-- Profile Dropdown -->
-                    <div class="relative" x-data="{ userMenuOpen: false }">
+                    <div class="relative" x-data="{ userMenuOpen: false, profileModalOpen: false }">
                         <button @click="userMenuOpen = !userMenuOpen" @click.away="userMenuOpen = false" class="flex items-center gap-3 focus:outline-none">
                             <div class="text-right hidden md:block">
                                 <div class="text-sm font-bold text-slate-800">{{ auth()->user()->name }}</div>
                                 <div class="text-xs text-slate-500">{{ auth()->user()->roles->first()->name ?? 'User' }}</div>
                             </div>
-                            <div class="h-10 w-10 rounded-full bg-slate-200 border-2 border-white shadow-sm overflow-hidden">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=0D8ABC&color=fff" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover">
+                            <div class="h-10 w-10 rounded-full bg-slate-200 border-2 border-white shadow-sm overflow-hidden cursor-pointer">
+                                <img @click.stop="profileModalOpen = true" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=0D8ABC&color=fff" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover">
                             </div>
                             <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
                         </button>
@@ -248,6 +248,61 @@
                     </div>
                 </div>
             </header>
+
+            <!-- Profile Modal (opened from header avatar) -->
+            <div x-show="profileModalOpen" x-cloak x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div @click.away="profileModalOpen = false" class="w-full max-w-2xl mx-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-4 flex items-start justify-between">
+                        <div class="flex items-center gap-4">
+                            <img class="w-20 h-20 rounded-full border-4 border-white shadow-md" src="/images/avatar-default.jpg" alt="Avatar">
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ auth()->user()->name }}</h2>
+                                <p class="text-sm text-gray-500 dark:text-gray-300">{{ auth()->user()->roles->first()->name ?? 'User' }}</p>
+                            </div>
+                        </div>
+                        <button @click="profileModalOpen = false" class="text-gray-500 hover:text-gray-700">✕</button>
+                    </div>
+
+                    <div class="px-6 pb-6">
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Bio: Passionate about building clean, accessible interfaces.</p>
+
+                        <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
+                                <div class="text-sm text-gray-500 dark:text-gray-300">Attendance</div>
+                                <div class="mt-1 text-xl font-bold text-gray-900 dark:text-white">98%</div>
+                            </div>
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
+                                <div class="text-sm text-gray-500 dark:text-gray-300">Leaves</div>
+                                <div class="mt-1 text-xl font-bold text-gray-900 dark:text-white">2 / 12</div>
+                            </div>
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
+                                <div class="text-sm text-gray-500 dark:text-gray-300">Overtime</div>
+                                <div class="mt-1 text-xl font-bold text-gray-900 dark:text-white">5h</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
+                            <div class="lg:col-span-2 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                                <h3 class="font-medium text-gray-800 dark:text-gray-100">Recent Activity</h3>
+                                <ul class="mt-3 space-y-3 text-sm text-gray-600 dark:text-gray-300">
+                                    <li class="flex justify-between"><span>Checked in</span><span class="text-gray-500">Today · 08:02</span></li>
+                                    <li class="flex justify-between"><span>Requested leave</span><span class="text-gray-500">Mar 01</span></li>
+                                    <li class="flex justify-between"><span>Overtime approved</span><span class="text-gray-500">Feb 27</span></li>
+                                </ul>
+                            </div>
+
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                                <h3 class="font-medium text-gray-800 dark:text-gray-100">Contact</h3>
+                                <div class="mt-3 text-sm text-gray-600 dark:text-gray-300 space-y-2">
+                                    <div>Email: {{ auth()->user()->email }}</div>
+                                    <div>Phone: +855 12 345 678</div>
+                                    <div>Department: {{ auth()->user()->employee?->department?->name ?? '-' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Main Content -->
             <main class="flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-6 lg:p-8">
