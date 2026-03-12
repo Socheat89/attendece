@@ -27,7 +27,7 @@
                     <div class="relative group">
                         <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[28px] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
                         <div class="relative w-24 h-24 rounded-[24px] bg-white shadow-xl flex items-center justify-center text-blue-600 border border-slate-100 overflow-hidden">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=3b82f6&color=fff&size=128" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                            <img src="{{ Auth::user()->photo_path ? asset('storage/'.$user->photo_path) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=3b82f6&color=fff&size=128' }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
                         </div>
                     </div>
                 </div>
@@ -113,11 +113,24 @@
                     </div>
                     
                     <div class="p-10">
-                        <form method="POST" action="{{ route('profile.update') }}" class="space-y-8">
+                        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-8">
                             @csrf
                             @method('PATCH')
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <!-- photo upload preview -->
+                                <div class="space-y-2 flex flex-col items-center md:items-start">
+                                    <div class="relative">
+                                        <img id="preview" src="{{ $user->photo_path ? asset('storage/'.$user->photo_path) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=3b82f6&color=fff&size=128' }}" 
+                                             class="w-24 h-24 rounded-full object-cover border border-slate-200 shadow" />
+                                        <label for="photo" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-25 opacity-0 hover:opacity-100 rounded-full cursor-pointer transition-opacity">
+                                            <i class="fa-solid fa-camera text-white"></i>
+                                        </label>
+                                    </div>
+                                    <input id="photo" name="photo" type="file" accept="image/*" class="hidden" onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0])" />
+                                    <x-input-error :messages="$errors->get('photo')" />
+                                </div>
+
                                 <div class="space-y-2">
                                     <x-input-label for="name" :value="__('Display Name')" />
                                     <x-text-input id="name" name="name" type="text" :value="old('name', $user->name)" required autofocus autocomplete="name" />
