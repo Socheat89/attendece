@@ -16,6 +16,74 @@
         </div>
     </div>
 
+    <!-- Quick Start Guide -->
+    <div class="mb-8 rounded-2xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+        <div class="flex items-center gap-3 mb-6 relative z-10">
+            <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                <i class="fa-solid fa-rocket"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-slate-800 tracking-tight">Quick Start Guide</h3>
+                <p class="text-xs text-slate-500 font-medium">Follow these steps to set up your workspace</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+            <!-- Step 1 -->
+            <div class="group relative rounded-xl border border-slate-100 bg-slate-50 p-5 hover:bg-white hover:border-blue-100 hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300 pointer-events-auto">
+                <div class="absolute top-4 right-4 text-slate-200 group-hover:text-blue-100 transition-colors font-extrabold text-4xl leading-none font-outfit">1</div>
+                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
+                    <i class="fa-solid fa-code-branch text-sm"></i>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 mb-1 line-clamp-1">Setup Workspace</h4>
+                <p class="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px]">Create branches, departments, and work schedules.</p>
+                <a href="{{ route('admin.branches.index') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 hover:gap-2 transition-all">
+                    Start Setup <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="group relative rounded-xl border border-slate-100 bg-slate-50 p-5 hover:bg-white hover:border-purple-100 hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-300 pointer-events-auto">
+                <div class="absolute top-4 right-4 text-slate-200 group-hover:text-purple-100 transition-colors font-extrabold text-4xl leading-none font-outfit">2</div>
+                <div class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
+                    <i class="fa-solid fa-users text-sm"></i>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 mb-1 line-clamp-1">Add Employees</h4>
+                <p class="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px]">Register your team members and assign roles.</p>
+                <a href="{{ route('admin.employees.index') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-purple-600 hover:text-purple-700 hover:gap-2 transition-all">
+                    Add People <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="group relative rounded-xl border border-slate-100 bg-slate-50 p-5 hover:bg-white hover:border-emerald-100 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300 pointer-events-auto">
+                <div class="absolute top-4 right-4 text-slate-200 group-hover:text-emerald-100 transition-colors font-extrabold text-4xl leading-none font-outfit">3</div>
+                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
+                    <i class="fa-solid fa-qrcode text-sm"></i>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 mb-1 line-clamp-1">Clock In/Out</h4>
+                <p class="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px]">Generate today's QR code for employee attendance.</p>
+                <a href="{{ route('admin.attendance-qr.index') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:gap-2 transition-all">
+                    Generate QR <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="group relative rounded-xl border border-slate-100 bg-slate-50 p-5 hover:bg-white hover:border-amber-100 hover:shadow-lg hover:shadow-amber-500/5 transition-all duration-300 pointer-events-auto">
+                <div class="absolute top-4 right-4 text-slate-200 group-hover:text-amber-100 transition-colors font-extrabold text-4xl leading-none font-outfit">4</div>
+                <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
+                    <i class="fa-solid fa-file-invoice-dollar text-sm"></i>
+                </div>
+                <h4 class="text-sm font-bold text-slate-800 mb-1 line-clamp-1">Run Payroll</h4>
+                <p class="text-xs text-slate-500 mb-4 line-clamp-2 min-h-[32px]">Calculate and execute monthly salary payments.</p>
+                <a href="{{ route('admin.payrolls.index') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-600 hover:text-amber-700 hover:gap-2 transition-all">
+                    Process Payroll <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Stats Grid -->
     <div class="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-5">
         
