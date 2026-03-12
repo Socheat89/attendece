@@ -25,6 +25,7 @@ class SetTelegramWebhookCommand extends Command
             return;
         }
 
+        /** @var \Illuminate\Http\Client\Response $response */
         $response = \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$botToken}/setWebhook", [
             'url' => $url,
         ]);
@@ -33,7 +34,7 @@ class SetTelegramWebhookCommand extends Command
             $this->info("Webhook registered successfully at: {$url}");
         } else {
             $this->error("Failed to set webhook:");
-            $this->error($response->body());
+            $this->error((string) $response->body());
         }
     }
 }
