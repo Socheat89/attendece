@@ -289,9 +289,11 @@
                          <label class="relative flex flex-col p-4 border border-slate-700 bg-slate-800/30 rounded-2xl cursor-pointer hover:bg-slate-800/60 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-900/20 group overflow-hidden">
                              <div class="absolute top-0 right-0 bg-gradient-to-l from-emerald-500/20 to-transparent w-24 h-full pointer-events-none"></div>
                              <input type="radio" name="billing_cycle" value="yearly" class="sr-only">
-                             <span class="text-sm font-bold text-white mb-1">Yearly</span>
+                             <div class="flex items-center gap-2 mb-1">
+                                 <span class="text-sm font-bold text-white">Yearly</span>
+                                 <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">SAVE 10%</span>
+                             </div>
                              <span class="text-xs text-blue-300 font-medium">${{ number_format($plan->price * 12 * 0.9, 2) }}/yr</span>
-                             <span class="absolute top-3.5 right-12 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">SAVE 10%</span>
                              <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-slate-500 group-has-[:checked]:border-blue-400 group-has-[:checked]:bg-blue-500 flex items-center justify-center transition-all">
                                  <div class="w-2 h-2 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
                              </div>
