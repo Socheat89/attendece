@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 class ImportLegacyData extends Command
 {
     protected $signature = 'db:import-legacy {file} {company_id=20}';
-    protected $description = 'Import data from old SQL dump to a specific company ID';
+    protected $description = 'Import data from old SQL dump to a specific company ID with Role mapping support';
 
     protected $idMaps = [
         'users' => [],
@@ -43,9 +43,10 @@ class ImportLegacyData extends Command
 
         DB::beginTransaction();
         try {
-            // First, map roles by name
-            $this->idMaps['roles'] = $this->mapRoles($sqlContent);
+            // Step 1: Map Roles first
+            $this->idMaps['roles'] = $this->mapRoles($sqlContent, $companyId);
 
+            // Step 2: Branches
             $this->idMaps['branches'] = $this->importTable($sqlContent, 'branches', $companyId, [$this, 'mapBranch']);
             
             // Determine default branch
@@ -61,26 +62,24 @@ class ImportLegacyData extends Command
                 $this->defaultBranchId = reset($this->idMaps['branches']);
             }
 
+            // Step 3: Users
             $this->idMaps['users'] = $this->importTable($sqlContent, 'users', $companyId, [$this, 'mapUser']);
             
-            // Map User Roles
+            // Step 4: Map User Roles (CRITICAL for distinguishing Admin/Employee)
             $this->importTable($sqlContent, 'model_has_roles', $companyId, [$this, 'mapUserRole']);
 
-            // Import Departments
+            // Step 5: Rest of data
             $this->idMaps['departments'] = $this->importTable($sqlContent, 'departments', $companyId, [$this, 'mapDepartment']);
-
             $this->idMaps['employees'] = $this->importTable($sqlContent, 'employees', $companyId, [$this, 'mapEmployee']);
             $this->idMaps['attendance_sessions'] = $this->importTable($sqlContent, 'attendance_sessions', $companyId, [$this, 'mapSession']);
             
             $this->importTable($sqlContent, 'attendance_logs', $companyId, [$this, 'mapLog']);
             $this->importTable($sqlContent, 'schedules', $companyId, [$this, 'mapSchedule']);
-            
-            // Import QR Tokens
             $this->importTable($sqlContent, 'attendance_qr_tokens', $companyId, [$this, 'mapQrToken']);
 
             DB::commit();
             $this->info("--------------------------------------------------");
-            $this->info("✅ ជោគជ័យ! ទិន្នន័យទាំងអស់ត្រូវបាន Merge រួចរាល់។");
+            $this->info("✅ ជោគជ័យ! ទិន្នន័យទាំងអស់បូករួមទាំង Roles ត្រូវបានបញ្ចូលរួចរាល់។");
             $this->info("--------------------------------------------------");
             return Command::SUCCESS;
         } catch (\Exception $e) {
@@ -142,7 +141,7 @@ class ImportLegacyData extends Command
         return ($val === 'NULL' || $val === '') ? null : $val;
     }
 
-    private function mapRoles($sql)
+    private function mapRoles($sql, $companyId)
     {
         $this->comment("👉 កំពុង Map Roles...");
         $rows = $this->parseValues($sql, 'roles');
@@ -151,8 +150,10 @@ class ImportLegacyData extends Command
             $oldId = $this->clean($row[0]);
             $roleName = $this->clean($row[1]);
             
-            // Find or create role in the new system
-            $newRole = DB::table('roles')->where('name', $roleName)->where('guard_name', 'web')->first();
+            // In Spatie multi-tenant, roles can be company-specific. 
+            // We find a role with the same name.
+            $newRole = DB::table('roles')->where('name', $roleName)->first();
+            
             if (!$newRole) {
                 $newRoleId = DB::table('roles')->insertGetId([
                     'name' => $roleName,
@@ -166,6 +167,51 @@ class ImportLegacyData extends Command
             $map[$oldId] = $newRoleId;
         }
         return $map;
+    }
+
+    private function mapUserRole($row, $companyId) {
+        $oldRoleId = $this->clean($row[0]);
+        $oldUserId = $this->clean($row[2]);
+
+        if (!isset($this->idMaps['users'][$oldUserId]) || !isset($this->idMaps['roles'][$oldRoleId])) {
+            return null;
+        }
+
+        $newUserId = $this->idMaps['users'][$oldUserId];
+        $newRoleId = $this->idMaps['roles'][$oldRoleId];
+
+        // Specific handling for 'Super Admin' role from legacy
+        if ($oldRoleId == 1) {
+            DB::table('users')->where('id', $newUserId)->update(['is_super_admin' => true]);
+        }
+
+        // We insert with company_id because of the tenancy requirements
+        $data = [
+            'role_id' => $newRoleId,
+            'model_id' => $newUserId,
+            'model_type' => 'App\Models\User',
+        ];
+
+        // If the table has company_id, include it
+        if (Schema::hasColumn('model_has_roles', 'company_id')) {
+            $data['company_id'] = $companyId;
+        }
+
+        // Check if mapping already exists for this user/role/company combination
+        $query = DB::table('model_has_roles')
+            ->where('role_id', $newRoleId)
+            ->where('model_id', $newUserId)
+            ->where('model_type', 'App\Models\User');
+            
+        if (isset($data['company_id'])) {
+            $query->where('company_id', $companyId);
+        }
+
+        if (!$query->exists()) {
+            DB::table('model_has_roles')->insert($data);
+        }
+        
+        return true;
     }
 
     private function mapUser($row, $companyId) {
@@ -184,6 +230,7 @@ class ImportLegacyData extends Command
                 'password' => $this->clean($row[8]),
                 'company_id' => $companyId, 
                 'is_active' => 1, 
+                'is_super_admin' => false,
                 'created_at' => $this->clean($row[10]) ?? now(),
                 'updated_at' => $this->clean($row[11]) ?? now(),
             ]);
@@ -195,39 +242,6 @@ class ImportLegacyData extends Command
             ]);
         }
         return $newId;
-    }
-
-    private function mapUserRole($row, $companyId) {
-        $oldRoleId = $this->clean($row[0]);
-        $oldUserId = $this->clean($row[2]);
-
-        if (!isset($this->idMaps['users'][$oldUserId]) || !isset($this->idMaps['roles'][$oldRoleId])) {
-            return null;
-        }
-
-        $newUserId = $this->idMaps['users'][$oldUserId];
-        $newRoleId = $this->idMaps['roles'][$oldRoleId];
-
-        // Assign super admin status if legacy role was Super Admin (ID 1)
-        if ($oldRoleId == 1) {
-            DB::table('users')->where('id', $newUserId)->update(['is_super_admin' => true]);
-        }
-
-        // Check if mapping already exists
-        $exists = DB::table('model_has_roles')
-            ->where('role_id', $newRoleId)
-            ->where('model_id', $newUserId)
-            ->where('model_type', 'App\Models\User')
-            ->exists();
-
-        if (!$exists) {
-            DB::table('model_has_roles')->insert([
-                'role_id' => $newRoleId,
-                'model_id' => $newUserId,
-                'model_type' => 'App\Models\User'
-            ]);
-        }
-        return true;
     }
 
     private function mapBranch($row, $companyId) {
