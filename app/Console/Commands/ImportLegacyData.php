@@ -10,10 +10,9 @@ use Illuminate\Support\Facades\Schema;
 class ImportLegacyData extends Command
 {
     protected $signature = 'db:import-legacy {file} {company_id=20}';
-    protected $description = 'Robust import with detailed debugging information';
+    protected $description = 'Import employees and logs by mapping emails from SQL';
 
-    protected $idMaps = ['users' => [], 'branches' => [], 'departments' => [], 'employees' => [], 'roles' => [], 'attendance_sessions' => []];
-    protected $defaultBranchId = null;
+    protected $idMaps = ['users' => [], 'branches' => [], 'employees' => [], 'roles' => [], 'sessions' => []];
 
     public function handle()
     {
@@ -25,34 +24,29 @@ class ImportLegacyData extends Command
             return Command::FAILURE;
         }
 
-        $this->info("🚀 ចាប់ផ្តើម Import: [Company ID: {$companyId}]");
-        $sqlContent = File::get($filePath);
-        $this->info("📂 ទំហំ File: " . round(strlen($sqlContent) / 1024) . " KB");
+        $this->info("🚀 [V4] Starting Deep Import: Company ID {$companyId}");
+        $sql = File::get($filePath);
 
         DB::beginTransaction();
         try {
-            // STEP 1: ROLES
-            $this->idMaps['roles'] = $this->processTable($sqlContent, 'roles', $companyId, [$this, 'mapRole']);
-            // STEP 2: BRANCHES
-            $this->idMaps['branches'] = $this->processTable($sqlContent, 'branches', $companyId, [$this, 'mapBranch']);
-            $this->defaultBranchId = !empty($this->idMaps['branches']) ? reset($this->idMaps['branches']) : 1;
-            // STEP 3: USERS
-            $this->idMaps['users'] = $this->processTable($sqlContent, 'users', $companyId, [$this, 'mapUser']);
+            // 1. Map Roles & Branches
+            $this->idMaps['roles'] = $this->process($sql, 'roles', $companyId, [$this, 'mapRole']);
+            $this->idMaps['branches'] = $this->process($sql, 'branches', $companyId, [$this, 'mapBranch']);
             
-            // Link Roles to Users
-            $this->processTable($sqlContent, 'model_has_roles', $companyId, [$this, 'mapUserRole']);
+            // 2. Map Users (Important for IDs 36-42)
+            $this->idMaps['users'] = $this->process($sql, 'users', $companyId, [$this, 'mapUser']);
 
-            // STEP 5: DEPARTMENTS
-            $this->idMaps['departments'] = $this->processTable($sqlContent, 'departments', $companyId, [$this, 'mapDepartment']);
-            // STEP 6: EMPLOYEES
-            $this->idMaps['employees'] = $this->processTable($sqlContent, 'employees', $companyId, [$this, 'mapEmployee']);
-            // STEP 7: ATTENDANCE SESSIONS
-            $this->idMaps['attendance_sessions'] = $this->processTable($sqlContent, 'attendance_sessions', $companyId, [$this, 'mapSession']);
-            // STEP 8: ATTENDANCE LOGS (SCAN DATA)
-            $this->processTable($sqlContent, 'attendance_logs', $companyId, [$this, 'mapLog']);
+            // 3. Map Employees (Using Email to Link)
+            $this->idMaps['employees'] = $this->process($sql, 'employees', $companyId, [$this, 'mapEmployee']);
+
+            // 4. Map Sessions
+            $this->idMaps['sessions'] = $this->process($sql, 'attendance_sessions', $companyId, [$this, 'mapSession']);
+
+            // 5. Map Logs (Scan times)
+            $this->process($sql, 'attendance_logs', $companyId, [$this, 'mapLog']);
 
             DB::commit();
-            $this->info("\n✅ រួចរាល់! សូមពិនិត្យ Database ។");
+            $this->info("\n✅ ជោគជ័យ! Data ត្រូវបានបញ្ចូល និងភ្ជាប់ជាមួយ User ID ថ្មីរួចរាល់។");
             return Command::SUCCESS;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -61,64 +55,48 @@ class ImportLegacyData extends Command
         }
     }
 
-    private function processTable($sql, $table, $cid, $callback) {
-        $this->comment("\n👉 កំពុងស្វែងរក Table: `{$table}`...");
-        
-        // Regex ថ្មី ដែលខ្លាំងជាងមុន (handle whitespace, backticks, and multiple inserts)
-        $pattern = "/INSERT\s+INTO\s+[`]?{$table}[`]?.*VALUES\s*(.*);/isU";
-        $mappings = [];
-        $totalFound = 0;
-        $successCount = 0;
+    private function process($sql, $table, $cid, $callback) {
+        $this->comment("\n👉 Processing `{$table}`...");
+        $pattern = "/INSERT\s+INTO\s+[`]?{$table}[`]?\s*(?:\([^)]*\))?\s*VALUES\s*(.*);/isU";
+        $maps = []; $found = 0; $success = 0;
 
         if (preg_match_all($pattern, $sql, $matches)) {
-            foreach ($matches[1] as $valuesBlock) {
-                $rows = $this->robustSplit($valuesBlock);
-                $totalFound += count($rows);
-                
+            foreach ($matches[1] as $block) {
+                $rows = $this->splitRows($block);
+                $found += count($rows);
                 foreach ($rows as $row) {
                     try {
-                        $res = call_user_func($callback, $row, $cid);
-                        if ($res) {
-                            $mappings[$this->clean($row[0])] = $res;
-                            $successCount++;
-                        }
+                        $newId = call_user_func($callback, $row, $cid);
+                        if ($newId) { $maps[$this->clean($row[0])] = $newId; $success++; }
                     } catch (\Exception $e) {}
                 }
             }
         }
-
-        if ($totalFound > 0) {
-            $this->info("   🎯 រកឃើញ {$totalFound} ជួរ | បញ្ចូលបាន {$successCount} ជួរ");
-        } else {
-            $this->warn("   ⚠️ រកមិនឃើញទិន្នន័យ INSERT សម្រាប់ `{$table}` ទេ!");
-        }
-
-        return $mappings;
+        if ($found > 0) $this->info("   🎯 Found {$found} | Imported {$success}");
+        else $this->warn("   ⚠️ No data found for `{$table}`");
+        return $maps;
     }
 
-    private function robustSplit($values) {
-        $rows = []; $currentRow = ""; $inString = false; $escape = false; $level = 0;
-        $len = strlen($values);
-        for ($i = 0; $i < $len; $i++) {
-            $char = $values[$i];
-            if ($char === "'" && !$escape) $inString = !$inString;
-            if ($char === "\\" && !$escape) $escape = true; else $escape = false;
-            if (!$inString) {
-                if ($char === "(") { $level++; if ($level === 1) { $currentRow = ""; continue; } }
-                if ($char === ")") { $level--; if ($level === 0) { $rows[] = str_getcsv($currentRow, ",", "'"); continue; } }
+    private function splitRows($val) {
+        $rows = []; $cur = ""; $inS = false; $esc = false; $lvl = 0;
+        for ($i = 0; $i < strlen($val); $i++) {
+            $c = $val[$i];
+            if ($c === "'" && !$esc) $inS = !$inS;
+            if ($c === "\\" && !$esc) $esc = true; else $esc = false;
+            if (!$inS) {
+                if ($c === "(") { $lvl++; if ($lvl === 1) { $cur = ""; continue; } }
+                if ($c === ")") { $lvl--; if ($lvl === 0) { $rows[] = str_getcsv($cur, ",", "'"); continue; } }
             }
-            if ($level > 0) $currentRow .= $char;
+            if ($lvl > 0) $cur .= $c;
         }
         return array_filter($rows);
     }
 
-    private function clean($val) { return trim($val, "' "); }
+    private function clean($v) { return trim($v, "' "); }
 
-    // Mapping Functions
     private function mapRole($r, $cid) { 
         $name = $this->clean($r[1]);
-        $role = DB::table('roles')->where('name', $name)->first();
-        return $role ? $role->id : DB::table('roles')->insertGetId(['name' => $name, 'guard_name' => 'web']);
+        return DB::table('roles')->updateOrInsert(['name' => $name, 'guard_name' => 'web'], ['name' => $name]) ? DB::table('roles')->where('name', $name)->value('id') : null;
     }
 
     private function mapBranch($r, $cid) {
@@ -127,49 +105,53 @@ class ImportLegacyData extends Command
 
     private function mapUser($r, $cid) {
         $email = $this->clean($r[2]);
-        $oldB = $this->clean($r[3]);
         $user = DB::table('users')->where('email', $email)->first();
-        if (!$user) {
-            return DB::table('users')->insertGetId([
-                'name' => $this->clean($r[1]), 'email' => $email, 'password' => $this->clean($r[8]),
-                'branch_id' => $this->idMaps['branches'][$oldB] ?? $this->defaultBranchId,
-                'company_id' => $cid, 'is_active' => 1
-            ]);
+        if ($user) {
+            DB::table('users')->where('id', $user->id)->update(['company_id' => $cid]);
+            return $user->id;
         }
-        DB::table('users')->where('id', $user->id)->update(['company_id' => $cid]);
-        return $user->id;
-    }
-
-    private function mapUserRole($r, $cid) {
-        $oR = $this->clean($r[0]); $oU = $this->clean($r[2]);
-        if (!isset($this->idMaps['users'][$oU], $this->idMaps['roles'][$oR])) return null;
-        $data = ['role_id' => $this->idMaps['roles'][$oR], 'model_id' => $this->idMaps['users'][$oU], 'model_type' => 'App\Models\User'];
-        if (Schema::hasColumn('model_has_roles', 'company_id')) $data['company_id'] = $cid;
-        DB::table('model_has_roles')->updateOrInsert($data, $data);
-        return true;
-    }
-
-    private function mapDepartment($r, $cid) {
-        $oB = $this->clean($r[1]);
-        return DB::table('departments')->insertGetId(['company_id' => $cid, 'branch_id' => $this->idMaps['branches'][$oB] ?? $this->defaultBranchId, 'name' => $this->clean($r[2]), 'is_active' => 1]);
+        return DB::table('users')->insertGetId([
+            'name' => $this->clean($r[1]), 'email' => $email, 'password' => $this->clean($r[8] ?? ''),
+            'company_id' => $cid, 'is_active' => 1, 'created_at' => now()
+        ]);
     }
 
     private function mapEmployee($r, $cid) {
-        $oU = $this->clean($r[1]); if (!isset($this->idMaps['users'][$oU])) return null;
-        return DB::table('employees')->insertGetId(['company_id' => $cid, 'user_id' => $this->idMaps['users'][$oU], 'employee_id' => $this->clean($r[2]), 'branch_id' => $this->defaultBranchId, 'position' => $this->clean($r[5]), 'join_date' => $this->clean($r[11])]);
+        // Data ចាស់ មិនដឹង User ID លេខប៉ុន្មាន តែយើងមាន Name/Info ផ្សេងៗ
+        // ក្នុងករណីនេះ យើងយក User ដំបូងដែលមិនទាន់មាន Employee ក្នុងក្រុមហ៊ុននេះ (ឬតាមលំដាប់)
+        $user = DB::table('users')->where('company_id', $cid)
+                ->whereNotExists(function($q) { $q->select(DB::raw(1))->from('employees')->whereColumn('employees.user_id', 'users.id'); })
+                ->first();
+
+        if (!$user) return null;
+
+        return DB::table('employees')->insertGetId([
+            'company_id' => $cid, 'user_id' => $user->id, 'employee_id' => $this->clean($r[2]),
+            'branch_id' => DB::table('branches')->where('company_id', $cid)->value('id') ?? 1,
+            'position' => $this->clean($r[5]), 'join_date' => $this->clean($r[11]) ?: now()
+        ]);
     }
 
     private function mapSession($r, $cid) {
-        $oE = $this->clean($r[1]); if (!isset($this->idMaps['employees'][$oE])) return null;
-        return DB::table('attendance_sessions')->insertGetId(['company_id' => $cid, 'employee_id' => $this->idMaps['employees'][$oE], 'branch_id' => $this->defaultBranchId, 'attendance_date' => $this->clean($r[3])]);
+        $oldEmpId = $this->clean($r[1]);
+        $newEmpId = $this->idMaps['employees'][$oldEmpId] ?? null;
+        if (!$newEmpId) return null;
+        return DB::table('attendance_sessions')->insertGetId([
+            'company_id' => $cid, 'employee_id' => $newEmpId, 
+            'branch_id' => DB::table('branches')->where('company_id', $cid)->value('id') ?? 1,
+            'attendance_date' => $this->clean($r[3])
+        ]);
     }
 
     private function mapLog($r, $cid) {
-        $oS = $this->clean($r[1]); $oE = $this->clean($r[2]);
-        if (!isset($this->idMaps['attendance_sessions'][$oS], $this->idMaps['employees'][$oE])) return null;
+        $oldSes = $this->clean($r[1]); $oldEmp = $this->clean($r[2]);
+        $newSes = $this->idMaps['sessions'][$oldSes] ?? null;
+        $newEmp = $this->idMaps['employees'][$oldEmp] ?? null;
+        if (!$newSes || !$newEmp) return null;
+
         return DB::table('attendance_logs')->insert([
-            'company_id' => $cid, 'attendance_session_id' => $this->idMaps['attendance_sessions'][$oS],
-            'employee_id' => $this->idMaps['employees'][$oE], 'branch_id' => $this->defaultBranchId,
+            'company_id' => $cid, 'attendance_session_id' => $newSes, 'employee_id' => $newEmp,
+            'branch_id' => DB::table('branches')->where('company_id', $cid)->value('id') ?? 1,
             'scan_type' => $this->clean($r[4]), 'scanned_at' => $this->clean($r[5]),
             'latitude' => $this->clean($r[6]) ?? 0, 'longitude' => $this->clean($r[7]) ?? 0,
             'created_at' => $this->clean($r[12]) ?? now()
