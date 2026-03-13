@@ -85,7 +85,7 @@
     </div>
 
     <!-- Stats Grid -->
-    <div class="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-5">
+    <div class="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-6">
         
         <!-- Total Employees -->
         <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-blue-500/30 transition-all duration-300">
@@ -140,14 +140,27 @@
         </div>
 
         <!-- Payroll -->
-        <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-indigo-500/30 transition-all duration-300 sm:col-span-2 xl:col-span-1">
+        <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-indigo-500/30 transition-all duration-300">
             <div class="flex justify-between items-start z-10 relative">
                 <div>
                     <p class="text-sm font-medium text-slate-500">Est. Payroll</p>
-                    <h3 class="mt-2 text-2xl font-bold text-slate-800">${{ number_format($monthlyPayrollCost,0) }}<span class="text-sm font-normal text-slate-400">.00</span></h3>
+                    <h3 class="mt-2 text-2xl font-bold text-slate-800">${{ number_format($monthlyPayrollCost,0) }}</h3>
                 </div>
                 <div class="h-10 w-10 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600 group-hover:bg-indigo-100 transition-colors">
                    <i class="fa-solid fa-sack-dollar"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Revenue -->
+        <div class="relative overflow-hidden rounded-2xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-emerald-500/30 transition-all duration-300">
+            <div class="flex justify-between items-start z-10 relative">
+                <div>
+                    <p class="text-sm font-medium text-slate-500">Total Revenue</p>
+                    <h3 class="mt-2 text-2xl font-bold text-slate-800">${{ number_format($totalRevenue,0) }}<span class="text-sm font-normal text-slate-400">.00</span></h3>
+                </div>
+                <div class="h-10 w-10 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 group-hover:bg-emerald-100 transition-colors">
+                   <i class="fa-solid fa-file-invoice-dollar"></i>
                 </div>
             </div>
         </div>
@@ -295,6 +308,75 @@
                                         <p class="text-slate-500 font-medium">No pending requests</p>
                                         <p class="text-xs text-slate-400">All caught up! New requests will appear here.</p>
                                     </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-1 mt-8">
+        <!-- Recent Subscriptions -->
+        <div class="lg:col-span-1">
+            <div class="overflow-hidden rounded-2xl bg-white shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                <div class="border-b border-slate-50 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                         <h3 class="text-lg font-bold text-slate-800">Recent Subscriptions</h3>
+                         <p class="text-sm text-slate-500">Latest paid invoices and payments</p>
+                    </div>
+                    <a href="{{ route('admin.subscription.index') }}" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                        All Invoices <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50/50 text-xs uppercase text-slate-500 font-semibold">
+                            <tr>
+                                <th class="px-6 py-4">Invoice #</th>
+                                <th class="px-6 py-4">Company</th>
+                                <th class="px-6 py-4">Plan</th>
+                                <th class="px-6 py-4 text-center">Amount</th>
+                                <th class="px-6 py-4 text-center">Date</th>
+                                <th class="px-6 py-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                        @forelse($recentInvoices as $invoice)
+                            <tr class="hover:bg-slate-50/80 transition-colors group">
+                                <td class="px-6 py-4">
+                                    <span class="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">
+                                        {{ $invoice->invoice_number }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 font-semibold text-slate-700">
+                                    {{ $invoice->company_name }}
+                                </td>
+                                <td class="px-6 py-4">
+                                     <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-bold">
+                                        {{ $invoice->plan_name }}
+                                     </span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="font-bold text-emerald-600">
+                                        ${{ number_format($invoice->amount, 2) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-center text-slate-500">
+                                    {{ $invoice->paid_at->format('M d, Y') }}
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                     <a href="{{ route('admin.invoices.download', $invoice) }}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700">
+                                        <i class="fa-solid fa-download"></i> PDF
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-12 text-center text-slate-400">
+                                    No recent subscription payments found.
                                 </td>
                             </tr>
                         @endforelse
