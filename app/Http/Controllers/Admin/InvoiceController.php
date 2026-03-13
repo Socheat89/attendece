@@ -13,6 +13,11 @@ class InvoiceController extends Controller
      */
     public function download(Invoice $invoice)
     {
+        // Security check: ensure user only downloads their own company invoices
+        if ($invoice->company_id !== auth()->user()->company_id) {
+            abort(403, 'Unauthorized access to this invoice.');
+        }
+
         $pdf = Pdf::loadView('admin.invoices.pdf', compact('invoice'))
             ->setPaper('a4', 'portrait');
 

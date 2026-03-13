@@ -73,8 +73,13 @@ class DashboardController extends Controller
                 'hasMonthlyAttendanceData' => $chartValues->sum() > 0,
                 'lateEmployees' => $lateEmployees,
                 'pendingLeaves' => $pendingLeaves,
-                'totalRevenue' => Invoice::where('status', 'paid')->sum('amount'),
-                'recentInvoices' => Invoice::query()->with('subscriptionPlan')->where('status', 'paid')->latest()->limit(5)->get(),
+                'totalRevenue' => Invoice::where('company_id', auth()->user()->company_id)->where('status', 'paid')->sum('amount'),
+                'recentInvoices' => Invoice::query()->with('subscriptionPlan')
+                    ->where('company_id', auth()->user()->company_id)
+                    ->where('status', 'paid')
+                    ->latest()
+                    ->limit(5)
+                    ->get(),
             ];
         });
 
