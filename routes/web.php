@@ -60,7 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::middleware(['company_subscription'])->group(function () {
-        Route::prefix('admin')->as('admin.')->middleware('role:Super Admin,Admin / HR')->group(function () {
+        Route::prefix('admin')->as('admin.')->middleware('role:Super Admin,Admin / HR,Test')->group(function () {
             Route::get('/dashboard', AdminDashboardController::class)->name('dashboard');
 
             Route::get('/attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');

@@ -151,7 +151,7 @@
                     Payroll
                 </a>
 
-                @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin / HR']))
+                @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin / HR', 'Test']))
                     <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Administration</div>
                     
                     <a href="{{ route('admin.branches.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.branches.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
