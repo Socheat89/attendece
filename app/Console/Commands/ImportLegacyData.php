@@ -16,6 +16,7 @@ class ImportLegacyData extends Command
         'branches' => [],
         'departments' => [],
         'employees' => [],
+        'roles' => [],
         'attendance_sessions' => [],
     ];
 
@@ -42,7 +43,9 @@ class ImportLegacyData extends Command
 
         DB::beginTransaction();
         try {
-            $this->idMaps['users'] = $this->importTable($sqlContent, 'users', $companyId, [$this, 'mapUser']);
+            // First, map roles by name
+            $this->idMaps['roles'] = $this->mapRoles($sqlContent);
+
             $this->idMaps['branches'] = $this->importTable($sqlContent, 'branches', $companyId, [$this, 'mapBranch']);
             
             // Determine default branch
@@ -57,6 +60,11 @@ class ImportLegacyData extends Command
             } else {
                 $this->defaultBranchId = reset($this->idMaps['branches']);
             }
+
+            $this->idMaps['users'] = $this->importTable($sqlContent, 'users', $companyId, [$this, 'mapUser']);
+            
+            // Map User Roles
+            $this->importTable($sqlContent, 'model_has_roles', $companyId, [$this, 'mapUserRole']);
 
             // Import Departments
             $this->idMaps['departments'] = $this->importTable($sqlContent, 'departments', $companyId, [$this, 'mapDepartment']);
@@ -93,26 +101,36 @@ class ImportLegacyData extends Command
         }
     }
 
-    private function importTable($sql, $table, $companyId, $callback)
+    private function parseValues($sql, $table)
     {
-        $this->comment("👉 កំពុងបញ្ចូល {$table}...");
         $pattern = "/INSERT INTO `{$table}`.*VALUES\s*(.*);/isU";
-        $mappings = [];
+        $allRows = [];
 
         if (preg_match_all($pattern, $sql, $matches)) {
             foreach ($matches[1] as $valuesBlock) {
                 $rows = preg_split("/\),\s*\(/", trim($valuesBlock, "() "));
                 foreach ($rows as $row) {
-                    $data = str_getcsv($row, ",", "'");
-                    try {
-                        $result = call_user_func($callback, $data, $companyId);
-                        if ($result) {
-                            $mappings[$this->clean($data[0])] = $result;
-                        }
-                    } catch (\Exception $e) {
-                        $this->warn("⚠️ មិនអាចបញ្ចូលមួយជួរក្នុង {$table}: " . $e->getMessage());
-                    }
+                    $allRows[] = str_getcsv($row, ",", "'");
                 }
+            }
+        }
+        return $allRows;
+    }
+
+    private function importTable($sql, $table, $companyId, $callback)
+    {
+        $this->comment("👉 កំពុងបញ្ចូល {$table}...");
+        $rows = $this->parseValues($sql, $table);
+        $mappings = [];
+
+        foreach ($rows as $row) {
+            try {
+                $result = call_user_func($callback, $row, $companyId);
+                if ($result) {
+                    $mappings[$this->clean($row[0])] = $result;
+                }
+            } catch (\Exception $e) {
+                $this->warn("⚠️ មិនអាចបញ្ចូលមួយជួរក្នុង {$table}: " . $e->getMessage());
             }
         }
         return $mappings;
@@ -124,21 +142,92 @@ class ImportLegacyData extends Command
         return ($val === 'NULL' || $val === '') ? null : $val;
     }
 
+    private function mapRoles($sql)
+    {
+        $this->comment("👉 កំពុង Map Roles...");
+        $rows = $this->parseValues($sql, 'roles');
+        $map = [];
+        foreach ($rows as $row) {
+            $oldId = $this->clean($row[0]);
+            $roleName = $this->clean($row[1]);
+            
+            // Find or create role in the new system
+            $newRole = DB::table('roles')->where('name', $roleName)->where('guard_name', 'web')->first();
+            if (!$newRole) {
+                $newRoleId = DB::table('roles')->insertGetId([
+                    'name' => $roleName,
+                    'guard_name' => 'web',
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            } else {
+                $newRoleId = $newRole->id;
+            }
+            $map[$oldId] = $newRoleId;
+        }
+        return $map;
+    }
+
     private function mapUser($row, $companyId) {
         if (count($row) < 3) return null;
         $oldId = $this->clean($row[0]);
+        $oldBranchId = $this->clean($row[3]);
         $email = $this->clean($row[2]);
         
         $user = DB::table('users')->where('email', $email)->first();
         if (!$user) {
-            return DB::table('users')->insertGetId([
-                'name' => $this->clean($row[1]), 'email' => $email, 'password' => $this->clean($row[8]),
-                'company_id' => $companyId, 'is_active' => 1, 'created_at' => $this->clean($row[10]) ?? now(),
+            $newId = DB::table('users')->insertGetId([
+                'name' => $this->clean($row[1]), 
+                'email' => $email, 
+                'branch_id' => $this->idMaps['branches'][$oldBranchId] ?? $this->defaultBranchId,
+                'phone' => $this->clean($row[4]),
+                'password' => $this->clean($row[8]),
+                'company_id' => $companyId, 
+                'is_active' => 1, 
+                'created_at' => $this->clean($row[10]) ?? now(),
                 'updated_at' => $this->clean($row[11]) ?? now(),
             ]);
+        } else {
+            $newId = $user->id;
+            DB::table('users')->where('id', $newId)->update([
+                'company_id' => $companyId,
+                'branch_id' => $this->idMaps['branches'][$oldBranchId] ?? $this->defaultBranchId
+            ]);
         }
-        DB::table('users')->where('id', $user->id)->update(['company_id' => $companyId]);
-        return $user->id;
+        return $newId;
+    }
+
+    private function mapUserRole($row, $companyId) {
+        $oldRoleId = $this->clean($row[0]);
+        $oldUserId = $this->clean($row[2]);
+
+        if (!isset($this->idMaps['users'][$oldUserId]) || !isset($this->idMaps['roles'][$oldRoleId])) {
+            return null;
+        }
+
+        $newUserId = $this->idMaps['users'][$oldUserId];
+        $newRoleId = $this->idMaps['roles'][$oldRoleId];
+
+        // Assign super admin status if legacy role was Super Admin (ID 1)
+        if ($oldRoleId == 1) {
+            DB::table('users')->where('id', $newUserId)->update(['is_super_admin' => true]);
+        }
+
+        // Check if mapping already exists
+        $exists = DB::table('model_has_roles')
+            ->where('role_id', $newRoleId)
+            ->where('model_id', $newUserId)
+            ->where('model_type', 'App\Models\User')
+            ->exists();
+
+        if (!$exists) {
+            DB::table('model_has_roles')->insert([
+                'role_id' => $newRoleId,
+                'model_id' => $newUserId,
+                'model_type' => 'App\Models\User'
+            ]);
+        }
+        return true;
     }
 
     private function mapBranch($row, $companyId) {
