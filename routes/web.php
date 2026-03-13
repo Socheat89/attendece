@@ -28,6 +28,8 @@ Route::post('/checkout/{plan}/notify', [\App\Http\Controllers\Saas\RegistrationC
 Route::get('/checkout/{plan}/status/{token}', [\App\Http\Controllers\Saas\RegistrationController::class, 'checkPaymentStatus'])->name('checkout.status');
 Route::get('/register-company/{plan}', [\App\Http\Controllers\Saas\RegistrationController::class, 'register'])->name('register.company');
 Route::post('/register-company/{plan}', [\App\Http\Controllers\Saas\RegistrationController::class, 'store'])->name('register.company.store');
+Route::get('/terms', fn() => view('saas.terms'))->name('terms');
+Route::get('/privacy', fn() => view('saas.privacy'))->name('privacy');
 
 Route::get('/', function () {
     if (! auth()->check()) {

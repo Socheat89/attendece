@@ -370,7 +370,7 @@
                         
                         <p class="text-[12px] text-slate-500 font-medium text-center mt-6 p-4 rounded-xl bg-slate-800/20 border border-slate-700/30">
                             <i class="fa-solid fa-shield-halved text-slate-400 mr-1"></i>
-                            By launching, you agree to our <a href="#" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">Terms of Service</a> and <a href="#" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">Privacy Policy</a>.
+                            By launching, you agree to our <a href="{{ route('terms') }}" target="_blank" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">Terms of Service</a> and <a href="{{ route('privacy') }}" target="_blank" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">Privacy Policy</a>.
                         </p>
                     </div>
                 </form>
