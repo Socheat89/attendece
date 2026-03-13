@@ -271,39 +271,31 @@
                         </div>
                     </div>
 
-                    <!-- Billing Cycle if not free -->
+                    <!-- Billing Cycle: auto from payment request -->
+                    <input type="hidden" name="billing_cycle" value="{{ $billingCycle }}">
+                    <input type="hidden" name="months" value="{{ $months }}">
                     @if($plan->price > 0)
-                    <div class="space-y-4 pt-2">
-                         <label class="block text-sm font-semibold text-slate-300 mb-2">Billing Cycle <span class="text-rose-400">*</span></label>
-                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                             <!-- Monthly -->
-                             <label class="relative flex flex-col p-4 border border-slate-700 bg-slate-800/30 rounded-2xl cursor-pointer hover:bg-slate-800/60 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-900/20 group">
-                                 <input type="radio" name="billing_cycle" value="monthly" checked class="sr-only">
-                                 <span class="text-sm font-bold text-white mb-1">Monthly</span>
-                                 <span class="text-xs text-blue-300 font-medium">${{ number_format($plan->price, 2) }}/mo</span>
-                                 <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-slate-500 group-has-[:checked]:border-blue-400 group-has-[:checked]:bg-blue-500 flex items-center justify-center transition-all">
-                                     <div class="w-2 h-2 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
-                                 </div>
-                             </label>
-                             
-                             <!-- Yearly -->
-                             <label class="relative flex flex-col p-4 border border-slate-700 bg-slate-800/30 rounded-2xl cursor-pointer hover:bg-slate-800/60 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-900/20 group overflow-hidden">
-                                 <div class="absolute top-0 right-0 bg-gradient-to-l from-emerald-500/20 to-transparent w-24 h-full pointer-events-none"></div>
-                                 <input type="radio" name="billing_cycle" value="yearly" class="sr-only">
-                                 <div class="flex items-center gap-2 mb-1">
-                                     <span class="text-sm font-bold text-white">Yearly</span>
-                                     <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">SAVE 10%</span>
-                                 </div>
-                                 <span class="text-xs text-blue-300 font-medium">${{ number_format($plan->price * 12 * 0.9, 2) }}/yr</span>
-                                 <div class="absolute top-4 right-4 w-5 h-5 rounded-full border-2 border-slate-500 group-has-[:checked]:border-blue-400 group-has-[:checked]:bg-blue-500 flex items-center justify-center transition-all">
-                                     <div class="w-2 h-2 rounded-full bg-white opacity-0 group-has-[:checked]:opacity-100"></div>
-                                 </div>
-                             </label>
-                         </div>
-                     </div>
-                    @else
-                        <input type="hidden" name="billing_cycle" value="trial">
+                    <div class="pt-2">
+                        <p class="block text-sm font-semibold text-slate-300 mb-2">Billing Cycle</p>
+                        <div class="flex items-center gap-3 px-4 py-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                            <i class="fa-solid fa-clock-rotate-left text-blue-400 text-sm"></i>
+                            <div>
+                                <span class="text-sm font-bold text-white">
+                                    @if($months >= 12)
+                                        {{ $months / 12 }} Year{{ $months > 12 ? 's' : '' }} Plan
+                                    @else
+                                        {{ $months }} Month{{ $months > 1 ? 's' : '' }} Plan
+                                    @endif
+                                </span>
+                                <span class="ml-2 text-xs text-blue-300">(from your payment selection)</span>
+                            </div>
+                            @if($months >= 12)
+                            <span class="ml-auto bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[9px] font-bold px-1.5 py-0.5 rounded">SAVE 10%</span>
+                            @endif
+                        </div>
+                    </div>
                     @endif
+
 
                     <!-- 2. Admin Info -->
                     <div class="space-y-5 pt-4">

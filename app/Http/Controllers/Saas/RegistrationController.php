@@ -192,11 +192,13 @@ class RegistrationController extends Controller
             abort(404, 'This plan is not available.');
         }
 
+        $billingCycle = 'monthly';
+        $months = 1;
+
         // Only require payment check if plan is not free
         if ($plan->price > 0) {
             $token = request()->query('token');
             if (!$token) {
-                // If they have no token, deny access and maybe offer contact
                 abort(403, 'Unauthorized. Please complete payment or wait for your approval link.');
             }
 
@@ -207,9 +209,14 @@ class RegistrationController extends Controller
             if (!$paymentRequest) {
                 abort(403, 'Invalid or expired approval link.');
             }
+
+            $months = $paymentRequest->months ?? 1;
+            $billingCycle = ($months >= 12) ? 'yearly' : 'monthly';
+        } else {
+            $billingCycle = 'trial';
         }
 
-        return view('saas.register', compact('plan'));
+        return view('saas.register', compact('plan', 'billingCycle', 'months'));
     }
 
     /**
