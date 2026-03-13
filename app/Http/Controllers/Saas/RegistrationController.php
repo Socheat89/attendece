@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Saas;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Invoice;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -309,6 +310,34 @@ class RegistrationController extends Controller
             ]);
 
             DB::commit();
+
+            // Generate Invoice for paid subscriptions
+            if ($plan->price > 0) {
+                $paymentRequest = null;
+                if (request()->query('token')) {
+                    $paymentRequest = \App\Models\PaymentRequest::where('access_token', request()->query('token'))->first();
+                }
+                $invoiceMonths = $paymentRequest?->months ?? 1;
+                $invoiceAmount = $paymentRequest?->amount ?? ($plan->price * $invoiceMonths);
+                $invoiceContact = $paymentRequest?->contact ?? null;
+                $invoiceMethod  = $paymentRequest?->method ?? 'KHQR';
+
+                Invoice::create([
+                    'invoice_number'       => Invoice::generateNumber(),
+                    'company_id'           => $company->id,
+                    'subscription_plan_id' => $plan->id,
+                    'company_name'         => $company->name,
+                    'contact'              => $invoiceContact,
+                    'plan_name'            => $plan->name,
+                    'billing_cycle'        => $billingCycle,
+                    'months'               => $invoiceMonths,
+                    'amount'               => $invoiceAmount,
+                    'paid_at'              => now()->toDateString(),
+                    'valid_until'          => $expiryDate->toDateString(),
+                    'payment_method'       => $invoiceMethod,
+                    'status'               => 'paid',
+                ]);
+            }
 
             // Log the new user in persistently
             Auth::login($user, true);

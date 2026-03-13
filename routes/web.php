@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\LeaveRequestController;
 use App\Http\Controllers\Admin\LeaveTypeController;
 use App\Http\Controllers\Admin\PayrollController;
@@ -98,6 +99,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('employees/{employee}/schedule/{schedule}', [\App\Http\Controllers\Admin\EmployeeScheduleController::class, 'destroy'])->name('employees.schedule.destroy');
 
             Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription.index');
+            Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'download'])->name('invoices.download');
             Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
             Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
 
