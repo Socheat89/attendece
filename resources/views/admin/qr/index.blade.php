@@ -58,7 +58,7 @@
                     @forelse($tokens as $token)
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-slate-800">{{ $token->branch->name }}</div>
+                                <div class="text-sm font-medium text-slate-800">{{ $token->branch?->name ?? 'Unknown Branch' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                                 {{ $token->token_date->format('M d, Y') }}
@@ -85,7 +85,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 @if($token->is_active)
-                                    <a href="{{ route('admin.attendance-qr.image', $token) }}" target="_blank" download="Branch_QR_{{ $token->branch->name }}_{{ $token->token_date->format('Y-m-d') }}.png" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center gap-1 mr-3">
+                                    <a href="{{ route('admin.attendance-qr.image', $token) }}" target="_blank" download="Branch_QR_{{ $token->branch?->name ?? 'Branch' }}_{{ $token->token_date->format('Y-m-d') }}.png" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center gap-1 mr-3">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                         Download
                                     </a>

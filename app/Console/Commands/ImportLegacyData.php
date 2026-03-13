@@ -32,7 +32,7 @@ class ImportLegacyData extends Command
         $sql = File::get($file);
         
         // Define tables in Order of Dependencies
-        $tables = ['roles', 'branches', 'users', 'model_has_roles', 'employees', 'attendance_sessions', 'attendance_logs'];
+        $tables = ['roles', 'branches', 'users', 'model_has_roles', 'employees', 'attendance_sessions', 'attendance_logs', 'attendance_qr_tokens'];
 
         foreach ($tables as $table) {
             $this->processTable($sql, $table, $cid);
@@ -160,6 +160,18 @@ class ImportLegacyData extends Command
                         'scan_type' => $this->clean($data[4]), 'scanned_at' => $time,
                         'latitude' => $this->clean($data[6]) ?? 0, 'longitude' => $this->clean($data[7]) ?? 0,
                         'created_at' => $this->clean($data[12]) ?? now()
+                    ]);
+
+                case 'attendance_qr_tokens':
+                    $bId = $this->maps['branches'][$this->clean($data[1])] ?? null;
+                    if (!$bId) return null;
+                    $token = $this->clean($data[3]);
+                    if (DB::table('attendance_qr_tokens')->where('token', $token)->exists()) return true;
+                    return DB::table('attendance_qr_tokens')->insert([
+                        'company_id' => $cid, 'branch_id' => $bId,
+                        'token_date' => $this->clean($data[2]), 'token' => $token,
+                        'expires_at' => $this->clean($data[4]), 'is_active' => $this->clean($data[5]) ?? 1,
+                        'created_at' => $this->clean($data[6]) ?? now(), 'updated_at' => now()
                     ]);
             }
         } catch (\Exception $e) { return null; }
