@@ -159,6 +159,11 @@
                         Branches
                     </a>
 
+                    <a href="{{ route('admin.subscription.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.subscription.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <i class="fa-solid fa-credit-card w-5 h-5 mr-3 {{ request()->routeIs('admin.subscription.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
+                        Subscription
+                    </a>
+
                     <a href="{{ route('admin.settings.edit') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.settings.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <i class="fa-solid fa-gear w-5 h-5 mr-3 {{ request()->routeIs('admin.settings.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
                         Settings
