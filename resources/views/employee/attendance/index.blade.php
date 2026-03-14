@@ -283,10 +283,11 @@
                     };
                     
                     $isToday = ($thisDate === $todayDate);
+                    $lateMinutes = $data['late_minutes'] ?? 0;
                 @endphp
                 
                 <div class="day-cell {{ $statusClass }} {{ $isToday ? 'today' : '' }}" 
-                     onclick="openSheet('{{ $thisDate }}', '{{ $status }}', '{{ json_encode($data['scans'] ?? []) }}')">
+                     onclick="openSheet('{{ $thisDate }}', '{{ $status }}', '{{ json_encode($data['scans'] ?? []) }}', {{ $lateMinutes }})">
                     <span>{{ $d }}</span>
                     @if($status !== 'none' && $status !== 'absent')
                         <div class="status-dot"></div>
@@ -328,19 +329,27 @@
         }
     });
 
-    function openSheet(dateStr, status, scansJson) {
+    function openSheet(dateStr, status, scansJson, lateMin = 0) {
         const date = new Date(dateStr);
         document.getElementById('sheetDate').textContent = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
         
         const statusEl = document.getElementById('sheetStatus');
-        statusEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
         
-        let color = '#64748b'; let bg = '#f1f5f9';
-        if(status==='present'){ color='#166534'; bg='#dcfce7'; }
-        else if(status==='late'){ color='#a16207'; bg='#fef9c3'; }
-        else if(status==='absent'){ color='#991b1b'; bg='#fee2e2'; }
-        else if(status==='leave'){ color='#1e40af'; bg='#dbeafe'; }
+        let color = '#64748b'; let bg = '#f1f5f9'; let label = status.charAt(0).toUpperCase() + status.slice(1);
         
+        if (status === 'present') { 
+            color = '#166534'; bg = '#dcfce7'; 
+            label = 'Good';
+        } else if (status === 'late') { 
+            color = '#a16207'; bg = '#fef9c3'; 
+            label = `Late (${lateMin}m)`;
+        } else if (status === 'absent') { 
+            color = '#991b1b'; bg = '#fee2e2'; 
+        } else if (status === 'leave') { 
+            color = '#1e40af'; bg = '#dbeafe'; 
+        }
+        
+        statusEl.textContent = label;
         statusEl.style.color = color;
         statusEl.style.background = bg;
         
