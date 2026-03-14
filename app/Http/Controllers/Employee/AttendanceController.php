@@ -22,6 +22,8 @@ class AttendanceController extends Controller
     public function index(Request $request)
     {
         $employee = auth()->user()->employee;
+        $employee->load(['schedules', 'branch.schedules']);
+        
         $monthInput = (string) $request->input('month', now()->format('Y-m'));
         $month = preg_match('/^\d{4}-\d{2}$/', $monthInput) ? $monthInput : now()->format('Y-m');
 
@@ -45,11 +47,30 @@ class AttendanceController extends Controller
 
         $calendarData = [];
         foreach ($sessions as $session) {
-            $status = $session->late_minutes > 0 ? 'late' : 'present';
+            $lateMinutes = $session->late_minutes;
+
+            // Recalculate late minutes dynamically for imported legacy records
+            if ($lateMinutes == 0) {
+                $dayOfWeek = $session->attendance_date->dayOfWeek;
+                $schedule = $employee->schedules->firstWhere('day_of_week', $dayOfWeek) 
+                         ?? $employee->branch?->schedules->firstWhere('day_of_week', $dayOfWeek);
+
+                $morningLog = $session->logs->firstWhere('scan_type', 'morning_in');
+                if ($morningLog && $schedule && $schedule->morning_in) {
+                    $expected = \Carbon\Carbon::parse($session->attendance_date->toDateString() . ' ' . $schedule->morning_in);
+                    $graceLimit = (clone $expected)->addMinutes((int) $schedule->late_grace_minutes);
+                    
+                    if ($morningLog->scanned_at->gt($graceLimit)) {
+                        $lateMinutes = (int) $expected->diffInMinutes($morningLog->scanned_at);
+                    }
+                }
+            }
+
+            $status = $lateMinutes > 0 ? 'late' : 'present';
             $calendarData[$session->attendance_date->toDateString()] = [
                 'status' => $status,
                 'work_hours' => round($session->work_minutes / 60, 2),
-                'late_minutes' => $session->late_minutes,
+                'late_minutes' => $lateMinutes,
                 'overtime_hours' => round($session->overtime_minutes / 60, 2),
                 'gps_status' => $session->has_fake_gps_flag ? 'Flagged' : 'Verified',
                 'scans' => [
