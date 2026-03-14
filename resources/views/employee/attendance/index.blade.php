@@ -339,10 +339,8 @@
         
         if (status === 'present') { 
             color = '#166534'; bg = '#dcfce7'; 
-            label = 'Good';
         } else if (status === 'late') { 
             color = '#a16207'; bg = '#fef9c3'; 
-            label = `Late (${lateMin}m)`;
         } else if (status === 'absent') { 
             color = '#991b1b'; bg = '#fee2e2'; 
         } else if (status === 'leave') { 
@@ -366,15 +364,25 @@
         
         let hasData = false;
         
-        for (const [label, time] of Object.entries(scanTypes)) {
+        for (const [scanLabel, time] of Object.entries(scanTypes)) {
             if(time) {
                 hasData = true;
-                const isOut = label.includes('Out');
+                const isOut = scanLabel.includes('Out');
+                
+                let extraTag = '';
+                if (scanLabel === 'Morning In') {
+                    if (status === 'late') {
+                        extraTag = `<span style="margin-left:6px; font-size:0.65rem; padding:2px 8px; border-radius:12px; background:#fef9c3; color:#a16207; font-weight:700;">Late (${lateMin}m)</span>`;
+                    } else if (status === 'present') {
+                        extraTag = `<span style="margin-left:6px; font-size:0.65rem; padding:2px 8px; border-radius:12px; background:#dcfce7; color:#166534; font-weight:700;">Good</span>`;
+                    }
+                }
+
                 const html = `
                     <div class="timeline-item">
                         <div class="timeline-dot ${isOut ? 'out' : ''}"></div>
                         <div class="timeline-content">
-                            <h4>${label}</h4>
+                            <h4>${scanLabel}${extraTag}</h4>
                             <p>${time}</p>
                         </div>
                     </div>
