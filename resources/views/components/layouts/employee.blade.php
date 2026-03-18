@@ -940,20 +940,29 @@
         </div>
         <div class="top-actions">
             <!-- Language Switcher -->
-            <select style="border-radius: 10px; font-size: 0.76rem; font-weight: 600; padding: 0.38rem 1.5rem 0.38rem 0.75rem; border: 1px solid var(--line); color: var(--muted); background-color: #fff; cursor: pointer; outline: none; appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right .7rem top 50%; background-size: .65rem auto;" onchange="window.location.href=this.value">
-                <option value="{{ route('lang.switch', 'en') }}" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>EN</option>
-                <option value="{{ route('lang.switch', 'km') }}" {{ app()->getLocale() == 'km' ? 'selected' : '' }}>KM</option>
-            </select>
+            <div class="dropdown">
+                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 10px; font-size: 0.76rem; font-weight: 600; padding: 0.38rem 0.75rem; border: 1px solid var(--line); color: var(--muted); background-color: #fff; display: flex; align-items: center; gap: 6px; cursor: pointer; height: 100%;">
+                    @if(app()->getLocale() == 'km')
+                        🇰🇭 <span class="d-none d-sm-inline">KM</span>
+                    @else
+                        🇬🇧 <span class="d-none d-sm-inline">EN</span>
+                    @endif
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="min-width: 140px; border-radius: 12px; font-size: 0.85rem; padding: 0.5rem;">
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded {{ app()->getLocale() == 'en' ? 'bg-primary text-white' : '' }}" href="{{ route('lang.switch', 'en') }}">🇬🇧 English</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded mt-1 {{ app()->getLocale() == 'km' ? 'bg-primary text-white' : '' }}" href="{{ route('lang.switch', 'km') }}">🇰🇭 ភាសាខ្មែរ</a></li>
+                </ul>
+            </div>
             
             <a href="{{ route('profile.edit') }}">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:3px"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                គណនី (Profile)
+                {{ __('Profile') }}
             </a>
             <form method="POST" action="{{ route('logout') }}" style="margin:0">
                 @csrf
                 <button type="submit">
                     <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:3px"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                    ចាកចេញ (Logout)
+                    {{ __('Logout') }}
                 </button>
             </form>
         </div>
@@ -975,24 +984,24 @@
     <nav class="bottom-nav" style="--nav-count: {{ $navCount }};">
         <a href="{{ route('employee.dashboard') }}" class="{{ request()->routeIs('employee.dashboard') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            <span>ទំព័រដើម</span>
+            <span>{{ __('Home') }}</span>
         </a>
         <a href="{{ route('employee.attendance.scan') }}" class="{{ request()->routeIs('employee.attendance.scan') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="5" height="5" rx="1"/><rect x="16" y="3" width="5" height="5" rx="1"/><rect x="3" y="16" width="5" height="5" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
-            <span>ស្កេន</span>
+            <span>{{ __('Scan') }}</span>
         </a>
         <a href="{{ route('employee.attendance.index') }}" class="{{ request()->routeIs('employee.attendance.index') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <span>វត្តមាន</span>
+            <span>{{ __('Attendance') }}</span>
         </a>
         <a href="{{ route('employee.leave.index') }}" class="{{ request()->routeIs('employee.leave.*', 'employee.overtime.*', 'employee.changedayoff.*') ? 'active' : '' }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-            <span>សំណើ</span>
+            <span>{{ __('Requests') }}</span>
         </a>
         @if($showSalary)
             <a href="{{ route('employee.salary.index') }}" class="{{ request()->routeIs('employee.salary.*') ? 'active' : '' }}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                <span>ប្រាក់ខែ</span>
+                <span>{{ __('Payroll') }}</span>
             </a>
         @endif
     </nav>

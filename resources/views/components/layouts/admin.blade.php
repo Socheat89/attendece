@@ -59,7 +59,7 @@
                     </div>
                     <div class="flex flex-col overflow-hidden">
                         <span class="text-lg font-bold text-white tracking-wide truncate leading-none">{{ $uiCompanySetting->company_name ?? config('app.name') }}</span>
-                        <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-1">ផ្ទាំងអ្នកគ្រប់គ្រង (Admin)</span>
+                        <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-1">{{ __('Admin') }}</span>
                     </div>
                 </div>
             </div>
@@ -67,33 +67,33 @@
             <!-- Navigation -->
             <nav class="flex-1 space-y-1 px-4 py-6">
                 
-                <div class="mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">ផ្ទាំងគ្រប់គ្រង (Dashboards)</div>
+                <div class="mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Dashboards') }}</div>
                 
                 <a href="{{ route('admin.dashboard') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                     <i class="fa-solid fa-chart-pie w-5 h-5 mr-3 {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
-                    សង្ខេប (Overview)
+                    {{ __('Overview') }}
                 </a>
 
 
-                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">បុគ្គលិក (People)</div>
+                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('People') }}</div>
 
                 <!-- Employees Group -->
                 <div x-data="{ open: {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
                             <i class="fa-solid fa-users w-5 h-5 mr-3 {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
-                            បុគ្គលិក (Employees)
+                            {{ __('Employees') }}
                         </span>
                         <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                     </button>
                     <div x-show="open" x-collapse class="pl-4 space-y-1">
                         <a href="{{ route('admin.employees.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.employees.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.employees.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            បុគ្គលិកទាំងអស់ (All Employees)
+                            {{ __('All Employees') }}
                         </a>
                         <a href="{{ route('admin.departments.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.departments.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.departments.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            ផ្នែកការងារ (Departments)
+                            {{ __('Departments') }}
                         </a>
                     </div>
                 </div>
@@ -103,22 +103,22 @@
                     <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
                             <i class="fa-solid fa-clock w-5 h-5 mr-3 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
-                            វត្តមាន (Attendance)
+                            {{ __('Attendance') }}
                         </span>
                         <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                     </button>
                     <div x-show="open" x-collapse class="pl-4 space-y-1">
                         <a href="{{ route('admin.attendance.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.attendance.index') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.attendance.index') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            កំណត់ត្រាប្រចាំថ្ងៃ (Daily Logs)
+                            {{ __('Daily Logs') }}
                         </a>
                         <a href="{{ route('admin.attendance-qr.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.attendance-qr.index') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.attendance-qr.index') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            គ្រប់គ្រង QR (QR Manager)
+                            {{ __('QR Manager') }}
                         </a>
                         <a href="{{ route('admin.live-map.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.live-map.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.live-map.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            ផែនទីសកម្មភាព (Live Map)
+                            {{ __('Live Map') }}
                         </a>
                     </div>
                 </div>
@@ -128,49 +128,49 @@
                     <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.leave-requests.*') || request()->routeIs('admin.leave-types.*') || request()->routeIs('admin.overtime-requests.*') || request()->routeIs('admin.change-dayoff-requests.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
                             <i class="fa-solid fa-clipboard-check w-5 h-5 mr-3 {{ request()->routeIs('admin.leave-requests.*') || request()->routeIs('admin.leave-types.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
-                            សំណើផ្សេងៗ (Requests)
+                            {{ __('Requests') }}
                         </span>
                         <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                     </button>
                     <div x-show="open" x-collapse class="pl-4 space-y-1">
                          <a href="{{ route('admin.leave-requests.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.leave-requests.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.leave-requests.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            ច្បាប់ឈប់សម្រាក (Leave)
+                            {{ __('Leave') }}
                         </a>
                         <a href="{{ route('admin.overtime-requests.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.overtime-requests.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.overtime-requests.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            ថែមម៉ោង (Overtime)
+                            {{ __('Overtime') }}
                         </a>
                         <a href="{{ route('admin.change-dayoff-requests.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.change-dayoff-requests.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.change-dayoff-requests.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            ប្តូរថ្ងៃសម្រាក (Change Dayoff)
+                            {{ __('Change Dayoff') }}
                         </a>
                     </div>
                 </div>
 
-                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">ហិរញ្ញវត្ថុ (Finance)</div>
+                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Finance') }}</div>
 
                 <a href="{{ route('admin.payrolls.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.payrolls.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                     <i class="fa-solid fa-money-bill-wave w-5 h-5 mr-3 {{ request()->routeIs('admin.payrolls.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
-                    ប្រាក់ខែ (Payroll)
+                    {{ __('Payroll') }}
                 </a>
 
                 @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin / HR']))
-                    <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">រដ្ឋបាល (Administration)</div>
+                    <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Administration') }}</div>
                     
                     <a href="{{ route('admin.branches.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.branches.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <i class="fa-solid fa-building w-5 h-5 mr-3 {{ request()->routeIs('admin.branches.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
-                        សាខា (Branches)
+                        {{ __('Branches') }}
                     </a>
 
                     <a href="{{ route('admin.subscription.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.subscription.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <i class="fa-solid fa-credit-card w-5 h-5 mr-3 {{ request()->routeIs('admin.subscription.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
-                        ការជាវ (Subscription)
+                        {{ __('Subscription') }}
                     </a>
 
                     <a href="{{ route('admin.settings.edit') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.settings.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <i class="fa-solid fa-gear w-5 h-5 mr-3 {{ request()->routeIs('admin.settings.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
-                        ការកំណត់ (Settings)
+                        {{ __('Settings') }}
                     </a>
                 @endif
                 
@@ -181,7 +181,7 @@
                         @csrf
                         <button type="submit" class="flex items-center text-slate-400 hover:text-white text-sm font-medium transition-colors mt-3">
                             <i class="fa-solid fa-arrow-right-from-bracket mr-3"></i>
-                            ចាកចេញ (Sign Out)
+                            {{ __('Sign Out') }}
                         </button>
                     </form>
                 </div>
@@ -211,8 +211,13 @@
                     <!-- Language Selection -->
                     <div class="relative" x-data="{ langMenuOpen: false }">
                         <button @click="langMenuOpen = !langMenuOpen" @click.away="langMenuOpen = false" class="flex items-center gap-2 focus:outline-none text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
-                            <i class="fa-solid fa-language text-lg"></i>
-                            <span class="hidden sm:inline">{{ app()->getLocale() == 'km' ? 'ភាសាខ្មែរ' : 'English' }}</span>
+                            @if(app()->getLocale() == 'km')
+                                <span class="text-base leading-none">🇰🇭</span>
+                                <span class="hidden sm:inline">ភាសាខ្មែរ</span>
+                            @else
+                                <span class="text-base leading-none">🇬🇧</span>
+                                <span class="hidden sm:inline">English</span>
+                            @endif
                             <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
                         </button>
                         
@@ -223,12 +228,12 @@
                              x-transition:leave="transition ease-in duration-75" 
                              x-transition:leave-start="transform opacity-100 scale-100" 
                              x-transition:leave-end="transform opacity-0 scale-95" 
-                             class="absolute right-0 mt-2 w-36 transform rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5 py-2 z-50">
-                            <a href="{{ route('lang.switch', 'km') }}" class="flex items-center px-4 py-2 text-sm {{ app()->getLocale() == 'km' ? 'text-blue-600 bg-blue-50 font-bold' : 'text-slate-700 hover:bg-slate-50' }} transition-colors">
-                                ភាសាខ្មែរ
+                             class="absolute right-0 mt-2 w-40 transform rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5 py-2 z-50">
+                            <a href="{{ route('lang.switch', 'en') }}" class="flex items-center gap-2 px-4 py-2 text-sm {{ app()->getLocale() == 'en' ? 'text-blue-600 bg-blue-50 font-bold' : 'text-slate-700 hover:bg-slate-50' }} transition-colors">
+                                <span class="text-base leading-none">🇬🇧</span> English
                             </a>
-                            <a href="{{ route('lang.switch', 'en') }}" class="flex items-center px-4 py-2 text-sm {{ app()->getLocale() == 'en' ? 'text-blue-600 bg-blue-50 font-bold' : 'text-slate-700 hover:bg-slate-50' }} transition-colors">
-                                English
+                            <a href="{{ route('lang.switch', 'km') }}" class="flex items-center gap-2 px-4 py-2 text-sm {{ app()->getLocale() == 'km' ? 'text-blue-600 bg-blue-50 font-bold' : 'text-slate-700 hover:bg-slate-50' }} transition-colors">
+                                <span class="text-base leading-none">🇰🇭</span> ភាសាខ្មែរ
                             </a>
                         </div>
                     </div>
