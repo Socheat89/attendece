@@ -208,6 +208,31 @@
                 </div>
                 
                 <div class="flex items-center gap-6">
+                    <!-- Language Selection -->
+                    <div class="relative" x-data="{ langMenuOpen: false }">
+                        <button @click="langMenuOpen = !langMenuOpen" @click.away="langMenuOpen = false" class="flex items-center gap-2 focus:outline-none text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
+                            <i class="fa-solid fa-language text-lg"></i>
+                            <span class="hidden sm:inline">{{ app()->getLocale() == 'km' ? 'ភាសាខ្មែរ' : 'English' }}</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                        </button>
+                        
+                        <div x-show="langMenuOpen" x-cloak
+                             x-transition:enter="transition ease-out duration-100" 
+                             x-transition:enter-start="transform opacity-0 scale-95" 
+                             x-transition:enter-end="transform opacity-100 scale-100" 
+                             x-transition:leave="transition ease-in duration-75" 
+                             x-transition:leave-start="transform opacity-100 scale-100" 
+                             x-transition:leave-end="transform opacity-0 scale-95" 
+                             class="absolute right-0 mt-2 w-36 transform rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5 py-2 z-50">
+                            <a href="{{ route('lang.switch', 'km') }}" class="flex items-center px-4 py-2 text-sm {{ app()->getLocale() == 'km' ? 'text-blue-600 bg-blue-50 font-bold' : 'text-slate-700 hover:bg-slate-50' }} transition-colors">
+                                ភាសាខ្មែរ
+                            </a>
+                            <a href="{{ route('lang.switch', 'en') }}" class="flex items-center px-4 py-2 text-sm {{ app()->getLocale() == 'en' ? 'text-blue-600 bg-blue-50 font-bold' : 'text-slate-700 hover:bg-slate-50' }} transition-colors">
+                                English
+                            </a>
+                        </div>
+                    </div>
+
                     <!-- Notifications (Placeholder) -->
                     <button class="relative text-slate-400 hover:text-slate-600 transition-colors">
                         <i class="fa-regular fa-bell text-xl"></i>

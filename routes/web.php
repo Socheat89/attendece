@@ -42,6 +42,8 @@ Route::get('/hosting-setup', function () {
     }
 });
 
+Route::get('/lang/{lang}', [\App\Http\Controllers\LanguageController::class, 'switchLang'])->name('lang.switch');
+
 Route::get('/', function () {
     if (! auth()->check()) {
         $plans = \App\Models\SubscriptionPlan::where('is_active', true)->orderBy('price')->get();
