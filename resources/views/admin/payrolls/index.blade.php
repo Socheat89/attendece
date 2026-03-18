@@ -1,12 +1,12 @@
 <x-layouts.admin>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
-            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">ប្រាក់ខែ (Payroll)</h2>
-            <p class="text-sm text-slate-500 mt-1">គ្រប់គ្រងប្រាក់បៀវត្សរ៍ និងការកាត់ប្រាក់របស់បុគ្គលិក</p>
+            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">{{ __('Payroll') }}</h2>
+            <p class="text-sm text-slate-500 mt-1">{{ __('Manage and generate employee payrolls.') }}</p>
         </div>
         <a href="{{ route('admin.payrolls.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            បង្កើតប្រាក់ខែប្រចាំខែ (Generate Monthly Payroll)
+            {{ __('Generate Payroll') }}
         </a>
     </div>
 
@@ -15,13 +15,13 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-semibold">
-                        <th class="py-3 px-4">បុគ្គលិក (Employee)</th>
-                        <th class="py-3 px-4">ប្រាក់ខែគោល (Base)</th>
-                        <th class="py-3 px-4">ថែមម៉ោង (Overtime)</th>
-                        <th class="py-3 px-4">ការកាត់ប្រាក់ (Deduction)</th>
-                        <th class="py-3 px-4">ប្រាក់ខែសុទ្ធ (Net)</th>
-                        <th class="py-3 px-4">ស្ថានភាព (Status)</th>
-                        <th class="py-3 px-4 text-right">សកម្មភាព (Action)</th>
+                        <th class="py-3 px-4">{{ __('Employee') }}</th>
+                        <th class="py-3 px-4">{{ __('Basic Salary') }}</th>
+                        <th class="py-3 px-4">{{ __('Overtime') }}</th>
+                        <th class="py-3 px-4">{{ __('Deductions') }}</th>
+                        <th class="py-3 px-4">{{ __('Net Salary') }}</th>
+                        <th class="py-3 px-4">{{ __('Status') }}</th>
+                        <th class="py-3 px-4 text-right">{{ __('Action') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -38,23 +38,23 @@
                         <td class="py-3 px-4 font-semibold text-slate-800">${{ number_format($payroll->net_salary,2) }}</td>
                         <td class="py-3 px-4">
                             @if($payroll->status === 'paid')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">បានបើក (Paid)</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">{{ __('Paid') }}</span>
                             @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">រង់ចាំបើក (Pending)</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">{{ __('Pending') }}</span>
                             @endif
                         </td>
                         <td class="py-3 px-4 text-right whitespace-nowrap">
-                            <a class="inline-flex items-center justify-center text-sm font-medium text-blue-600 hover:text-blue-800 bg-white border border-blue-200 hover:bg-blue-50 px-3 py-1.5 rounded-md transition-colors mr-2" href="{{ route('admin.payrolls.show', $payroll) }}">ព័ត៌មានលម្អិត (Detail)</a>
+                            <a class="inline-flex items-center justify-center text-sm font-medium text-blue-600 hover:text-blue-800 bg-white border border-blue-200 hover:bg-blue-50 px-3 py-1.5 rounded-md transition-colors mr-2" href="{{ route('admin.payrolls.show', $payroll) }}">{{ __('View') }}</a>
                             @if($payroll->status !== 'paid')
                                 <form method="POST" action="{{ route('admin.payrolls.paid', $payroll) }}" class="inline-block">
                                     @csrf @method('PATCH')
-                                    <button class="inline-flex items-center justify-center text-sm font-medium text-emerald-700 hover:text-emerald-800 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 px-3 py-1.5 rounded-md transition-colors">គូសចំណាំថាបើករួច (Mark Paid)</button>
+                                    <button class="inline-flex items-center justify-center text-sm font-medium text-emerald-700 hover:text-emerald-800 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 px-3 py-1.5 rounded-md transition-colors">{{ __('Mark as Paid') }}</button>
                                 </form>
                             @endif
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="py-8 text-center text-slate-500">គ្មានកំណត់ត្រាប្រាក់ខែទេ (No payroll records).</td></tr>
+                    <tr><td colspan="7" class="py-8 text-center text-slate-500">{{ __('No payroll records found.') }}</td></tr>
                 @endforelse
                 </tbody>
             </table>

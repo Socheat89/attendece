@@ -1,12 +1,11 @@
 <x-layouts.admin>
     <div class="mb-6 flex items-center justify-between">
         <div>
-            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">ការគ្រប់គ្រង QR វត្តមាន (Attendance QR Management)</h2>
-            <p class="text-sm text-slate-500 mt-1">បង្កើត និងគ្រប់គ្រង QR Code ប្រចាំថ្ងៃសម្រាប់ការស្កេនរបស់បុគ្គលិក</p>
+            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">{{ __('QR Code Management') }}</h2>
+            <p class="text-sm text-slate-500 mt-1">{{ __('Generate QR codes for attendance scanning.') }}</p>
         </div>
     </div>
 
-    <!-- Alert / Flash Messages via Alpine -->
     @if(session('success'))
         <div x-data="{ show: true }" x-show="show" class="mb-6 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl p-4 flex items-start justify-between shadow-sm">
             <div class="flex items-center">
@@ -21,11 +20,11 @@
 
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
         <div class="p-6 border-b border-slate-200">
-            <h3 class="text-lg font-bold text-slate-800 mb-4">បង្កើត QR Code ថ្មី (Generate New QR Code)</h3>
+            <h3 class="text-lg font-bold text-slate-800 mb-4">{{ __('Generate New QR') }}</h3>
             <form method="POST" action="{{ route('admin.attendance-qr.generate') }}" class="flex flex-col md:flex-row md:items-end gap-4">
                 @csrf
                 <div class="flex-1">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">ជ្រើសរើសសាខា (Select Branch)</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('Select Branch') }}</label>
                     <select name="branch_id" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50">
                         @foreach($branches as $branch)
                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
@@ -35,7 +34,7 @@
                 <div>
                     <button type="submit" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
-                        បង្កើត QR (Generate QR)
+                        {{ __('Generate') }}
                     </button>
                 </div>
             </form>
@@ -47,11 +46,11 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200">
-                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">សាខា (Branch)</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">កាលបរិច្ឆេទ (Date)</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">ស្ថានភាព (Status)</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">រូបភាព QR Code (QR Code Image)</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">សកម្មភាព (Action)</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('Branch') }}</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('Date') }}</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('Status') }}</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">QR Code</th>
+                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{{ __('Action') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200">
@@ -66,11 +65,11 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($token->is_active)
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
-                                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-green-500"></span> សកម្ម (Active)
+                                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-green-500"></span> {{ __('Active') }}
                                     </span>
                                 @else
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
-                                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-slate-500"></span> ផុតកំណត់ (Expired)
+                                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-slate-500"></span> {{ __('Expired') }}
                                     </span>
                                 @endif
                             </td>
@@ -80,18 +79,18 @@
                                         <img src="{{ route('admin.attendance-qr.image', $token) }}" width="80" class="rounded-lg border border-slate-200 shadow-sm transition-transform group-hover:scale-105 cursor-pointer" alt="QR Code">
                                     </div>
                                 @else
-                                    <span class="text-sm text-slate-400 italic">មិនមានទៀតទេ (No longer available)</span>
+                                    <span class="text-sm text-slate-400 italic">—</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 @if($token->is_active)
                                     <a href="{{ route('admin.attendance-qr.image', $token) }}" target="_blank" download="Branch_QR_{{ $token->branch?->name ?? 'Branch' }}_{{ $token->token_date->format('Y-m-d') }}.png" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center gap-1 mr-3">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                        ទាញយក (Download)
+                                        {{ __('Download') }}
                                     </a>
                                     <a href="{{ route('admin.attendance-qr.print', $token) }}" target="_blank" class="text-slate-600 hover:text-slate-800 font-medium inline-flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                                        បោះពុម្ព (Print)
+                                        {{ __('Print') }}
                                     </a>
                                 @endif
                             </td>
@@ -103,8 +102,7 @@
                                     <div class="bg-slate-100 p-3 rounded-full mb-3">
                                         <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
                                     </div>
-                                    <p class="text-slate-500 font-medium text-sm">មិនទាន់មាន QR codes ត្រូវបានបង្កើតទេ (No QR codes generated yet).</p>
-                                    <p class="text-slate-400 text-xs mt-1">ជ្រើសរើសសាខាខាងលើ ហើយចុច បង្កើត ដើម្បីបង្កើតមួយ។</p>
+                                    <p class="text-slate-500 font-medium text-sm">{{ __('No QR codes found.') }}</p>
                                 </div>
                             </td>
                         </tr>

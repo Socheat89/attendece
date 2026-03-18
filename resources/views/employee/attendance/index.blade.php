@@ -225,19 +225,19 @@
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-value" style="color:var(--success)">{{ $summary['present'] ?? 0 }}</div>
-            <div class="stat-label">វត្តមាន (Present)</div>
+            <div class="stat-label">{{ __('Present') }}</div>
         </div>
         <div class="stat-card">
             <div class="stat-value" style="color:var(--warning)">{{ $summary['late'] ?? 0 }}</div>
-            <div class="stat-label">មកយឺត (Late)</div>
+            <div class="stat-label">{{ __('Late') }}</div>
         </div>
         <div class="stat-card">
             <div class="stat-value" style="color:var(--danger)">{{ $summary['absent'] ?? 0 }}</div>
-            <div class="stat-label">អវត្តមាន (Absent)</div>
+            <div class="stat-label">{{ __('Absent') }}</div>
         </div>
         <div class="stat-card">
             <div class="stat-value" style="color:var(--info)">{{ $summary['leave'] ?? 0 }}</div>
-            <div class="stat-label">ច្បាប់ (Leave)</div>
+            <div class="stat-label">{{ __('Leave') }}</div>
         </div>
     </div>
 
@@ -300,7 +300,7 @@
     <div style="text-align:center; margin-top:1.5rem">
         <a href="{{ route('employee.attendance.export', ['month' => $month]) }}" class="btn-secondary" style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.6rem 1.2rem; border-radius:50px; font-size:0.9rem; font-weight:600; text-decoration:none;">
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
-            ទាញយករបាយការណ៍ (Download Report)
+            {{ __('Download Report') }}
         </a>
     </div>
 
@@ -391,8 +391,8 @@
             }
         }
         
-        if(!hasData) {
-            content.innerHTML = '<div style="text-align:center; color:var(--muted); padding:2rem;">រកមិនឃើញទិន្នន័យស្កេនទេ (No scan records found).</div>';
+                if (!hasData) {
+            content.innerHTML = '<div style="text-align:center; color:var(--muted); padding:2rem;">' + '{{ __('No scan records found.') }}' + '</div>';
         }
         
         document.body.classList.add('sheet-open');

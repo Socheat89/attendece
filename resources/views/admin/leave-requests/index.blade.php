@@ -1,17 +1,17 @@
 <x-layouts.admin>
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
-            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">ការអនុម័តច្បាប់ (Leave Approval)</h2>
-            <p class="text-sm text-slate-500 mt-1">គ្រប់គ្រងសំណើច្បាប់ឈប់សម្រាករបស់បុគ្គលិក</p>
+            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">{{ __('Leave Requests') }}</h2>
+            <p class="text-sm text-slate-500 mt-1">{{ __('Review and manage employee leave requests.') }}</p>
         </div>
         <form method="GET" class="flex gap-2 w-full md:w-auto">
             <select name="status" class="border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 text-sm py-2 px-3 pl-3 pr-10">
-                <option value="">គ្រប់ស្ថានភាព (All Status)</option>
-                <option value="pending" @selected(request('status')==='pending')>រង់ចាំ (Pending)</option>
-                <option value="approved" @selected(request('status')==='approved')>យល់ព្រម (Approved)</option>
-                <option value="rejected" @selected(request('status')==='rejected')>បដិសេធ (Rejected)</option>
+                <option value="">{{ __('All Statuses') }}</option>
+                <option value="pending" @selected(request('status')==='pending')>{{ __('Pending') }}</option>
+                <option value="approved" @selected(request('status')==='approved')>{{ __('Approved') }}</option>
+                <option value="rejected" @selected(request('status')==='rejected')>{{ __('Rejected') }}</option>
             </select>
-            <button class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium py-2 px-4 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">ចម្រោះ (Filter)</button>
+            <button class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium py-2 px-4 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">{{ __('Filter') }}</button>
         </form>
     </div>
 
@@ -20,12 +20,12 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-semibold">
-                        <th class="py-3 px-4">បុគ្គលិក (Employee)</th>
-                        <th class="py-3 px-4">ប្រភេទច្បាប់ (Leave Type)</th>
-                        <th class="py-3 px-4">កាលបរិច្ឆេទ (Date Range)</th>
-                        <th class="py-3 px-4 max-w-xs">មូលហេតុ (Reason)</th>
-                        <th class="py-3 px-4">ស្ថានភាព (Status)</th>
-                        <th class="py-3 px-4 text-right">សកម្មភាព (Action)</th>
+                        <th class="py-3 px-4">{{ __('Employee') }}</th>
+                        <th class="py-3 px-4">{{ __('Leave Type') }}</th>
+                        <th class="py-3 px-4">{{ __('Date') }}</th>
+                        <th class="py-3 px-4 max-w-xs">{{ __('Reason') }}</th>
+                        <th class="py-3 px-4">{{ __('Status') }}</th>
+                        <th class="py-3 px-4 text-right">{{ __('Action') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -35,8 +35,8 @@
                                 <div class="font-medium text-slate-800">{{ $request->employee->user->name }}</div>
                             </td>
                             <td class="py-3 px-4 text-sm text-slate-600">{{ $request->leaveType->name }}</td>
-                            <td class="py-3 px-4 text-sm text-slate-600 whitespace-nowrap">{{ $request->start_date->toDateString() }} <span class="text-slate-400 mx-1">ដល់ (to)</span> {{ $request->end_date->toDateString() }}</td>
-                            <td class="py-3 px-4 text-sm text-slate-600 truncate max-w-[220px]" title="{{ $request->reason ?? 'គ្មានមូលហេតុផ្តល់ជូន (No reason provided)' }}">
+                            <td class="py-3 px-4 text-sm text-slate-600 whitespace-nowrap">{{ $request->start_date->toDateString() }} <span class="text-slate-400 mx-1">→</span> {{ $request->end_date->toDateString() }}</td>
+                            <td class="py-3 px-4 text-sm text-slate-600 truncate max-w-[220px]" title="{{ $request->reason ?? '' }}">
                                 {{ $request->reason ?? '-' }}
                             </td>
                             <td class="py-3 px-4">
@@ -62,22 +62,22 @@
                                         @csrf @method('PATCH')
                                         <input type="hidden" name="status" value="approved">
                                         <button class="inline-flex items-center justify-center text-sm font-medium text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-md transition-colors">
-                                            អនុម័ត (Approve)
+                                            {{ __('Approve') }}
                                         </button>
                                     </form>
                                     <button 
                                         x-data=""
                                         x-on:click="$dispatch('open-modal', 'rejectModal'); $dispatch('set-reject-id', '{{ $request->id }}')"
                                         class="inline-flex items-center justify-center text-sm font-medium text-red-600 hover:text-red-700 bg-white border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded-md transition-colors ml-1">
-                                        Reject
+                                        {{ __('Reject') }}
                                     </button>
                                 @else
-                                    <span class="text-xs text-slate-400">បានដំណើរការ (Processed)</span>
+                                    <span class="text-xs text-slate-400">{{ __('Processed') }}</span>
                                 @endif
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="py-8 text-center text-slate-500">មិនមានសំណើច្បាប់ឈប់សម្រាកទេ (No leave requests found).</td></tr>
+                        <tr><td colspan="6" class="py-8 text-center text-slate-500">{{ __('No leave requests found.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -134,24 +134,24 @@
                     
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-100">
-                            <h3 class="text-lg leading-6 font-semibold text-slate-800" id="modal-title">បដិសេធសំណើច្បាប់ (Reject Leave Request)</h3>
+                            <h3 class="text-lg leading-6 font-semibold text-slate-800" id="modal-title">{{ __('Reject Leave Request') }}</h3>
                             <button type="button" x-on:click="open = false" class="text-slate-400 hover:text-slate-500 transition-colors">
                                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                             </button>
                         </div>
                         
                         <div class="mt-2">
-                            <label class="block text-sm font-medium text-slate-700 mb-2">មតិបដិសេធ (ចាំបាច់) (Reject comment)</label>
-                            <textarea name="admin_comment" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 text-sm" rows="3" required placeholder="សូមផ្តល់មូលហេតុសម្រាប់ការបដិសេធសំណើច្បាប់នេះ..."></textarea>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('Rejection Comment') }}</label>
+                            <textarea name="admin_comment" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 text-sm" rows="3" required placeholder="{{ __('Please provide a reason for rejecting this leave request...') }}"></textarea>
                         </div>
                     </div>
                     
                     <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-slate-200 gap-2">
                         <button type="submit" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:w-auto sm:text-sm transition-colors mb-2 sm:mb-0">
-                            បដិសេធច្បាប់ (Reject Leave)
+                            {{ __('Reject') }}
                         </button>
                         <button type="button" x-on:click="open = false" class="w-full inline-flex justify-center rounded-lg border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:w-auto sm:text-sm transition-colors">
-                            បោះបង់ (Cancel)
+                            {{ __('Cancel') }}
                         </button>
                     </div>
                 </form>

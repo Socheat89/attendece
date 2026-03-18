@@ -155,15 +155,15 @@
 
         <!-- Hero -->
         <div class="salary-card">
-            <div class="salary-label">ប្រាក់ខែគោលបច្ចុប្បន្ន (Current Base Salary)</div>
+            <div class="salary-label">{{ __('Basic Salary') }}</div>
             <div class="salary-amount">${{ number_format($baseSalary, 2) }}</div>
             <div class="salary-sub">មុនពេលកាត់ពន្ធ និងការកាត់រំលស់ (Before taxes & deductions)</div>
         </div>
 
         <!-- List -->
         <div class="list-header">
-            <div class="list-title">ប្រវត្តិការទូទាត់ (Payment History)</div>
-            <div class="list-count">{{ $payrolls->total() }} កំណត់ត្រា (Records)</div>
+            <div class="list-title">{{ __('Payment History') }}</div>
+            <div class="list-count">{{ $payrolls->total() }} {{ __('records') }}</div>
         </div>
 
         <div class="flex flex-col gap-3">
@@ -191,7 +191,7 @@
                     
                     <div class="payslip-body">
                         <div>
-                            <div class="net-label">ប្រាក់ខែសុទ្ធ (Net Pay)</div>
+                            <div class="net-label">{{ __('Net Salary') }}</div>
                             <div class="net-amount">${{ number_format($payroll->net_salary, 2) }}</div>
                         </div>
                         <div class="action-btns">
@@ -206,7 +206,7 @@
                     </div>
                 </div>
             @empty
-                <div style="text-align:center; padding:3rem 1rem; color:var(--muted)">រកមិនឃើញប្រវត្តិការទូទាត់ទេ (No payment records found).</div>
+                <div style="text-align:center; padding:3rem 1rem; color:var(--muted)">{{ __('No payment records found.') }}</div>
             @endforelse
             
             <div class="mt-3">{{ $payrolls->links() }}</div>
@@ -230,20 +230,20 @@
                             </template>
                             
                             <div class="detail-row">
-                                <span>ប្រាក់រង្វាន់ (Bonus)</span>
+                                <span>{{ __('Allowances') }}</span>
                                 <strong x-text="'$' + selected.bonus"></strong>
                             </div>
                             <div class="detail-row">
-                                <span>ការកាត់ប្រាក់ (Deductions)</span>
+                                <span>{{ __('Deductions') }}</span>
                                 <strong class="text-danger" x-text="'-$' + selected.deductions"></strong>
                             </div>
                             
                             <div class="detail-row total-row">
-                                <span>សរុបប្រាក់សុទ្ធ (NET TOTAL)</span>
+                                <span>{{ __('Net Salary') }}</span>
                                 <strong x-text="'$' + selected.net"></strong>
                             </div>
                             
-                            <button class="btn-submit mt-4" @click="openModal = false">បិទ (Close)</button>
+                            <button class="btn-submit mt-4" @click="openModal = false">{{ __('Close') }}</button>
                         </div>
                     </div>
                 </template>

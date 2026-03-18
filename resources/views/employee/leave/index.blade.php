@@ -166,9 +166,9 @@
 
         <!-- Tabs -->
         <div class="segmented-control">
-            <div class="segment-btn" :class="tab==='leave' && 'active'" @click="tab='leave'; showForm=false">ច្បាប់ (Leave)</div>
-            <div class="segment-btn" :class="tab==='ot' && 'active'" @click="tab='ot'; showForm=false">ថែមម៉ោង (OT)</div>
-            <div class="segment-btn" :class="tab==='dayoff' && 'active'" @click="tab='dayoff'; showForm=false">ប្តូរថ្ងៃសម្រាក (Day Off)</div>
+            <div class="segment-btn" :class="tab==='leave' && 'active'" @click="tab='leave'; showForm=false">{{ __('Leave') }}</div>
+            <div class="segment-btn" :class="tab==='ot' && 'active'" @click="tab='ot'; showForm=false">{{ __('Overtime') }}</div>
+            <div class="segment-btn" :class="tab==='dayoff' && 'active'" @click="tab='dayoff'; showForm=false">{{ __('Change Dayoff') }}</div>
         </div>
 
         <!-- Toolbar -->
@@ -188,7 +188,7 @@
                 <form method="POST" enctype="multipart/form-data" action="{{ route('employee.leave.store') }}">
                     @csrf
                     <div class="form-group">
-                        <label class="form-label">ប្រភេទច្បាប់ (Leave Type)</label>
+                        <label class="form-label">{{ __('Leave Type') }}</label>
                         <select name="leave_type_id" class="form-select" required>
                             <option value="">ជ្រើសរើសប្រភេទ (Select Type...)</option>
                             @foreach($leaveTypes as $type)
@@ -198,19 +198,19 @@
                     </div>
                     <div class="w-full flex gap-4">
                         <div class="flex-1 form-group">
-                            <label class="form-label">ចាប់ពី (From)</label>
+                            <label class="form-label">{{ __('From') }}</label>
                             <input type="date" name="start_date" class="form-input" required>
                         </div>
                         <div class="flex-1 form-group">
-                            <label class="form-label">ដល់ (To)</label>
+                            <label class="form-label">{{ __('To') }}</label>
                             <input type="date" name="end_date" class="form-input" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">មូលហេតុ (Reason)</label>
+                        <label class="form-label">{{ __('Reason') }}</label>
                         <textarea name="reason" class="form-textarea" rows="3" placeholder="មូលហេតុនៃការសុំច្បាប់... (Reason for leave...)"></textarea>
                     </div>
-                    <button type="submit" class="btn-submit">បញ្ជូនសំណើ (Submit Request)</button>
+                    <button type="submit" class="btn-submit">{{ __('Submit') }}</button>
                 </form>
             </div>
 
@@ -280,7 +280,7 @@
                             <div class="status-badge status-{{ strtolower($leave->status) }}">{{ $leave->status }}</div>
                         </div>
                     @empty
-                        <div style="text-align:center; padding:3rem 1rem; color:var(--muted)">រកមិនឃើញសំណើសុំច្បាប់ទេ (No leave requests found).</div>
+                        <div style="text-align:center; padding:3rem 1rem; color:var(--muted)">{{ __('No requests found.') }}</div>
                     @endforelse
                     <div class="mt-3">{{ $leaveRequests->links() }}</div>
                 </div>
@@ -301,7 +301,7 @@
                             <div class="status-badge status-{{ strtolower($ot->status) }}">{{ $ot->status }}</div>
                         </div>
                     @empty
-                        <div style="text-align:center; padding:3rem 1rem; color:var(--muted)">រកមិនឃើញសំណើថែមម៉ោងទេ (No overtime requests found).</div>
+                        <div style="text-align:center; padding:3rem 1rem; color:var(--muted)">{{ __('No requests found.') }}</div>
                     @endforelse
                     <div class="mt-3">{{ $otRequests->links() }}</div>
                 </div>
@@ -325,7 +325,7 @@
                             <div class="status-badge status-{{ strtolower($req->status) }}">{{ $req->status }}</div>
                         </div>
                     @empty
-                        <div style="text-align:center; padding:3rem 1rem; color:var(--muted)">រកមិនឃើញសំណើប្តូរថ្ងៃសម្រាកទេ (No day off requests found).</div>
+                        <div style="text-align:center; padding:3rem 1rem; color:var(--muted)">{{ __('No requests found.') }}</div>
                     @endforelse
                     <div class="mt-3">{{ $dayoffRequests->links() }}</div>
                 </div>
