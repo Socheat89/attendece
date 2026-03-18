@@ -8,10 +8,10 @@
 
 <div class="mb-6">
     <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-slate-800 tracking-tight">{{ isset($branch) ? 'Edit Branch' : 'Create Branch' }}</h2>
+        <h2 class="text-2xl font-bold text-slate-800 tracking-tight">{{ isset($branch) ? __('Edit Branch') : __('Create Branch') }}</h2>
         <a href="{{ route('admin.branches.index') }}" class="text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors flex items-center">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            Back to List
+            {{ __('Back to List') }}
         </a>
     </div>
 </div>
@@ -22,23 +22,23 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Name</label>
-                <input name="name" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" value="{{ old('name', ($branch ?? null)?->name ?? '') }}" required placeholder="e.g. Headquarters">
+                <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('Name') }}</label>
+                <input name="name" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" value="{{ old('name', ($branch ?? null)?->name ?? '') }}" required placeholder="{{ __('e.g. Headquarters') }}">
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Address</label>
-                <input name="address" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" value="{{ old('address', ($branch ?? null)?->address ?? '') }}" placeholder="Full physical address">
+                <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('Address') }}</label>
+                <input name="address" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" value="{{ old('address', ($branch ?? null)?->address ?? '') }}" placeholder="{{ __('Full physical address') }}">
             </div>
         </div>
 
         {{-- Map Picker --}}
         <div class="mb-6">
             <label class="block text-sm font-medium text-slate-700 mb-1">
-                Location <span class="text-slate-500 font-normal ml-1">(Click on map or drag marker to set)</span>
+                {{ __('Location') }} <span class="text-slate-500 font-normal ml-1">({{ __('Click on map or drag marker to set') }})</span>
             </label>
             <div class="flex items-center gap-3 mb-3">
                 <button type="button" class="inline-flex items-center px-3 py-1.5 border border-slate-300 shadow-sm text-xs font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors" id="locateBtn">
-                    📍 Use My Location
+                    📍 {{ __('Use My Location') }}
                 </button>
                 <span class="map-coords font-mono" id="coordsDisplay"></span>
             </div>
@@ -47,36 +47,36 @@
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Latitude</label>
+                <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('Latitude') }}</label>
                 <input name="latitude" id="latInput" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 text-sm font-mono" value="{{ old('latitude', ($branch ?? null)?->latitude ?? '') }}" placeholder="e.g. 11.5564" required>
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Longitude</label>
+                <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('Longitude') }}</label>
                 <input name="longitude" id="lngInput" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 text-sm font-mono" value="{{ old('longitude', ($branch ?? null)?->longitude ?? '') }}" placeholder="e.g. 104.9282" required>
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Allowed Radius (m)</label>
+                <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('allowed_radius_meters') }}</label>
                 <div class="relative rounded-md shadow-sm">
                     <input name="allowed_radius_meters" id="radiusInput" type="number" min="10" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 text-sm pr-12" value="{{ old('allowed_radius_meters', ($branch ?? null)?->allowed_radius_meters ?? 300) }}">
                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span class="text-slate-500 sm:text-sm">meters</span>
+                        <span class="text-slate-500 sm:text-sm">{{ __('meters') }}</span>
                     </div>
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Scan Mode</label>
+                <label class="block text-sm font-medium text-slate-700 mb-1">{{ __('Scan Mode') }}</label>
                 <select name="scan_mode" class="w-full border-slate-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 text-sm">
-                    <option value="gps" @selected(old('scan_mode', ($branch ?? null)?->scan_mode ?? 'gps') === 'gps')>GPS Only</option>
-                    <option value="qr" @selected(old('scan_mode', ($branch ?? null)?->scan_mode) === 'qr')>QR Only</option>
-                    <option value="gps_qr" @selected(old('scan_mode', ($branch ?? null)?->scan_mode) === 'gps_qr')>GPS + QR</option>
+                    <option value="gps" @selected(old('scan_mode', ($branch ?? null)?->scan_mode ?? 'gps') === 'gps')>{{ __('GPS Only') }}</option>
+                    <option value="qr" @selected(old('scan_mode', ($branch ?? null)?->scan_mode) === 'qr')>{{ __('QR Only') }}</option>
+                    <option value="gps_qr" @selected(old('scan_mode', ($branch ?? null)?->scan_mode) === 'gps_qr')>{{ __('GPS + QR') }}</option>
                 </select>
-                <p class="mt-1 text-xs text-slate-500">Method for employee verification.</p>
+                <p class="mt-1 text-xs text-slate-500">{{ __('Method for employee verification.') }}</p>
             </div>
         </div>
 
         <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-            <a href="{{ route('admin.branches.index') }}" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium py-2 px-4 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-1">Cancel</a>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-6 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">Save Branch</button>
+            <a href="{{ route('admin.branches.index') }}" class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium py-2 px-4 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-1">{{ __('Cancel') }}</a>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-6 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">{{ __('Save Branch') }}</button>
         </div>
     </form>
 </div>

@@ -8,7 +8,7 @@
         ];
         $s = $statusColors[$todayStatus] ?? ['bg'=>'#f1f5f9', 'text'=>'#475569', 'border'=>'#e2e8f0', 'icon'=>'help-circle'];
         
-        $greeting = (now()->hour < 12 ? 'អរុណសួស្តី (Good Morning)' : (now()->hour < 18 ? 'ទិវាសួស្តី (Good Afternoon)' : 'សាយណ្ហសួស្តី (Good Evening)'));
+        $greeting = (now()->hour < 12 ? __('Good Morning') : (now()->hour < 18 ? __('Good Afternoon') : __('Good Evening')));
     @endphp
 
     <style>
@@ -128,7 +128,7 @@
             <div style="display:flex; justify-content:space-between; align-items:start;">
                 <div>
                     <p style="margin:0; font-size:0.85rem; opacity:0.9;">{{ $greeting }}, {{ auth()->user()->first_name }}</p>
-                    <h1 style="margin:0.25rem 0 0.5rem; font-size:1.75rem; font-weight:800; font-family:'Sora',sans-serif;">{{ $todayStatus }}</h1>
+                    <h1 style="margin:0.25rem 0 0.5rem; font-size:1.75rem; font-weight:800; font-family:'Sora',sans-serif;">{{ __($todayStatus) }}</h1>
                     <div style="display:flex; align-items:center; gap:0.5rem; font-size:0.8rem; opacity:0.8;">
                         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         {{ now()->format('l, M jS') }}
@@ -138,7 +138,7 @@
                 @if($todayStatus !== 'Present' && $todayStatus !== 'On Leave')
                 <a href="{{ route('employee.attendance.scan') }}" style="background:white; color:var(--brand); border:none; padding:0.6rem 1rem; border-radius:var(--radius-md); font-weight:700; font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-                    ស្កេន (Scan)
+                    {{ __('Scan') }}
                 </a>
                 @endif
             </div>
@@ -149,32 +149,32 @@
     <div class="stat-grid">
         <div class="stat-card">
             <span class="stat-value" style="color:var(--success)">{{ $presentDays }}</span>
-            <span class="stat-label">វត្តមាន (Present)</span>
+            <span class="stat-label">{{ __('Present') }}</span>
         </div>
         <div class="stat-card">
             <span class="stat-value" style="color:var(--warning)">{{ $lateDays }}</span>
-            <span class="stat-label">មកយឺត (Late)</span>
+            <span class="stat-label">{{ __('Late') }}</span>
         </div>
         <div class="stat-card">
             <span class="stat-value" style="color:var(--danger)">{{ $absentDays }}</span>
-            <span class="stat-label">អវត្តមាន (Absent)</span>
+            <span class="stat-label">{{ __('Absent') }}</span>
         </div>
         <div class="stat-card">
             <span class="stat-value" style="color:var(--info)">{{ $leaveTaken }}</span>
-            <span class="stat-label">ច្បាប់ (On Leave)</span>
+            <span class="stat-label">{{ __('On Leave') }}</span>
         </div>
     </div>
 
     <!-- Quick Actions -->
-    <h3 class="section-title">សកម្មភាព (Quick Actions)</h3>
+    <h3 class="section-title">{{ __('Quick Actions') }}</h3>
     <div class="action-list">
         <a href="{{ route('employee.leave.index') }}" class="action-item">
             <div class="action-icon" style="background:var(--warning-bg); color:var(--warning);">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             </div>
             <div style="flex:1;">
-                <div style="font-weight:600; font-size:0.95rem;">ស្នើសុំច្បាប់ (Request Leave)</div>
-                <div style="font-size:0.75rem; color:var(--muted);">អនុវត្តច្បាប់ឈឺ ឬច្បាប់ផ្សេងៗទៀត។</div>
+                <div style="font-weight:600; font-size:0.95rem;">{{ __('Request Leave') }}</div>
+                <div style="font-size:0.75rem; color:var(--muted);">{{ __('Create new leave or dayoff requests.') }}</div>
             </div>
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--line)"><path d="M9 5l7 7-7 7"/></svg>
         </a>
@@ -184,8 +184,8 @@
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
             </div>
             <div style="flex:1;">
-                <div style="font-weight:600; font-size:0.95rem;">ប្រវត្តិវត្តមាន (Attendance History)</div>
-                <div style="font-size:0.75rem; color:var(--muted);">ពិនិត្យមើលវត្តមានប្រចាំខែរបស់អ្នក។</div>
+                <div style="font-weight:600; font-size:0.95rem;">{{ __('Attendance History') }}</div>
+                <div style="font-size:0.75rem; color:var(--muted);">{{ __('Review calendar activity and logs.') }}</div>
             </div>
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--line)"><path d="M9 5l7 7-7 7"/></svg>
         </a>
@@ -194,7 +194,7 @@
     <!-- Today's Activity -->
     <div class="card">
         <div class="section-title" style="margin-bottom:1.25rem;">
-            <span>សកម្មភាពថ្ងៃនេះ (Today's Activity)</span>
+            <span>{{ __("Today's Activity") }}</span>
             <span style="font-size:0.75rem; color:var(--muted); font-weight:400;">{{ now()->format('H:i') }}</span>
         </div>
         
@@ -211,15 +211,15 @@
                 </div>
             @empty
                 <div style="text-align:center; padding:1rem 0; color:var(--muted); font-size:0.85rem;">
-                    មិនទាន់មានសកម្មភាពសម្រាប់ថ្ងៃនេះទេ។ (No activity recorded yet for today.)
+                    {{ __('No activity recorded yet for today.') }}
                 </div>
             @endforelse
             
             @if($scannedLogs->count() > 0 && $scannedLogs->count() < 4)
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
-                    <div style="font-weight:500; font-size:0.9rem; color:var(--muted);">ស្កេនបន្ទាប់ (Next Scan)</div>
-                    <div style="font-size:0.75rem; color:var(--muted);">ខាងមុខ (Upcoming)</div>
+                    <div style="font-weight:500; font-size:0.9rem; color:var(--muted);">{{ __('Next Scan') }}</div>
+                    <div style="font-size:0.75rem; color:var(--muted);">{{ __('Upcoming') }}</div>
                 </div>
             @endif
         </div>

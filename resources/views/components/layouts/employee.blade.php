@@ -940,18 +940,57 @@
         </div>
         <div class="top-actions">
             <!-- Language Switcher -->
-            <div class="dropdown">
-                <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 10px; font-size: 0.76rem; font-weight: 600; padding: 0.38rem 0.75rem; border: 1px solid var(--line); color: var(--muted); background-color: #fff; display: flex; align-items: center; gap: 6px; cursor: pointer; height: 100%;">
+            <div class="relative" x-data="{ langOpen: false }">
+                <button @click="langOpen = !langOpen" @click.away="langOpen = false"
+                    style="display:flex; align-items:center; gap:6px; padding:0.35rem 0.75rem; border-radius:50px; border:1.5px solid var(--line); background:#fff; font-size:0.78rem; font-weight:700; color:var(--ink); cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.06); transition:all 0.2s;">
                     @if(app()->getLocale() == 'km')
-                        🇰🇭 <span class="d-none d-sm-inline">KM</span>
+                        <span style="font-size:1.1rem; line-height:1;">🇰🇭</span>
+                        <span>ខ្មែរ</span>
                     @else
-                        🇬🇧 <span class="d-none d-sm-inline">EN</span>
+                        <span style="font-size:1.1rem; line-height:1;">🇬🇧</span>
+                        <span>EN</span>
                     @endif
+                    <svg x-bind:style="langOpen ? 'transform:rotate(180deg)' : ''" style="width:10px;height:10px;transition:transform 0.2s;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="min-width: 140px; border-radius: 12px; font-size: 0.85rem; padding: 0.5rem;">
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded {{ app()->getLocale() == 'en' ? 'bg-primary text-white' : '' }}" href="{{ route('lang.switch', 'en') }}">🇬🇧 English</a></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded mt-1 {{ app()->getLocale() == 'km' ? 'bg-primary text-white' : '' }}" href="{{ route('lang.switch', 'km') }}">🇰🇭 ភាសាខ្មែរ</a></li>
-                </ul>
+
+                <div x-show="langOpen" x-cloak
+                     x-transition:enter="transition ease-out duration-150"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-100"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     style="position:absolute; right:0; top:calc(100% + 8px); width:170px; background:#fff; border-radius:16px; box-shadow:0 10px 40px rgba(0,0,0,0.15); border:1px solid rgba(0,0,0,0.06); padding:6px; z-index:999;">
+                    <div style="padding:8px 10px 6px; border-bottom:1px solid #f1f5f9; margin-bottom:4px;">
+                        <p style="font-size:9px; font-weight:800; color:#94a3b8; text-transform:uppercase; letter-spacing:0.1em; margin:0;">{{ app()->getLocale() == 'km' ? 'ជ្រើសរើស' : 'Language' }}</p>
+                    </div>
+                    <a href="{{ route('lang.switch', 'en') }}" 
+                       style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px; border-radius:10px; text-decoration:none; {{ app()->getLocale() == 'en' ? 'background:#eff6ff; color:#1d4ed8;' : 'color:#334155;' }} transition:background 0.15s;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:1.3rem; line-height:1;">🇬🇧</span>
+                            <div>
+                                <p style="font-size:0.82rem; font-weight:700; margin:0; line-height:1.2;">English</p>
+                                <p style="font-size:0.65rem; color:#94a3b8; margin:0;">International</p>
+                            </div>
+                        </div>
+                        @if(app()->getLocale() == 'en')
+                            <svg style="width:14px;height:14px;flex-shrink:0;color:#2563eb;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        @endif
+                    </a>
+                    <a href="{{ route('lang.switch', 'km') }}"
+                       style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px; border-radius:10px; text-decoration:none; {{ app()->getLocale() == 'km' ? 'background:#eff6ff; color:#1d4ed8;' : 'color:#334155;' }} transition:background 0.15s;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:1.3rem; line-height:1;">🇰🇭</span>
+                            <div>
+                                <p style="font-size:0.82rem; font-weight:700; margin:0; line-height:1.2;">ភាសាខ្មែរ</p>
+                                <p style="font-size:0.65rem; color:#94a3b8; margin:0;">Khmer</p>
+                            </div>
+                        </div>
+                        @if(app()->getLocale() == 'km')
+                            <svg style="width:14px;height:14px;flex-shrink:0;color:#2563eb;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        @endif
+                    </a>
+                </div>
             </div>
             
             <a href="{{ route('profile.edit') }}">

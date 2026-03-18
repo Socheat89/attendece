@@ -3,10 +3,10 @@
     {{-- Header --}}
     <div style="margin-bottom:1.75rem">
         <h2 style="font-size:1.5rem;font-weight:900;color:#eef3fe;letter-spacing:-.025em;margin:0 0 .35rem;font-family:'Sora',sans-serif">
-            Welcome Back 👋
+            {{ __('Welcome Back 👋') }}
         </h2>
         <p style="font-size:.85rem;font-weight:500;color:#475569;margin:0">
-            Sign in to your Mekong CyberUnit account
+            {{ __('Sign in to your Mekong CyberUnit account') }}
         </p>
     </div>
 
@@ -18,7 +18,7 @@
 
         {{-- Email --}}
         <div>
-            <label class="auth-label" for="email">Email Address</label>
+            <label class="auth-label" for="email">{{ __('Email Address') }}</label>
             <div class="auth-input-wrap">
                 <i class="fa-solid fa-envelope auth-input-icon"></i>
                 <input
@@ -41,10 +41,10 @@
         {{-- Password --}}
         <div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.45rem">
-                <label class="auth-label" for="password" style="margin:0">Password</label>
+                <label class="auth-label" for="password" style="margin:0">{{ __('Password') }}</label>
                 @if (Route::has('password.request'))
                     <a href="{{ route('password.request') }}" class="auth-link" style="font-size:.73rem">
-                        Forgot password?
+                        {{ __('Forgot password?') }}
                     </a>
                 @endif
             </div>
@@ -72,21 +72,21 @@
         {{-- Remember Me --}}
         <label class="auth-check-label">
             <input type="checkbox" name="remember" id="remember_me">
-            Keep me signed in
+            {{ __('Keep me signed in') }}
         </label>
 
         {{-- Submit --}}
         <div style="padding-top:.25rem">
             <button type="submit" class="auth-btn" id="loginBtn">
                 <i class="fa-solid fa-arrow-right-to-bracket" style="font-size:.85rem"></i>
-                Sign In
+                {{ __('Sign In') }}
             </button>
         </div>
 
         {{-- Separator --}}
         <div class="auth-sep">
             <div class="auth-sep-line"></div>
-            <div class="auth-sep-text">New here?</div>
+            <div class="auth-sep-text">{{ __('New here?') }}</div>
             <div class="auth-sep-line"></div>
         </div>
 
@@ -99,7 +99,7 @@
            onmouseover="this.style.borderColor='rgba(45,124,246,0.4)';this.style.background='rgba(45,124,246,0.1)'"
            onmouseout="this.style.borderColor='rgba(45,124,246,0.2)';this.style.background='rgba(45,124,246,0.05)'">
             <i class="fa-solid fa-building-circle-arrow-right" style="font-size:.82rem"></i>
-            Register a new company
+            {{ __('Register a new company') }}
         </a>
     </form>
 
@@ -118,7 +118,7 @@
 
         document.getElementById('loginForm').addEventListener('submit', function () {
             const btn = document.getElementById('loginBtn');
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="font-size:.85rem"></i> Authenticating...';
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="font-size:.85rem"></i> {{ __('Authenticating...') }}';
             btn.disabled = true;
         });
     </script>
