@@ -25,6 +25,8 @@ class UpdateCompanySettingRequest extends FormRequest
             'late_deduction_per_minute' => ['required', 'numeric', 'min:0'],
             'allowed_late_count' => ['required', 'integer', 'min:0'],
             'late_deduction_amount' => ['required', 'numeric', 'min:0'],
+            'hr_permissions' => ['nullable', 'array'],
+            'hr_permissions.*' => ['string'],
         ];
     }
 }

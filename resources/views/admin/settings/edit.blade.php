@@ -190,6 +190,36 @@
                         </div>
                     </div>
                 </div>
+
+                @if(auth()->user()->hasRole('Super Admin'))
+                <!-- HR Permissions Section -->
+                <div class="mb-8 mt-8 border-t border-slate-200 pt-8">
+                    <h3 class="text-lg font-bold text-slate-800 pb-2 mb-1">HR & Admin Access Controls</h3>
+                    <p class="text-sm text-slate-500 mb-6">Select which modules users with the "Admin / HR" role can access.</p>
+                    
+                    @php
+                        $hrPermissions = old('hr_permissions', $setting->hr_permissions ?? []);
+                        $modules = [
+                            'employees' => 'Employees & Departments',
+                            'attendance' => 'Attendance & QR',
+                            'requests' => 'Leave & Overtime Requests',
+                            'payrolls' => 'Payroll Management',
+                            'performance' => 'Performance & KPIs',
+                            'security' => 'Security & Activity Logs',
+                            'settings' => 'System Settings & Subscription'
+                        ];
+                    @endphp
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach($modules as $key => $label)
+                        <div class="flex items-center space-x-3 bg-white border border-slate-200 p-4 rounded-xl shadow-sm hover:border-blue-300 transition-colors">
+                            <input type="checkbox" id="perm_{{ $key }}" name="hr_permissions[]" value="{{ $key }}" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-5 h-5 transition-colors cursor-pointer" {{ in_array($key, is_array($hrPermissions) ? $hrPermissions : []) ? 'checked' : '' }}>
+                            <label for="perm_{{ $key }}" class="text-sm font-semibold text-slate-700 cursor-pointer select-none">{{ $label }}</label>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
             </div>
 
             <!-- Action Buttons -->

@@ -26,6 +26,7 @@ class CompanySetting extends Model
         'allowed_late_count',
         'late_deduction_amount',
         'telegram_connection_token',
+        'hr_permissions',
     ];
 
     protected function casts(): array
@@ -37,6 +38,7 @@ class CompanySetting extends Model
             'late_deduction_per_minute' => 'decimal:4',
             'allowed_late_count' => 'integer',
             'late_deduction_amount' => 'decimal:2',
+            'hr_permissions' => 'array',
         ];
     }
 }

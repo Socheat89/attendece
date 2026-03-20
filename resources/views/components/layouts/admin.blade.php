@@ -67,6 +67,10 @@
 
             <!-- Navigation -->
             <nav class="flex-1 space-y-1 px-4 py-6">
+                @php
+                    $isSuperAdmin = auth()->user()->hasRole('Super Admin');
+                    $hrPerms = $uiCompanySetting?->hr_permissions ?? [];
+                @endphp
                 
                 <div class="mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Dashboards') }}</div>
                 
@@ -79,6 +83,7 @@
                 <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('People') }}</div>
 
                 <!-- Employees Group -->
+                @if($isSuperAdmin || in_array('employees', $hrPerms))
                 <div x-data="{ open: {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
@@ -98,8 +103,10 @@
                         </a>
                     </div>
                 </div>
+                @endif
 
                 <!-- Attendance Group -->
+                @if($isSuperAdmin || in_array('attendance', $hrPerms))
                 <div x-data="{ open: {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
@@ -123,8 +130,10 @@
                         </a>
                     </div>
                 </div>
+                @endif
 
                 <!-- Requests Group -->
+                @if($isSuperAdmin || in_array('requests', $hrPerms))
                 <div x-data="{ open: {{ request()->routeIs('admin.leave-requests.*') || request()->routeIs('admin.leave-types.*') || request()->routeIs('admin.overtime-requests.*') || request()->routeIs('admin.change-dayoff-requests.*') ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.leave-requests.*') || request()->routeIs('admin.leave-types.*') || request()->routeIs('admin.overtime-requests.*') || request()->routeIs('admin.change-dayoff-requests.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
@@ -144,19 +153,23 @@
                         </a>
                         <a href="{{ route('admin.change-dayoff-requests.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.change-dayoff-requests.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.change-dayoff-requests.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            {{ __('Change Dayoff') }}
+                            {{ __('Change Day-off') }}
                         </a>
                     </div>
                 </div>
+                @endif
 
+                @if($isSuperAdmin || in_array('payrolls', $hrPerms))
                 <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Finance') }}</div>
 
                 <a href="{{ route('admin.payrolls.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.payrolls.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                     <i class="fa-solid fa-money-bill-wave w-5 h-5 mr-3 {{ request()->routeIs('admin.payrolls.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
                     {{ __('Payroll') }}
                 </a>
+                @endif
 
                 {{-- ─── Performance ────────────────────────────────────────── --}}
+                @if($isSuperAdmin || in_array('performance', $hrPerms))
                 <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Performance') }}</div>
 
                 <div x-data="{ open: {{ request()->routeIs('admin.performance.*') ? 'true' : 'false' }} }" class="space-y-1">
@@ -178,6 +191,7 @@
                         </a>
                     </div>
                 </div>
+                @endif
 
                 {{-- ─── Notifications ───────────────────────────────────────── --}}
                 <a href="{{ route('admin.notifications.index') }}" class="group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.notifications.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
@@ -193,6 +207,7 @@
                 </a>
 
                 {{-- ─── Security ────────────────────────────────────────────── --}}
+                @if($isSuperAdmin || in_array('security', $hrPerms))
                 <div class="mt-4 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Security') }}</div>
 
                 <div x-data="{ open: {{ request()->routeIs('admin.security.*') ? 'true' : 'false' }} }" class="space-y-1">
@@ -227,8 +242,9 @@
                         </a>
                     </div>
                 </div>
+                @endif
 
-                @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin / HR']))
+                @if($isSuperAdmin || in_array('settings', $hrPerms))
                     <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Administration') }}</div>
                     
                     <a href="{{ route('admin.branches.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.branches.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
