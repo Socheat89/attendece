@@ -30,7 +30,9 @@ class EvaluationController extends Controller
         $evaluations = $query->paginate(20)->withQueryString();
         $employees = Employee::with('user')
             ->where('company_id', auth()->user()->company_id)
-            ->orderBy('name')
+            ->join('users', 'users.id', '=', 'employees.user_id')
+            ->orderBy('users.name')
+            ->select('employees.*')
             ->get();
 
         return view('admin.performance.evaluations.index', compact('evaluations', 'employees'));
@@ -40,13 +42,16 @@ class EvaluationController extends Controller
     {
         $employees = Employee::with('user')
             ->where('company_id', auth()->user()->company_id)
-            ->orderBy('name')
+            ->join('users', 'users.id', '=', 'employees.user_id')
+            ->orderBy('users.name')
+            ->select('employees.*')
             ->get();
 
         $kpis = Kpi::with('category')
             ->where('company_id', auth()->user()->company_id)
             ->where('is_active', true)
-            ->orderBy('name')
+            ->orderBy('kpi_category_id')
+            ->orderBy('id')
             ->get();
 
         return view('admin.performance.evaluations.create', compact('employees', 'kpis'));
@@ -96,7 +101,7 @@ class EvaluationController extends Controller
         $totalScore = $totalWeight > 0 ? round($weightedSum / $totalWeight, 2) : 0;
         $evaluation->update(['total_score' => $totalScore]);
 
-        return redirect()->route('admin.evaluations.index')
+        return redirect()->route('admin.performance.evaluations.index')
             ->with('success', "Evaluation created. Total Score: {$totalScore}/100");
     }
 
@@ -118,6 +123,6 @@ class EvaluationController extends Controller
     {
         abort_if($evaluation->company_id !== auth()->user()->company_id, 403);
         $evaluation->delete();
-        return redirect()->route('admin.evaluations.index')->with('success', 'Evaluation deleted.');
+        return redirect()->route('admin.performance.evaluations.index')->with('success', 'Evaluation deleted.');
     }
 }
