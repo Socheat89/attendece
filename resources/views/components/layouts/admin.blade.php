@@ -155,6 +155,78 @@
                     {{ __('Payroll') }}
                 </a>
 
+                {{-- ─── Performance ────────────────────────────────────────── --}}
+                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Performance') }}</div>
+
+                <div x-data="{ open: {{ request()->routeIs('admin.performance.*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.performance.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <span class="flex items-center">
+                            <i class="fa-solid fa-chart-line w-5 h-5 mr-3 {{ request()->routeIs('admin.performance.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
+                            {{ __('Performance') }}
+                        </span>
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                    <div x-show="open" x-collapse class="pl-4 space-y-1">
+                        <a href="{{ route('admin.performance.kpi.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.performance.kpi.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.performance.kpi.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('KPI Setup') }}
+                        </a>
+                        <a href="{{ route('admin.performance.evaluations.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.performance.evaluations.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.performance.evaluations.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('Evaluations') }}
+                        </a>
+                    </div>
+                </div>
+
+                {{-- ─── Notifications ───────────────────────────────────────── --}}
+                <a href="{{ route('admin.notifications.index') }}" class="group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.notifications.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                    <span class="flex items-center">
+                        <i class="fa-regular fa-bell w-5 h-5 mr-3 {{ request()->routeIs('admin.notifications.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
+                        {{ __('Notifications') }}
+                    </span>
+                    @if(auth()->user()->unreadNotifications->count() > 0)
+                        <span class="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-red-500 text-white">
+                            {{ auth()->user()->unreadNotifications->count() }}
+                        </span>
+                    @endif
+                </a>
+
+                {{-- ─── Security ────────────────────────────────────────────── --}}
+                <div class="mt-4 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Security') }}</div>
+
+                <div x-data="{ open: {{ request()->routeIs('admin.security.*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.security.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <span class="flex items-center">
+                            <i class="fa-solid fa-shield-halved w-5 h-5 mr-3 {{ request()->routeIs('admin.security.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
+                            {{ __('Security') }}
+                        </span>
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                    <div x-show="open" x-collapse class="pl-4 space-y-1">
+                        <a href="{{ route('admin.security.activity-log') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.security.activity-log') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.security.activity-log') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('Activity Log') }}
+                        </a>
+                        <a href="{{ route('admin.security.ip-whitelist.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.security.ip-whitelist.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.security.ip-whitelist.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('IP Whitelist') }}
+                        </a>
+                        <a href="{{ route('admin.security.backup.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.security.backup.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.security.backup.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('Database Backup') }}
+                        </a>
+                        <a href="{{ route('two-factor.setup') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('two-factor.setup') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('two-factor.setup') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('2FA Setup') }}
+                            @if(!auth()->user()->two_factor_enabled)
+                                <span class="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500 text-white">OFF</span>
+                            @else
+                                <span class="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded bg-green-500 text-white">ON</span>
+                            @endif
+                        </a>
+                    </div>
+                </div>
+
                 @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin / HR']))
                     <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Administration') }}</div>
                     

@@ -14,6 +14,12 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SubscriptionController;
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\IpWhitelistController;
+use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\Admin\KpiController;
+use App\Http\Controllers\Admin\EvaluationController;
 use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\LeaveController;
 use App\Http\Controllers\Employee\PanelController;
@@ -43,6 +49,10 @@ Route::get('/hosting-setup', function () {
 });
 
 Route::get('/lang/{lang}', [\App\Http\Controllers\LanguageController::class, 'switchLang'])->name('lang.switch');
+
+// ─── 2FA Challenge (unauthenticated route) ───────────────────────────────────
+Route::get('/two-factor/challenge', [\App\Http\Controllers\Auth\TwoFactorController::class, 'challenge'])->name('two-factor.challenge');
+Route::post('/two-factor/verify',   [\App\Http\Controllers\Auth\TwoFactorController::class, 'verify'])->name('two-factor.verify');
 
 Route::get('/', function () {
     if (! auth()->check()) {
@@ -125,6 +135,48 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
 
             Route::resource('branches', BranchController::class);
+
+            // ─── Notifications ────────────────────────────────────────────────
+            Route::prefix('notifications')->as('notifications.')->group(function () {
+                Route::get('/',              [NotificationController::class, 'index'])->name('index');
+                Route::post('read-all',      [NotificationController::class, 'markAllAsRead'])->name('read-all');
+                Route::post('{id}/read',     [NotificationController::class, 'markAsRead'])->name('read');
+                Route::delete('{id}',        [NotificationController::class, 'destroy'])->name('destroy');
+            });
+
+            // ─── Security ─────────────────────────────────────────────────────
+            Route::prefix('security')->as('security.')->group(function () {
+                Route::get('activity-log',          [ActivityLogController::class, 'index'])->name('activity-log');
+
+                Route::get('ip-whitelist',           [IpWhitelistController::class, 'index'])->name('ip-whitelist.index');
+                Route::post('ip-whitelist',          [IpWhitelistController::class, 'store'])->name('ip-whitelist.store');
+                Route::patch('ip-whitelist/{ipWhitelist}/toggle', [IpWhitelistController::class, 'toggle'])->name('ip-whitelist.toggle');
+                Route::delete('ip-whitelist/{ipWhitelist}',       [IpWhitelistController::class, 'destroy'])->name('ip-whitelist.destroy');
+
+                Route::get('backup',             [BackupController::class, 'index'])->name('backup.index');
+                Route::post('backup',            [BackupController::class, 'create'])->name('backup.create');
+                Route::get('backup/download',    [BackupController::class, 'download'])->name('backup.download');
+                Route::delete('backup',          [BackupController::class, 'destroy'])->name('backup.destroy');
+            });
+
+            // ─── Performance Management ───────────────────────────────────────
+            Route::prefix('performance')->as('performance.')->group(function () {
+                // KPI setup
+                Route::get('kpi',                                    [KpiController::class, 'index'])->name('kpi.index');
+                Route::post('kpi/category',                          [KpiController::class, 'storeCategory'])->name('kpi.category.store');
+                Route::post('kpi',                                   [KpiController::class, 'storeKpi'])->name('kpi.store');
+                Route::patch('kpi/{kpi}/toggle',                     [KpiController::class, 'toggleKpi'])->name('kpi.toggle');
+                Route::delete('kpi/{kpi}',                           [KpiController::class, 'destroyKpi'])->name('kpi.destroy');
+                Route::delete('kpi/category/{kpiCategory}',          [KpiController::class, 'destroyCategory'])->name('kpi.category.destroy');
+
+                // Evaluations
+                Route::get('evaluations',                            [EvaluationController::class, 'index'])->name('evaluations.index');
+                Route::get('evaluations/create',                     [EvaluationController::class, 'create'])->name('evaluations.create');
+                Route::post('evaluations',                           [EvaluationController::class, 'store'])->name('evaluations.store');
+                Route::get('evaluations/{evaluation}',               [EvaluationController::class, 'show'])->name('evaluations.show');
+                Route::patch('evaluations/{evaluation}/approve',     [EvaluationController::class, 'approve'])->name('evaluations.approve');
+                Route::delete('evaluations/{evaluation}',            [EvaluationController::class, 'destroy'])->name('evaluations.destroy');
+            });
         });
 
         Route::prefix('employee')->as('employee.')->middleware('role:Employee')->group(function () {
@@ -160,6 +212,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/users/{user}/photo', ProfilePhotoController::class)->name('users.photo');
+
+    // ─── 2FA Setup (authenticated) ───────────────────────────────────────────
+    Route::get('/two-factor/setup',   [\App\Http\Controllers\Auth\TwoFactorController::class, 'setup'])->name('two-factor.setup');
+    Route::post('/two-factor/enable', [\App\Http\Controllers\Auth\TwoFactorController::class, 'enable'])->name('two-factor.enable');
+    Route::post('/two-factor/disable',[\App\Http\Controllers\Auth\TwoFactorController::class, 'disable'])->name('two-factor.disable');
 });
 
 require __DIR__.'/auth.php';
