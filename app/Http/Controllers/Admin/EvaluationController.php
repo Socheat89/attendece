@@ -29,11 +29,9 @@ class EvaluationController extends Controller
 
         $evaluations = $query->paginate(20)->withQueryString();
         $employees = Employee::with('user')
-            ->join('users', 'users.id', '=', 'employees.user_id')
-            ->where('employees.company_id', auth()->user()->company_id)
-            ->orderBy('users.name')
-            ->select('employees.*')
-            ->get();
+            ->where('company_id', auth()->user()->company_id)
+            ->get()
+            ->sortBy(fn($e) => $e->user?->name);
 
         return view('admin.performance.evaluations.index', compact('evaluations', 'employees'));
     }
@@ -41,11 +39,9 @@ class EvaluationController extends Controller
     public function create()
     {
         $employees = Employee::with('user')
-            ->join('users', 'users.id', '=', 'employees.user_id')
-            ->where('employees.company_id', auth()->user()->company_id)
-            ->orderBy('users.name')
-            ->select('employees.*')
-            ->get();
+            ->where('company_id', auth()->user()->company_id)
+            ->get()
+            ->sortBy(fn($e) => $e->user?->name);
 
         $kpis = Kpi::with('category')
             ->where('company_id', auth()->user()->company_id)
