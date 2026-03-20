@@ -29,8 +29,8 @@ class EvaluationController extends Controller
 
         $evaluations = $query->paginate(20)->withQueryString();
         $employees = Employee::with('user')
-            ->where('company_id', auth()->user()->company_id)
             ->join('users', 'users.id', '=', 'employees.user_id')
+            ->where('employees.company_id', auth()->user()->company_id)
             ->orderBy('users.name')
             ->select('employees.*')
             ->get();
@@ -41,8 +41,8 @@ class EvaluationController extends Controller
     public function create()
     {
         $employees = Employee::with('user')
-            ->where('company_id', auth()->user()->company_id)
             ->join('users', 'users.id', '=', 'employees.user_id')
+            ->where('employees.company_id', auth()->user()->company_id)
             ->orderBy('users.name')
             ->select('employees.*')
             ->get();
