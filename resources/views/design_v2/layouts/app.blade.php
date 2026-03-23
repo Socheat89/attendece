@@ -55,7 +55,7 @@
                         <h1 class="text-lg font-semibold">{{ $title ?? 'Dashboard' }}</h1>
                     </div>
                     <div class="flex items-center gap-3">
-                        <a href="{{ route('profile.edit') }}" class="text-sm text-slate-600">Profile</a>
+                        <button x-on:click.prevent="$dispatch('open-modal', 'profile-modal')" class="text-sm text-slate-600">Profile</button>
                         <form method="POST" action="{{ route('logout') }}">@csrf<button class="ml-3 bg-sky-600 text-white px-3 py-1 rounded">Logout</button></form>
                     </div>
                 </div>
@@ -74,5 +74,6 @@
             sb.classList.toggle('hidden');
         });
     </script>
+    <x-profile-modal />
 </body>
 </html>

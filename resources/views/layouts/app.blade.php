@@ -15,6 +15,19 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <style>
             [x-cloak] { display: none !important; }
+            
+            /* Modern Page Transitions */
+            .page-enter { animation: fadeIn 0.4s ease-out forwards; }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(8px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            /* Custom Scrollbar */
+            .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+            .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+            .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         </style>
     </head>
     <body class="font-sans antialiased text-slate-800" x-data="{ pageLoading: true }" x-init="setTimeout(() => pageLoading = false, 2000); window.addEventListener('load', () => pageLoading = false)">
@@ -50,7 +63,7 @@
                 @endisset
 
                 <!-- Page Content -->
-                <main class="flex-1 overflow-y-auto w-full p-4 sm:p-6 lg:p-8">
+                <main class="flex-1 overflow-y-auto w-full p-4 sm:p-6 lg:p-10 page-enter custom-scrollbar">
                     {{ $slot }}
                 </main>
             </div>

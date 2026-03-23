@@ -17,16 +17,20 @@ class RolePermissionSeeder extends Seeder
             Role::query()->firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
         }
 
-        $superAdmin = User::query()->firstOrCreate(
-            ['email' => 'superadmin@hrm.local'],
-            [
-                'name' => 'Super Admin',
-                'password' => Hash::make('password123'),
-                'email_verified_at' => now(),
-                'is_active' => true,
-            ]
-        );
+        // ensure there is a super admin account with known credentials
+        $superAdmin = User::query()->firstOrNew([
+            'email' => 'superadmin@hrm.local',
+        ]);
 
+        // fill or update fields in-case the record already exists
+        $superAdmin->name = 'Super Admin';
+        $superAdmin->password = Hash::make('password123');
+        $superAdmin->email_verified_at = now();
+        $superAdmin->is_active = true;
+        $superAdmin->is_super_admin = true;
+        $superAdmin->save();
+
+        // make sure the role exists and assign it
         $superAdmin->syncRoles(['Super Admin']);
     }
 }

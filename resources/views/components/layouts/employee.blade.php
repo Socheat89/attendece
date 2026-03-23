@@ -829,10 +829,10 @@
             </div>
         </div>
         <div class="top-actions">
-            <a href="{{ route('profile.edit') }}">
+            <button x-on:click.prevent="$dispatch('open-modal', 'profile-modal')">
                 <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:3px"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                 Profile
-            </a>
+            </button>
             <form method="POST" action="{{ route('logout') }}" style="margin:0">
                 @csrf
                 <button type="submit">
@@ -929,5 +929,6 @@ document.querySelectorAll('form').forEach((form) => {
     });
 });
 </script>
+    <x-profile-modal />
 </body>
 </html>

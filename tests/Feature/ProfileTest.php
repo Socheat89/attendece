@@ -10,6 +10,16 @@ class ProfileTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // the company_subscription middleware will logout users with no company
+        // during testing we don't care about companies so disable it
+        $this->withoutMiddleware([
+            \App\Http\Middleware\CheckCompanySubscription::class,
+        ]);
+    }
+
     public function test_profile_page_is_displayed(): void
     {
         $user = User::factory()->create();

@@ -14,21 +14,28 @@ class SuperAdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Check if there's already a super admin to avoid duplication
+        // This seeder is no longer invoked by default (see DatabaseSeeder).
+        // The RolePermissionSeeder now takes responsibility for creating the
+        // initial super‑admin user, so the values here are only used when
+        // executing this class explicitly (e.g. during manual debugging).
+
+        // avoid creating a duplicate super admin record
         if (User::where('is_super_admin', true)->exists()) {
+            $this->command->info('Super Admin already exists, skipping.');
             return;
         }
 
         User::create([
             'name' => 'Super Administrator',
-            'email' => 'superadmin@example.com',
-            'password' => Hash::make('password'),
+            // match the default credentials used elsewhere
+            'email' => 'superadmin@hrm.local',
+            'password' => Hash::make('password123'),
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
             'is_super_admin' => true,
             'is_active' => true,
         ]);
         
-        $this->command->info('Super Admin seeded successfully: superadmin@example.com / password');
+        $this->command->info('Super Admin seeded successfully: superadmin@hrm.local / password123');
     }
 }

@@ -13,13 +13,13 @@
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                         </span>
-                        Security Center
+                        {{ __('Security Center') }}
                     </div>
                     <h2 class="text-4xl font-black text-slate-900 tracking-tight leading-tight">
-                        Account <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Settings.</span>
+                        {{ __('Account Settings.') }}
                     </h2>
                     <p class="text-slate-500 font-medium max-w-xl text-lg leading-relaxed">
-                        Fine-tune your personal experience, secure your credentials, and manage your digital workspace.
+                        {{ __('Fine-tune your personal experience, secure your credentials, and manage your digital workspace.') }}
                     </p>
                 </div>
                 
@@ -52,33 +52,40 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
             
-            <!-- Sidebar Navigation (Desktop) -->
-            <div class="lg:col-span-4 space-y-4">
-                <nav class="sticky top-10 space-y-2 p-2 bg-white/50 backdrop-blur-xl rounded-[32px] border border-white shadow-inner">
-                    <button @click="document.getElementById('profile-info').scrollIntoView({behavior: 'smooth'})" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-200 transition-all font-bold text-sm">
+            <!-- Sidebar Navigation (Desktop/Responsive) -->
+            <div class="lg:col-span-4 space-y-4" x-data="{ open: false }">
+                <!-- mobile toggle -->
+                <div class="lg:hidden flex justify-end">
+                    <button @click="open = !open" class="p-2 rounded-md bg-blue-600 text-white focus:outline-none">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+
+                <nav :class="open ? 'block' : 'hidden lg:block'" class="sticky top-10 space-y-2 p-2 bg-white/50 backdrop-blur-xl rounded-[32px] border border-white shadow-inner">
+                    <button @click="document.getElementById('profile-info').scrollIntoView({behavior: 'smooth'}); open = false" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-200 transition-all font-bold text-sm">
                         <i class="fa-solid fa-user-gear w-5"></i>
-                        Profile Details
+                        {{ __('Profile Details') }}
                     </button>
-                    <button @click="document.getElementById('security').scrollIntoView({behavior: 'smooth'})" class="w-full flex items-center gap-4 p-4 rounded-2xl text-slate-500 hover:bg-slate-100 transition-all font-bold text-sm">
+                    <button @click="document.getElementById('security').scrollIntoView({behavior: 'smooth'}); open = false" class="w-full flex items-center gap-4 p-4 rounded-2xl text-slate-500 hover:bg-slate-100 transition-all font-bold text-sm">
                         <i class="fa-solid fa-shield-halved w-5"></i>
-                        Security & Login
+                        {{ __('Security & Login') }}
                     </button>
-                    <button @click="document.getElementById('danger-zone').scrollIntoView({behavior: 'smooth'})" class="w-full flex items-center gap-4 p-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm">
+                    <button @click="document.getElementById('danger-zone').scrollIntoView({behavior: 'smooth'}); open = false" class="w-full flex items-center gap-4 p-4 rounded-2xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm">
                         <i class="fa-solid fa-trash-can w-5"></i>
-                        Termination
+                        {{ __('Termination') }}
                     </button>
                 </nav>
 
                 <div class="p-6 bg-gradient-to-br from-slate-900 to-slate-800 rounded-[32px] text-white shadow-2xl relative overflow-hidden group">
                     <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-blue-500/20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-1000"></div>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Workspace Info</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">{{ __('Workspace Info') }}</p>
                     <div class="space-y-4 relative z-10">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs">
                                 <i class="fa-solid fa-building"></i>
                             </div>
                             <div>
-                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Company</p>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{{ __('Company') }}</p>
                                 <p class="text-sm font-bold">{{ $uiCompanySetting->company_name ?? 'HRM Portal' }}</p>
                             </div>
                         </div>
@@ -87,7 +94,7 @@
                                 <i class="fa-solid fa-user-tag"></i>
                             </div>
                             <div>
-                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Role</p>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{{ __('Role') }}</p>
                                 <p class="text-sm font-bold">{{ Auth::user()->roles->pluck('name')->first() ?? 'Employee' }}</p>
                             </div>
                         </div>
@@ -106,8 +113,8 @@
                                 <i class="fa-solid fa-address-card text-2xl"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-black text-slate-900 tracking-tight">Personal Profile</h3>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-[0.15em] mt-1">Basic identification details</p>
+                                <h3 class="text-xl font-black text-slate-900 tracking-tight">{{ __('Personal Profile') }}</h3>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-[0.15em] mt-1">{{ __('Basic identification details') }}</p>
                             </div>
                         </div>
                     </div>
@@ -155,8 +162,8 @@
                                 <i class="fa-solid fa-shield-halved text-2xl"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-black text-slate-900 tracking-tight">Security & Login</h3>
-                                <p class="text-xs font-bold text-emerald-600/60 uppercase tracking-[0.15em] mt-1">Authentication Management</p>
+                                <h3 class="text-xl font-black text-slate-900 tracking-tight">{{ __('Security & Login') }}</h3>
+                                <p class="text-xs font-bold text-emerald-600/60 uppercase tracking-[0.15em] mt-1">{{ __('Authentication Management') }}</p>
                             </div>
                         </div>
                     </div>
@@ -206,8 +213,8 @@
                                 <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-black text-red-900 tracking-tight">System Exit</h3>
-                                <p class="text-[10px] font-black text-red-400 uppercase tracking-[0.2em] mt-1">Termination Zone</p>
+                                <h3 class="text-xl font-black text-red-900 tracking-tight">{{ __('System Exit') }}</h3>
+                                <p class="text-[10px] font-black text-red-400 uppercase tracking-[0.2em] mt-1">{{ __('Termination Zone') }}</p>
                             </div>
                         </div>
                     </div>
@@ -216,7 +223,7 @@
                         <div class="p-6 bg-white rounded-3xl border border-red-100 shadow-sm">
                             <p class="text-slate-600 font-medium leading-relaxed">
                                 Once your account is deactivated, all associated data, logs, and resources will be permanently purged from our primary production environment. 
-                                <span class="text-red-600 font-bold underline">This action is irreversible.</span>
+                                <span class="text-red-600 font-bold underline">{{ __('This action is irreversible.') }}</span>
                             </p>
                         </div>
                         
@@ -244,10 +251,10 @@
                     <i class="fa-solid fa-circle-exclamation"></i>
                 </div>
                 <h2 class="text-3xl font-black text-slate-900 tracking-tight leading-tight">
-                    Confirm <span class="text-red-600">Identity.</span>
+                    {{ __('Confirm Identity.') }}
                 </h2>
                 <p class="text-slate-500 font-medium text-lg leading-relaxed">
-                    This is a destructive action. For your protection, please verify your credentials to authorize the permanent deletion of this account.
+                    {{ __('For your protection, please verify your credentials to authorize the permanent deletion of this account.') }}
                 </p>
             </div>
 

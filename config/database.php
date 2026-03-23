@@ -63,6 +63,26 @@ return [
             ]) : [],
         ],
 
+        'mysql_hosting' => [
+            'driver' => 'mysql',
+            'url' => env('DB_HOSTING_URL'),
+            'host' => env('DB_HOSTING_HOST', '127.0.0.1'),
+            'port' => env('DB_HOSTING_PORT', '3306'),
+            'database' => env('DB_HOSTING_DATABASE', 'hrm'),
+            'username' => env('DB_HOSTING_USERNAME', 'root'),
+            'password' => env('DB_HOSTING_PASSWORD', ''),
+            'unix_socket' => env('DB_HOSTING_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => 'InnoDB',
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
@@ -80,6 +100,27 @@ return [
             'engine' => 'InnoDB',
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        // additional local/testing connection (does not affect production)
+        'mysql_testing' => [
+            'driver' => 'mysql',
+            'url' => env('DB_TEST_URL'),
+            'host' => env('DB_TEST_HOST', env('DB_HOST', '127.0.0.1')),
+            'port' => env('DB_TEST_PORT', env('DB_PORT', '3306')),
+            'database' => env('DB_TEST_DATABASE', env('DB_DATABASE', 'hrm_test')),
+            'username' => env('DB_TEST_USERNAME', env('DB_USERNAME', 'root')),
+            'password' => env('DB_TEST_PASSWORD', env('DB_PASSWORD', '')),
+            'unix_socket' => env('DB_TEST_SOCKET', env('DB_SOCKET', '')),
+            'charset' => env('DB_TEST_CHARSET', env('DB_CHARSET', 'utf8mb4')),
+            'collation' => env('DB_TEST_COLLATION', env('DB_COLLATION', 'utf8mb4_unicode_ci')),
+            'prefix' => env('DB_TEST_PREFIX', ''),
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => 'InnoDB',
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 

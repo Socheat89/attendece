@@ -135,6 +135,10 @@
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.change-dayoff-requests.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
                             Change Dayoff
                         </a>
+                        <a href="{{ route('admin.leave-types.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.leave-types.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.leave-types.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            Leave Types
+                        </a>
                     </div>
                 </div>
 
@@ -160,10 +164,7 @@
                 @endif
                 
                 <div class="mt-8 pt-8 border-t border-white/5 px-6">
-                    <a href="{{ route('profile.edit') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('profile.edit') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
-                        <i class="fa-regular fa-user w-5 h-5 mr-3 {{ request()->routeIs('profile.edit') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
-                        Profile
-                    </a>
+
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -229,12 +230,12 @@
                                 <div class="text-xs text-slate-500">{{ auth()->user()->email }}</div>
                             </div>
 
-                            <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">
+                            <button x-on:click.prevent="$dispatch('open-modal', 'profile-modal')" class="flex w-full items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">
                                 <i class="fa-regular fa-user w-5 mr-2 text-slate-400"></i> Profile
-                            </a>
-                            <a href="{{ route('profile.edit') }}#password-section" class="flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">
+                            </button>
+                            <button x-on:click.prevent="$dispatch('open-modal', 'profile-modal')" class="flex w-full items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">
                                 <i class="fa-solid fa-lock w-5 mr-2 text-slate-400"></i> Security
-                            </a>
+                            </button>
                             
                             <div class="border-t border-slate-100 my-1"></div>
                             
@@ -334,5 +335,6 @@
         .menu-disclosure > summary { outline: none; }
         [x-cloak] { display: none !important; }
     </style>
+    <x-profile-modal />
 </body>
 </html>

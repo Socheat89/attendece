@@ -53,12 +53,59 @@ php artisan storage:link
 php artisan serve
 ```
 
+### Local testing database (optional)
+
+This project defines a second connection named **mysql_testing** that you can use
+when running tests locally. The production/online connection (`mysql`) is left
+untouched. To use the test database:
+
+1. Create a `.env.testing` file by copying the example:
+
+   ```bash
+   cp .env.testing.example .env.testing
+   # edit credentials if needed (DB_TEST_*)
+   ```
+
+2. Make sure your testing database exists (e.g. `CREATE DATABASE hrm_test;`).
+3. Run the tests normally; PHPUnit will pick up `DB_CONNECTION=mysql_testing` from
+   `phpunit.xml` and use the `DB_TEST_*` values.
+
+   ```bash
+   php artisan test
+   ```
+
+By separating the connections you can safely run migrations and seeders against
+a dedicated local database without affecting your online deployment.
+
+#### Migrate both databases at once
+
+A custom artisan command `migrate:all` has been added for convenience. It will
+run the Laravel migration command sequentially for the default connection and
+(for testing) the `mysql_testing` connection. You can call it like this:
+
+```bash
+# migrate both the regular and test connections
+php artisan migrate:all
+
+# including seeds on each connection
+php artisan migrate:all --seed
+
+# or specify a subset of connections by name
+php artisan migrate:all --connections=mysql,mysql_testing
+```
+
+This is useful when you maintain two databases locally and want to bring both
+schemas up to date with a single command.
+
+
 ## Default Accounts
 
-- Super Admin: `superadmin@hrm.local` / ` `
+- Super Admin: `superadmin@hrm.local` / `password123`
 - SaaS Admin: `saas@hrm.local` / `password123`
 - Admin HR: `hr@hrm.local` / `password123`
 - Employee: `employee@hrm.local` / `password123`
+
+> **Note:** running `php artisan db:seed` (the default seeder) will create the super admin user with these credentials. If you customise the address or password, update the seeder accordingly.
 
 ## How to Create a New Plan
 

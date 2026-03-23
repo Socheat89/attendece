@@ -23,8 +23,16 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
+        <!-- tests use sqlite memory by default for simplicity; if you need
+             a real MySQL database, override this in phpunit.xml or .env.testing -->
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
+        <!-- legacy mysql_testing vars are ignored but left for reference -->
+        <env name="DB_TEST_HOST" value="127.0.0.1"/>
+        <env name="DB_TEST_PORT" value="3306"/>
+        <env name="DB_TEST_DATABASE" value="hrm_test"/>
+        <env name="DB_TEST_USERNAME" value="root"/>
+        <env name="DB_TEST_PASSWORD" value=""/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>

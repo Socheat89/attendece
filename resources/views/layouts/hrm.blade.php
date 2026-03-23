@@ -1,69 +1,99 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-[#f8fafc]">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#0f4c81">
+    <meta name="theme-color" content="#0a0f1d">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
-    <title>{{ config('app.name', 'HRM') }}</title>
-    <link href="{{ asset('vendor/bootstrap/bootstrap.min.css', true) }}" rel="stylesheet">
+    <title>{{ config('app.name', 'HRM Intelligence') }}</title>
+
+    <!-- Essential Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
-        :root { --brand: #0f4c81; --brand-soft: #e8f0f8; }
-        body { background: #f4f6f9; }
-        .sidebar { min-height: 100vh; background: linear-gradient(180deg, #0f4c81, #154d76); }
-        .sidebar a { color: #eaf2fa; text-decoration: none; display: block; padding: .55rem .75rem; border-radius: .45rem; }
-        .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,.2); }
-        .panel-card { border: 0; border-radius: .9rem; box-shadow: 0 0.25rem 1rem rgba(0,0,0,.06); }
-        .scan-btn { width: 100%; font-size: 1.15rem; padding: 1rem; }
+        [x-cloak] { display: none !important; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* Modern Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+        .page-transition { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
-<body>
-<div class="container-fluid">
-    <div class="row">
-        <aside class="col-lg-2 col-md-3 p-3 sidebar text-white">
-            <h5 class="fw-bold">{{ config('app.name', 'HRM') }}</h5>
-            <p class="small mb-3">{{ auth()->user()->name }}</p>
-            @if(auth()->user()->hasAnyRole(['Super Admin','Admin / HR']))
-                <a class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Dashboard</a>
-                <a class="{{ request()->routeIs('admin.employees.*') ? 'active' : '' }}" href="{{ route('admin.employees.index') }}">Employees</a>
-                <a class="{{ request()->routeIs('admin.branches.*') ? 'active' : '' }}" href="{{ route('admin.branches.index') }}">Branches</a>
-                <a class="{{ request()->routeIs('admin.departments.*') ? 'active' : '' }}" href="{{ route('admin.departments.index') }}">Departments</a>
-                <a class="{{ request()->routeIs('admin.leave-types.*') ? 'active' : '' }}" href="{{ route('admin.leave-types.index') }}">Leave Types</a>
-                <a class="{{ request()->routeIs('admin.leave-requests.*') ? 'active' : '' }}" href="{{ route('admin.leave-requests.index') }}">Leave Requests</a>
-                <a class="{{ request()->routeIs('admin.payrolls.*') ? 'active' : '' }}" href="{{ route('admin.payrolls.index') }}">Payroll</a>
-                <a class="{{ request()->routeIs('admin.attendance-qr.*') ? 'active' : '' }}" href="{{ route('admin.attendance-qr.index') }}">Attendance QR</a>
-            @endif
-            @if(auth()->user()->hasRole('Employee'))
-                <a class="{{ request()->routeIs('employee.dashboard') ? 'active' : '' }}" href="{{ route('employee.dashboard') }}">Dashboard</a>
-                <a class="{{ request()->routeIs('employee.attendance.scan') ? 'active' : '' }}" href="{{ route('employee.attendance.scan') }}">Scan Attendance</a>
-                <a class="{{ request()->routeIs('employee.attendance.index') ? 'active' : '' }}" href="{{ route('employee.attendance.index') }}">My Attendance</a>
-                <a class="{{ request()->routeIs('employee.leave.*') ? 'active' : '' }}" href="{{ route('employee.leave.index') }}">Leave Request</a>
-                <a class="{{ request()->routeIs('employee.salary.*') ? 'active' : '' }}" href="{{ route('employee.salary.index') }}">My Salary</a>
-            @endif
-            <a class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">Profile</a>
-            <form method="POST" action="{{ route('logout') }}" class="mt-2">@csrf <button class="btn btn-sm btn-light w-100">Logout</button></form>
-        </aside>
-        <main class="col-lg-10 col-md-9 p-3 p-lg-4">
-            @if(session('status'))
-                <div class="alert alert-success">{{ session('status') }}</div>
-            @endif
-            @if($errors->any())
-                <div class="alert alert-danger"><ul class="mb-0">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
-            @endif
-            {{ $slot }}
-        </main>
+<body class="h-full antialiased text-slate-900 overflow-hidden" x-data="{ sidebarOpen: false }">
+    
+    <div class="flex h-screen bg-[#f8fafc]">
+        
+        <!-- Premium Sidebar -->
+        @include('layouts.sidebar')
+
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+            
+            <!-- Dynamic Navigation Bar -->
+            @include('layouts.navigation')
+
+            <!-- Main Scrollable Area -->
+            <main class="flex-1 overflow-y-auto custom-scrollbar relative p-4 sm:p-6 lg:p-10 page-transition">
+               
+                <!-- Alerts & Success Notifications -->
+                <div class="max-w-7xl mx-auto space-y-4 mb-8">
+                    @if(session('status'))
+                        <div x-data="{ show: true }" x-show="show" class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl flex items-center gap-4 shadow-sm animate-bounce-in">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                                <i class="fa-solid fa-check-double"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-emerald-900 tracking-tight leading-none">{{ __('System Alert') }}</p>
+                                <p class="text-xs font-semibold text-emerald-700/80 mt-1">{{ session('status') }}</p>
+                            </div>
+                            <button @click="show = false" class="text-emerald-400 hover:text-emerald-600 transition-colors"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    @endif
+
+                    @if($errors->any())
+                        <div x-data="{ show: true }" x-show="show" class="bg-rose-50 border border-rose-100 p-4 rounded-2xl flex items-center gap-4 shadow-sm">
+                            <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-500/20">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-rose-900 tracking-tight leading-none">{{ __('Logic Error Detected') }}</p>
+                                <ul class="mt-1 space-y-0.5">
+                                    @foreach($errors->all() as $error)
+                                        <li class="text-xs font-semibold text-rose-700/80">{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                            <button @click="show = false" class="text-rose-400 hover:text-rose-600 transition-colors"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Central Content -->
+                <div class="max-w-7xl mx-auto pb-12">
+                    {{ $slot }}
+                </div>
+            </main>
+        </div>
     </div>
-</div>
-<script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js', true) }}"></script>
-<script>
-if ('serviceWorker' in navigator) {
-    @if(app()->environment('production'))
-        navigator.serviceWorker.register('/service-worker.js').catch(() => {});
-    @else
-        navigator.serviceWorker.getRegistrations().then(r => r.forEach(reg => reg.unregister()));
-    @endif
-}
-</script>
+
+    <!-- Background Decorative Elements -->
+    <div class="fixed top-0 right-0 w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none -z-10 translate-x-1/2 -translate-y-1/2"></div>
+    <div class="fixed bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none -z-10 -translate-x-1/3 translate-y-1/3"></div>
+
+    @stack('scripts')
 </body>
 </html>
+
