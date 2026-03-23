@@ -80,12 +80,12 @@ nav{
 .btn-ghost:hover{color:var(--white)}
 .btn-primary{
   padding:.65rem 1.6rem;border-radius:100px;font-weight:700;font-size:.9rem;
-  background:linear-gradient(135deg,var(--blue),var(--indigo));
+  background:#3b82f6;
   color:white;text-decoration:none;
-  box-shadow:0 4px 20px rgba(59,130,246,.35);
+  box-shadow:0 0 15px rgba(59,130,246,.5);
   transition:all .3s
 }
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(59,130,246,.5)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 25px rgba(59,130,246,.8)}
 
 /* ── HERO ── */
 .hero{
@@ -151,10 +151,11 @@ h1{
   transition:all .35s;white-space:nowrap
 }
 .btn-hero-primary{
-  background:linear-gradient(135deg,var(--blue),var(--indigo));color:white;
-  box-shadow:0 10px 40px rgba(59,130,246,.4)
+  background:#5a67d8;color:white;
+  box-shadow:0 0 25px rgba(90,103,216,.4);
+  background-image: linear-gradient(90deg, #3b82f6, #6366f1);
 }
-.btn-hero-primary:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 20px 60px rgba(59,130,246,.55)}
+.btn-hero-primary:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 0 35px rgba(90,103,216,.6)}
 .btn-hero-outline{
   background:rgba(255,255,255,.06);color:var(--white);
   border:1.5px solid rgba(255,255,255,.15)
@@ -369,8 +370,8 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
       @auth
         <a href="{{ route('dashboard') }}" class="btn-primary">Dashboard <i class="fa-solid fa-arrow-right" style="font-size:.8rem"></i></a>
       @else
-        <a href="{{ route('login') }}" class="btn-ghost">Login</a>
-        <a href="{{ route('register') }}" class="btn-primary">Get Started Free</a>
+        <a href="{{ route('login') }}" class="btn-ghost" style="color:#d1d5db;font-weight:600;font-size:0.9rem;">Login</a>
+        <a href="{{ isset($plans) && $plans->where('price', 0)->first() ? route('register.company', $plans->where('price', 0)->first()->id) : '#pricing' }}" class="btn-primary" style="background:#5a67d8;box-shadow:0 0 20px rgba(90,103,216,0.5);font-weight:700;padding-left:1.8rem;padding-right:1.8rem;">Get Started Free</a>
       @endauth
     </div>
   </div>
@@ -387,7 +388,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
   </h1>
   <p class="hero-sub">Mekong CyberUnit helps you manage employees, QR attendance, payroll, and reports — all in one smart system.</p>
   <div class="hero-btns">
-    <a href="{{ route('register') }}" class="btn-hero btn-hero-primary">
+    <a href="{{ isset($plans) && $plans->where('price', 0)->first() ? route('register.company', $plans->where('price', 0)->first()->id) : '#pricing' }}" class="btn-hero btn-hero-primary">
       <i class="fa-solid fa-rocket"></i> Try For Free
     </a>
     <a href="#features" class="btn-hero btn-hero-outline">
@@ -610,7 +611,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
     <h2 class="cta-title">Ready for <br><span class="grad">Transformation?</span></h2>
     <p class="cta-sub">Join hundreds of growing companies using Mekong CyberUnit</p>
     <div class="cta-btns">
-      <a href="{{ route('register') }}" class="btn-hero btn-hero-primary"><i class="fa-solid fa-rocket"></i> Register Now</a>
+      <a href="{{ isset($plans) && $plans->where('price', 0)->first() ? route('register.company', $plans->where('price', 0)->first()->id) : '#pricing' }}" class="btn-hero btn-hero-primary"><i class="fa-solid fa-rocket"></i> Register Now</a>
       <a href="https://t.me/SOCHEAT_DOEM" target="_blank" class="btn-hero btn-hero-outline"><i class="fa-brands fa-telegram"></i> Contact Support</a>
     </div>
   </div>
@@ -652,8 +653,8 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
         <h5>Support</h5>
         <ul>
           <li><a href="#">Help Center</a></li>
-          <li><a href="#">Terms</a></li>
-          <li><a href="#">Privacy</a></li>
+          <li><a href="{{ route('terms') }}">Terms</a></li>
+          <li><a href="{{ route('privacy') }}">Privacy</a></li>
           <li><a href="#">Status</a></li>
         </ul>
       </div>

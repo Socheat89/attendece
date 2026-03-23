@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BranchController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\LeaveRequestController;
 use App\Http\Controllers\Admin\LeaveTypeController;
 use App\Http\Controllers\Admin\PayrollController;
@@ -13,6 +14,12 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SubscriptionController;
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\IpWhitelistController;
+use App\Http\Controllers\Admin\BackupController;
+use App\Http\Controllers\Admin\KpiController;
+use App\Http\Controllers\Admin\EvaluationController;
 use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\LeaveController;
 use App\Http\Controllers\Employee\PanelController;
@@ -27,6 +34,25 @@ Route::post('/checkout/{plan}/notify', [\App\Http\Controllers\Saas\RegistrationC
 Route::get('/checkout/{plan}/status/{token}', [\App\Http\Controllers\Saas\RegistrationController::class, 'checkPaymentStatus'])->name('checkout.status');
 Route::get('/register-company/{plan}', [\App\Http\Controllers\Saas\RegistrationController::class, 'register'])->name('register.company');
 Route::post('/register-company/{plan}', [\App\Http\Controllers\Saas\RegistrationController::class, 'store'])->name('register.company.store');
+Route::get('/terms', fn() => view('saas.terms'))->name('terms');
+Route::get('/privacy', fn() => view('saas.privacy'))->name('privacy');
+
+// Quick setup route for Hosting Server
+Route::get('/hosting-setup', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        return 'Success: Storage linked and Cache cleared! <br> You can remove this route for security.';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
+
+Route::get('/lang/{lang}', [\App\Http\Controllers\LanguageController::class, 'switchLang'])->name('lang.switch');
+
+// ─── 2FA Challenge (unauthenticated route) ───────────────────────────────────
+Route::get('/two-factor/challenge', [\App\Http\Controllers\Auth\TwoFactorController::class, 'challenge'])->name('two-factor.challenge');
+Route::post('/two-factor/verify',   [\App\Http\Controllers\Auth\TwoFactorController::class, 'verify'])->name('two-factor.verify');
 
 Route::get('/', function () {
     if (! auth()->check()) {
@@ -90,6 +116,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/attendance-qr/{token}/image', [AttendanceQrController::class, 'qr'])->name('attendance-qr.image');
             Route::get('/attendance-qr/{token}/print', [AttendanceQrController::class, 'print'])->name('attendance-qr.print');
 
+            Route::get('/live-map', [\App\Http\Controllers\Admin\LiveMapController::class, 'index'])->name('live-map.index');
+            Route::get('/live-map/data', [\App\Http\Controllers\Admin\LiveMapController::class, 'data'])->name('live-map.data');
+
             Route::resource('schedules', ScheduleController::class)->except(['show']);
 
             // Employee specific schedule management
@@ -97,11 +126,57 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('employees/{employee}/schedule', [\App\Http\Controllers\Admin\EmployeeScheduleController::class, 'store'])->name('employees.schedule.store');
             Route::delete('employees/{employee}/schedule/{schedule}', [\App\Http\Controllers\Admin\EmployeeScheduleController::class, 'destroy'])->name('employees.schedule.destroy');
 
+            // Employee specific scan history
+            Route::get('employees/{employee}/scan-history', [\App\Http\Controllers\Admin\EmployeeController::class, 'scanHistory'])->name('employees.scan-history');
+
             Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription.index');
+            Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'download'])->name('invoices.download');
             Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
             Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
 
             Route::resource('branches', BranchController::class);
+
+            // ─── Notifications ────────────────────────────────────────────────
+            Route::prefix('notifications')->as('notifications.')->group(function () {
+                Route::get('/',              [NotificationController::class, 'index'])->name('index');
+                Route::post('read-all',      [NotificationController::class, 'markAllAsRead'])->name('read-all');
+                Route::post('{id}/read',     [NotificationController::class, 'markAsRead'])->name('read');
+                Route::delete('{id}',        [NotificationController::class, 'destroy'])->name('destroy');
+            });
+
+            // ─── Security ─────────────────────────────────────────────────────
+            Route::prefix('security')->as('security.')->group(function () {
+                Route::get('activity-log',          [ActivityLogController::class, 'index'])->name('activity-log');
+
+                Route::get('ip-whitelist',           [IpWhitelistController::class, 'index'])->name('ip-whitelist.index');
+                Route::post('ip-whitelist',          [IpWhitelistController::class, 'store'])->name('ip-whitelist.store');
+                Route::patch('ip-whitelist/{ipWhitelist}/toggle', [IpWhitelistController::class, 'toggle'])->name('ip-whitelist.toggle');
+                Route::delete('ip-whitelist/{ipWhitelist}',       [IpWhitelistController::class, 'destroy'])->name('ip-whitelist.destroy');
+
+                Route::get('backup',             [BackupController::class, 'index'])->name('backup.index');
+                Route::post('backup',            [BackupController::class, 'create'])->name('backup.create');
+                Route::get('backup/download',    [BackupController::class, 'download'])->name('backup.download');
+                Route::delete('backup',          [BackupController::class, 'destroy'])->name('backup.destroy');
+            });
+
+            // ─── Performance Management ───────────────────────────────────────
+            Route::prefix('performance')->as('performance.')->group(function () {
+                // KPI setup
+                Route::get('kpi',                                    [KpiController::class, 'index'])->name('kpi.index');
+                Route::post('kpi/category',                          [KpiController::class, 'storeCategory'])->name('kpi.category.store');
+                Route::post('kpi',                                   [KpiController::class, 'storeKpi'])->name('kpi.store');
+                Route::patch('kpi/{kpi}/toggle',                     [KpiController::class, 'toggleKpi'])->name('kpi.toggle');
+                Route::delete('kpi/{kpi}',                           [KpiController::class, 'destroyKpi'])->name('kpi.destroy');
+                Route::delete('kpi/category/{kpiCategory}',          [KpiController::class, 'destroyCategory'])->name('kpi.category.destroy');
+
+                // Evaluations
+                Route::get('evaluations',                            [EvaluationController::class, 'index'])->name('evaluations.index');
+                Route::get('evaluations/create',                     [EvaluationController::class, 'create'])->name('evaluations.create');
+                Route::post('evaluations',                           [EvaluationController::class, 'store'])->name('evaluations.store');
+                Route::get('evaluations/{evaluation}',               [EvaluationController::class, 'show'])->name('evaluations.show');
+                Route::patch('evaluations/{evaluation}/approve',     [EvaluationController::class, 'approve'])->name('evaluations.approve');
+                Route::delete('evaluations/{evaluation}',            [EvaluationController::class, 'destroy'])->name('evaluations.destroy');
+            });
         });
 
         Route::prefix('employee')->as('employee.')->middleware('role:Employee')->group(function () {
@@ -110,6 +185,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
             Route::get('/attendance/scan', [AttendanceController::class, 'scan'])->name('attendance.scan');
             Route::post('/attendance/scan', [AttendanceController::class, 'store'])->name('attendance.store');
+            Route::post('/attendance/track-location', [AttendanceController::class, 'trackLocation'])->name('attendance.track-location');
             Route::get('/attendance/export', [AttendanceController::class, 'export'])->name('attendance.export');
 
             Route::get('/leave', [LeaveController::class, 'index'])->name('leave.index');
@@ -136,6 +212,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/users/{user}/photo', ProfilePhotoController::class)->name('users.photo');
+
+    // ─── 2FA Setup (authenticated) ───────────────────────────────────────────
+    Route::get('/two-factor/setup',   [\App\Http\Controllers\Auth\TwoFactorController::class, 'setup'])->name('two-factor.setup');
+    Route::post('/two-factor/enable', [\App\Http\Controllers\Auth\TwoFactorController::class, 'enable'])->name('two-factor.enable');
+    Route::post('/two-factor/disable',[\App\Http\Controllers\Auth\TwoFactorController::class, 'disable'])->name('two-factor.disable');
 });
 
 require __DIR__.'/auth.php';

@@ -1,4 +1,4 @@
-<x-layouts.employee page-title="My Salary" :back-url="route('employee.dashboard')">
+<x-layouts.employee page-title="ប្រាក់ខែរបស់ខ្ញុំ (My Salary)" :back-url="route('employee.dashboard')">
 
     <script src="//unpkg.com/alpinejs" defer></script>
 
@@ -155,15 +155,15 @@
 
         <!-- Hero -->
         <div class="salary-card">
-            <div class="salary-label">Current Base Salary</div>
+            <div class="salary-label">{{ __('Basic Salary') }}</div>
             <div class="salary-amount">${{ number_format($baseSalary, 2) }}</div>
-            <div class="salary-sub">Before taxes & deductions</div>
+            <div class="salary-sub">មុនពេលកាត់ពន្ធ និងការកាត់រំលស់ (Before taxes & deductions)</div>
         </div>
 
         <!-- List -->
         <div class="list-header">
-            <div class="list-title">Payment History</div>
-            <div class="list-count">{{ $payrolls->total() }} Records</div>
+            <div class="list-title">{{ __('Payment History') }}</div>
+            <div class="list-count">{{ $payrolls->total() }} {{ __('records') }}</div>
         </div>
 
         <div class="flex flex-col gap-3">
@@ -182,7 +182,7 @@
                     <div class="payslip-header">
                         <div>
                             <div class="payslip-month">{{ $payroll->period_start->format('F Y') }}</div>
-                            <div class="payslip-date">Period: {{ $payroll->period_start->format('d') }} - {{ $payroll->period_end->format('d M') }}</div>
+                            <div class="payslip-date">កំឡុងពេល (Period): {{ $payroll->period_start->format('d') }} - {{ $payroll->period_end->format('d M') }}</div>
                         </div>
                         <div class="status-badge {{ $payroll->status === 'paid' ? 'status-paid' : 'status-pending' }}">
                             {{ $payroll->status }}
@@ -191,7 +191,7 @@
                     
                     <div class="payslip-body">
                         <div>
-                            <div class="net-label">Net Pay</div>
+                            <div class="net-label">{{ __('Net Salary') }}</div>
                             <div class="net-amount">${{ number_format($payroll->net_salary, 2) }}</div>
                         </div>
                         <div class="action-btns">
@@ -206,7 +206,7 @@
                     </div>
                 </div>
             @empty
-                <div style="text-align:center; padding:3rem 1rem; color:var(--muted)">No payment records found.</div>
+                <div style="text-align:center; padding:3rem 1rem; color:var(--muted)">{{ __('No payment records found.') }}</div>
             @endforelse
             
             <div class="mt-3">{{ $payrolls->links() }}</div>
@@ -218,7 +218,7 @@
                 <template x-if="selected">
                     <div>
                         <div class="modal-header">
-                            <div class="modal-title" x-text="selected.month + ' Payslip'"></div>
+                            <div class="modal-title" x-text="selected.month + ' ប័ណ្ណបើកប្រាក់ខែ (Payslip)'"></div>
                         </div>
                         <div class="detail-list">
                             <!-- Items -->
@@ -230,20 +230,20 @@
                             </template>
                             
                             <div class="detail-row">
-                                <span>Bonus</span>
+                                <span>{{ __('Allowances') }}</span>
                                 <strong x-text="'$' + selected.bonus"></strong>
                             </div>
                             <div class="detail-row">
-                                <span>Deductions</span>
+                                <span>{{ __('Deductions') }}</span>
                                 <strong class="text-danger" x-text="'-$' + selected.deductions"></strong>
                             </div>
                             
                             <div class="detail-row total-row">
-                                <span>NET TOTAL</span>
+                                <span>{{ __('Net Salary') }}</span>
                                 <strong x-text="'$' + selected.net"></strong>
                             </div>
                             
-                            <button class="btn-submit mt-4" @click="openModal = false">Close</button>
+                            <button class="btn-submit mt-4" @click="openModal = false">{{ __('Close') }}</button>
                         </div>
                     </div>
                 </template>

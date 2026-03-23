@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Saas;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Invoice;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -191,11 +192,13 @@ class RegistrationController extends Controller
             abort(404, 'This plan is not available.');
         }
 
+        $billingCycle = 'monthly';
+        $months = 1;
+
         // Only require payment check if plan is not free
         if ($plan->price > 0) {
             $token = request()->query('token');
             if (!$token) {
-                // If they have no token, deny access and maybe offer contact
                 abort(403, 'Unauthorized. Please complete payment or wait for your approval link.');
             }
 
@@ -206,9 +209,14 @@ class RegistrationController extends Controller
             if (!$paymentRequest) {
                 abort(403, 'Invalid or expired approval link.');
             }
+
+            $months = $paymentRequest->months ?? 1;
+            $billingCycle = ($months >= 12) ? 'yearly' : 'monthly';
+        } else {
+            $billingCycle = 'trial';
         }
 
-        return view('saas.register', compact('plan'));
+        return view('saas.register', compact('plan', 'billingCycle', 'months'));
     }
 
     /**
@@ -310,8 +318,36 @@ class RegistrationController extends Controller
 
             DB::commit();
 
-            // Log the new user in
-            Auth::login($user);
+            // Generate Invoice for all subscriptions (including Free/Trial)
+            $paymentRequest = null;
+            if (request()->query('token')) {
+                $paymentRequest = \App\Models\PaymentRequest::where('access_token', request()->query('token'))->first();
+            }
+
+            $isFree = ($plan->price <= 0);
+            $invoiceMonths = $paymentRequest?->months ?? ($isFree ? 1 : 1);
+            $invoiceAmount = $paymentRequest?->amount ?? ($plan->price * $invoiceMonths);
+            $invoiceContact = $paymentRequest?->contact ?? $user->email;
+            $invoiceMethod  = $paymentRequest?->method ?? ($isFree ? 'Free Subscription' : 'KHQR');
+
+            Invoice::create([
+                'invoice_number'       => Invoice::generateNumber(),
+                'company_id'           => $company->id,
+                'subscription_plan_id' => $plan->id,
+                'company_name'         => $company->name,
+                'contact'              => $invoiceContact,
+                'plan_name'            => $plan->name,
+                'billing_cycle'        => $billingCycle,
+                'months'               => $invoiceMonths,
+                'amount'               => $invoiceAmount,
+                'paid_at'              => now()->toDateString(),
+                'valid_until'          => $expiryDate->toDateString(),
+                'payment_method'       => $invoiceMethod,
+                'status'               => 'paid',
+            ]);
+
+            // Log the new user in persistently
+            Auth::login($user, true);
 
             // Clear UI settings cache to ensure it's reloaded for the new tenant
             \Illuminate\Support\Facades\Cache::forget('ui_company_setting_' . $company->id);

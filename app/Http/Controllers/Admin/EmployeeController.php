@@ -132,4 +132,22 @@ class EmployeeController extends Controller
     {
         return $photo ? $photo->store('profile-photos', 'public') : null;
     }
+
+    public function scanHistory(Request $request, Employee $employee)
+    {
+        $employee->load(['user', 'branch', 'department']);
+        
+        $month = $request->input('month', now()->format('Y-m'));
+
+        $attendanceLogs = \App\Models\AttendanceLog::query()
+            ->with(['attendanceSession'])
+            ->where('employee_id', $employee->id)
+            ->whereYear('scanned_at', \Carbon\Carbon::parse($month)->year)
+            ->whereMonth('scanned_at', \Carbon\Carbon::parse($month)->month)
+            ->latest('scanned_at')
+            ->paginate(30)
+            ->withQueryString();
+
+        return view('admin.employees.scan-history', compact('employee', 'attendanceLogs', 'month'));
+    }
 }

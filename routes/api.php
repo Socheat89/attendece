@@ -4,6 +4,9 @@ use App\Http\Controllers\Api\V1\AttendanceApiController;
 use App\Http\Controllers\Api\V1\LeaveApiController;
 use App\Http\Controllers\Api\V1\ProfileApiController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TelegramWebhookController;
+
+Route::post('/telegram/webhook', [TelegramWebhookController::class, 'handle']);
 
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileApiController::class, 'show']);

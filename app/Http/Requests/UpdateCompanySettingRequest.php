@@ -21,12 +21,12 @@ class UpdateCompanySettingRequest extends FormRequest
             'current_plan_name' => ['required', 'string', 'max:120'],
             'payroll_enabled' => ['nullable', 'boolean'],
             'telegram_scan_enabled' => ['nullable', 'boolean'],
-            'telegram_bot_token' => ['nullable', 'string', 'max:255', 'required_if:telegram_scan_enabled,1'],
-            'telegram_chat_id' => ['nullable', 'string', 'max:255', 'required_if:telegram_scan_enabled,1'],
             'overtime_rate_per_hour' => ['required', 'numeric', 'min:0'],
             'late_deduction_per_minute' => ['required', 'numeric', 'min:0'],
             'allowed_late_count' => ['required', 'integer', 'min:0'],
             'late_deduction_amount' => ['required', 'numeric', 'min:0'],
+            'hr_permissions' => ['nullable', 'array'],
+            'hr_permissions.*' => ['string'],
         ];
     }
 }

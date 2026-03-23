@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceSession;
 use App\Models\Employee;
+use App\Models\Invoice;
 use App\Models\LeaveRequest;
 use App\Models\Payroll;
 use Carbon\Carbon;

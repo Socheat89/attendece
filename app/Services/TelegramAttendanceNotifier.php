@@ -23,8 +23,8 @@ class TelegramAttendanceNotifier
                 return;
             }
 
-            $botToken = trim((string) ($setting->telegram_bot_token ?: config('services.telegram.bot_token')));
-            $chatId = trim((string) ($setting->telegram_chat_id ?: config('services.telegram.chat_id')));
+            $botToken = trim((string) config('services.telegram.bot_token'));
+            $chatId = trim((string) $setting->telegram_chat_id);
 
             if ($botToken === '' || $chatId === '') {
                 return;

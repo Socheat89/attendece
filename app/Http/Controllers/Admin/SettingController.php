@@ -25,7 +25,13 @@ class SettingController extends Controller
             'late_deduction_per_minute' => 0,
             'allowed_late_count' => 0,
             'late_deduction_amount' => 0,
+            'telegram_connection_token' => \Illuminate\Support\Str::random(12),
         ]);
+
+        if (empty($setting->telegram_connection_token)) {
+            $setting->telegram_connection_token = \Illuminate\Support\Str::random(12);
+            $setting->save();
+        }
 
         return view('admin.settings.edit', compact('setting'));
     }
@@ -46,6 +52,7 @@ class SettingController extends Controller
             'late_deduction_per_minute' => 0,
             'allowed_late_count' => 0,
             'late_deduction_amount' => 0,
+            'telegram_connection_token' => \Illuminate\Support\Str::random(12),
         ]);
 
         $setting->update([

@@ -2,10 +2,17 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-50">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="{{ $uiCompanySetting->company_name ?? config('app.name') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/icons/icon-192x192.png') }}">
+    <meta name="mobile-web-app-capable" content="yes">
 
-    <title>{{ config('app.name', 'HRM') }} - Admin</title>
+    <title>{{ $uiCompanySetting->company_name ?? config('app.name') }} - {{ __('Admin') }}</title>
+    <link rel="icon" type="image/png" href="https://ui-avatars.com/api/?name={{ urlencode($uiCompanySetting->company_name ?? config('app.name')) }}&background=0D8ABC&color=fff&rounded=true" />
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
@@ -53,87 +60,100 @@
                     </div>
                     <div class="flex flex-col overflow-hidden">
                         <span class="text-lg font-bold text-white tracking-wide truncate leading-none">{{ $uiCompanySetting->company_name ?? config('app.name') }}</span>
-                        <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-1">Admin Portal</span>
+                        <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-1">{{ __('Admin') }}</span>
                     </div>
                 </div>
             </div>
 
             <!-- Navigation -->
             <nav class="flex-1 space-y-1 px-4 py-6">
+                @php
+                    $isSuperAdmin = auth()->user()->hasRole('Super Admin');
+                    $hrPerms = $uiCompanySetting?->hr_permissions ?? [];
+                @endphp
                 
-                <div class="mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Dashboards</div>
+                <div class="mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Dashboards') }}</div>
                 
                 <a href="{{ route('admin.dashboard') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                     <i class="fa-solid fa-chart-pie w-5 h-5 mr-3 {{ request()->routeIs('admin.dashboard') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
-                    Overview
+                    {{ __('Overview') }}
                 </a>
 
 
-                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">People</div>
+                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('People') }}</div>
 
                 <!-- Employees Group -->
+                @if($isSuperAdmin || in_array('employees', $hrPerms))
                 <div x-data="{ open: {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
                             <i class="fa-solid fa-users w-5 h-5 mr-3 {{ request()->routeIs('admin.employees.*') || request()->routeIs('admin.departments.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
-                            Employees
+                            {{ __('Employees') }}
                         </span>
                         <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                     </button>
                     <div x-show="open" x-collapse class="pl-4 space-y-1">
                         <a href="{{ route('admin.employees.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.employees.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.employees.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            All Employees
+                            {{ __('All Employees') }}
                         </a>
                         <a href="{{ route('admin.departments.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.departments.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.departments.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            Departments
+                            {{ __('Departments') }}
                         </a>
                     </div>
                 </div>
+                @endif
 
                 <!-- Attendance Group -->
-                <div x-data="{ open: {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') ? 'true' : 'false' }} }" class="space-y-1">
-                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                @if($isSuperAdmin || in_array('attendance', $hrPerms))
+                <div x-data="{ open: {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
-                            <i class="fa-solid fa-clock w-5 h-5 mr-3 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
-                            Attendance
+                            <i class="fa-solid fa-clock w-5 h-5 mr-3 {{ request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*') || request()->routeIs('admin.live-map.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
+                            {{ __('Attendance') }}
                         </span>
                         <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                     </button>
                     <div x-show="open" x-collapse class="pl-4 space-y-1">
                         <a href="{{ route('admin.attendance.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.attendance.index') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.attendance.index') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            Daily Logs
+                            {{ __('Daily Logs') }}
                         </a>
                         <a href="{{ route('admin.attendance-qr.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.attendance-qr.index') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.attendance-qr.index') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            QR Manager
+                            {{ __('QR Manager') }}
+                        </a>
+                        <a href="{{ route('admin.live-map.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.live-map.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.live-map.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('Live Map') }}
                         </a>
                     </div>
                 </div>
+                @endif
 
                 <!-- Requests Group -->
+                @if($isSuperAdmin || in_array('requests', $hrPerms))
                 <div x-data="{ open: {{ request()->routeIs('admin.leave-requests.*') || request()->routeIs('admin.leave-types.*') || request()->routeIs('admin.overtime-requests.*') || request()->routeIs('admin.change-dayoff-requests.*') ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.leave-requests.*') || request()->routeIs('admin.leave-types.*') || request()->routeIs('admin.overtime-requests.*') || request()->routeIs('admin.change-dayoff-requests.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <span class="flex items-center">
                             <i class="fa-solid fa-clipboard-check w-5 h-5 mr-3 {{ request()->routeIs('admin.leave-requests.*') || request()->routeIs('admin.leave-types.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
-                            Requests
+                            {{ __('Requests') }}
                         </span>
                         <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                     </button>
                     <div x-show="open" x-collapse class="pl-4 space-y-1">
                          <a href="{{ route('admin.leave-requests.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.leave-requests.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.leave-requests.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            Leave
+                            {{ __('Leave') }}
                         </a>
                         <a href="{{ route('admin.overtime-requests.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.overtime-requests.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.overtime-requests.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            Overtime
+                            {{ __('Overtime') }}
                         </a>
                         <a href="{{ route('admin.change-dayoff-requests.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.change-dayoff-requests.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.change-dayoff-requests.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
-                            Change Dayoff
+                            {{ __('Change Day-off') }}
                         </a>
                         <a href="{{ route('admin.leave-types.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.leave-types.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
                             <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.leave-types.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
@@ -141,25 +161,109 @@
                         </a>
                     </div>
                 </div>
+                @endif
 
-                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Finance</div>
+                @if($isSuperAdmin || in_array('payrolls', $hrPerms))
+                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Finance') }}</div>
 
                 <a href="{{ route('admin.payrolls.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.payrolls.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                     <i class="fa-solid fa-money-bill-wave w-5 h-5 mr-3 {{ request()->routeIs('admin.payrolls.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
-                    Payroll
+                    {{ __('Payroll') }}
+                </a>
+                @endif
+
+                {{-- ─── Performance ────────────────────────────────────────── --}}
+                @if($isSuperAdmin || in_array('performance', $hrPerms))
+                <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Performance') }}</div>
+
+                <div x-data="{ open: {{ request()->routeIs('admin.performance.*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.performance.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <span class="flex items-center">
+                            <i class="fa-solid fa-chart-line w-5 h-5 mr-3 {{ request()->routeIs('admin.performance.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
+                            {{ __('Performance') }}
+                        </span>
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                    <div x-show="open" x-collapse class="pl-4 space-y-1">
+                        <a href="{{ route('admin.performance.kpi.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.performance.kpi.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.performance.kpi.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('KPI Setup') }}
+                        </a>
+                        <a href="{{ route('admin.performance.evaluations.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.performance.evaluations.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.performance.evaluations.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('Evaluations') }}
+                        </a>
+                    </div>
+                </div>
+                @endif
+
+                {{-- ─── Notifications ───────────────────────────────────────── --}}
+                <a href="{{ route('admin.notifications.index') }}" class="group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.notifications.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                    <span class="flex items-center">
+                        <i class="fa-regular fa-bell w-5 h-5 mr-3 {{ request()->routeIs('admin.notifications.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
+                        {{ __('Notifications') }}
+                    </span>
+                    @if(auth()->user()->unreadNotifications->count() > 0)
+                        <span class="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-red-500 text-white">
+                            {{ auth()->user()->unreadNotifications->count() }}
+                        </span>
+                    @endif
                 </a>
 
-                @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin / HR']))
-                    <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Administration</div>
+                {{-- ─── Security ────────────────────────────────────────────── --}}
+                @if($isSuperAdmin || in_array('security', $hrPerms))
+                <div class="mt-4 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Security') }}</div>
+
+                <div x-data="{ open: {{ request()->routeIs('admin.security.*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" type="button" class="w-full group flex items-center justify-between px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.security.*') ? 'text-white bg-white/5' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <span class="flex items-center">
+                            <i class="fa-solid fa-shield-halved w-5 h-5 mr-3 {{ request()->routeIs('admin.security.*') ? 'text-blue-400' : 'text-slate-500 group-hover:text-white' }}"></i>
+                            {{ __('Security') }}
+                        </span>
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-90 text-slate-300' : 'text-slate-500'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                    <div x-show="open" x-collapse class="pl-4 space-y-1">
+                        <a href="{{ route('admin.security.activity-log') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.security.activity-log') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.security.activity-log') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('Activity Log') }}
+                        </a>
+                        <a href="{{ route('admin.security.ip-whitelist.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.security.ip-whitelist.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.security.ip-whitelist.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('IP Whitelist') }}
+                        </a>
+                        <a href="{{ route('admin.security.backup.index') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('admin.security.backup.*') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('admin.security.backup.*') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('Database Backup') }}
+                        </a>
+                        <a href="{{ route('two-factor.setup') }}" class="flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('two-factor.setup') ? 'text-blue-400 bg-blue-400/10' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-3 {{ request()->routeIs('two-factor.setup') ? 'bg-blue-400' : 'bg-slate-600' }}"></span>
+                            {{ __('2FA Setup') }}
+                            @if(!auth()->user()->two_factor_enabled)
+                                <span class="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500 text-white">OFF</span>
+                            @else
+                                <span class="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded bg-green-500 text-white">ON</span>
+                            @endif
+                        </a>
+                    </div>
+                </div>
+                @endif
+
+                @if($isSuperAdmin || in_array('settings', $hrPerms))
+                    <div class="mt-8 mb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">{{ __('Administration') }}</div>
                     
                     <a href="{{ route('admin.branches.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.branches.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <i class="fa-solid fa-building w-5 h-5 mr-3 {{ request()->routeIs('admin.branches.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
-                        Branches
+                        {{ __('Branches') }}
+                    </a>
+
+                    <a href="{{ route('admin.subscription.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.subscription.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <i class="fa-solid fa-credit-card w-5 h-5 mr-3 {{ request()->routeIs('admin.subscription.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
+                        {{ __('Subscription') }}
                     </a>
 
                     <a href="{{ route('admin.settings.edit') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('admin.settings.*') ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
                         <i class="fa-solid fa-gear w-5 h-5 mr-3 {{ request()->routeIs('admin.settings.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }} transition-colors"></i>
-                        Settings
+                        {{ __('Settings') }}
                     </a>
                 @endif
                 
@@ -170,7 +274,7 @@
                         @csrf
                         <button type="submit" class="flex items-center text-slate-400 hover:text-white text-sm font-medium transition-colors mt-3">
                             <i class="fa-solid fa-arrow-right-from-bracket mr-3"></i>
-                            Sign Out
+                            {{ __('Sign Out') }}
                         </button>
                     </form>
                 </div>
@@ -188,30 +292,146 @@
                     
                     <!-- Breadcrumbs (Simplified) -->
                      <h1 class="text-xl font-bold text-slate-800 tracking-tight">
-                        @if(request()->routeIs('admin.dashboard')) Dashboard
-                        @elseif(request()->routeIs('admin.employees.*')) Employees
-                        @elseif(request()->routeIs('admin.attendance.*')) Attendance
-                        @elseif(request()->routeIs('admin.payrolls.*')) Payroll
-                        @else {{ config('app.name') }} @endif
+                        @if(request()->routeIs('admin.dashboard')) {{ __('Dashboard') }}
+                        @elseif(request()->routeIs('admin.employees.*')) {{ __('Employees') }}
+                        @elseif(request()->routeIs('admin.attendance.*') || request()->routeIs('admin.attendance-qr.*')) {{ __('Attendance') }}
+                        @elseif(request()->routeIs('admin.payrolls.*')) {{ __('Payroll') }}
+                        @elseif(request()->routeIs('admin.performance.*')) {{ __('Performance') }}
+                        @elseif(request()->routeIs('admin.security.*') || request()->routeIs('two-factor.*')) {{ __('Security') }}
+                        @elseif(request()->routeIs('admin.notifications.*')) {{ __('Notifications') }}
+                        @elseif(request()->routeIs('admin.leave*') || request()->routeIs('admin.overtime*')) {{ __('Requests') }}
+                        @else {{ auth()->user()->company->name ?? 'Administration' }} @endif
                     </h1>
                 </div>
                 
                 <div class="flex items-center gap-6">
-                    <!-- Notifications (Placeholder) -->
-                    <button class="relative text-slate-400 hover:text-slate-600 transition-colors">
-                        <i class="fa-regular fa-bell text-xl"></i>
-                        <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                    </button>
+                    <!-- Language Selection -->
+                    <div class="relative" x-data="{ langMenuOpen: false }">
+                        <button @click="langMenuOpen = !langMenuOpen" @click.away="langMenuOpen = false" 
+                            class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1">
+                            @if(app()->getLocale() == 'km')
+                                <span class="text-lg leading-none">🇰🇭</span>
+                                <span class="text-xs font-bold text-slate-700 hidden sm:inline">ខ្មែរ</span>
+                            @else
+                                <span class="text-lg leading-none">🇬🇧</span>
+                                <span class="text-xs font-bold text-slate-700 hidden sm:inline">EN</span>
+                            @endif
+                            <svg class="w-3 h-3 text-slate-400 transition-transform duration-200" :class="langMenuOpen ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        
+                        <div x-show="langMenuOpen" x-cloak
+                             x-transition:enter="transition ease-out duration-150" 
+                             x-transition:enter-start="transform opacity-0 scale-95 -translate-y-1" 
+                             x-transition:enter-end="transform opacity-100 scale-100 translate-y-0" 
+                             x-transition:leave="transition ease-in duration-100" 
+                             x-transition:leave-start="transform opacity-100 scale-100" 
+                             x-transition:leave-end="transform opacity-0 scale-95" 
+                             class="absolute right-0 mt-2 w-44 rounded-2xl bg-white shadow-2xl border border-slate-100 py-1.5 z-50 overflow-hidden">
+                            <div class="px-3 py-2 border-b border-slate-50 mb-1">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ app()->getLocale() == 'km' ? 'ជ្រើសរើសភាសា' : 'Select Language' }}</p>
+                            </div>
+                            <a href="{{ route('lang.switch', 'en') }}" class="flex items-center justify-between gap-3 px-3 py-2.5 mx-1.5 rounded-xl {{ app()->getLocale() == 'en' ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50' }} transition-colors group">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="text-xl leading-none">🇬🇧</span>
+                                    <div>
+                                        <p class="text-sm font-semibold leading-tight">English</p>
+                                        <p class="text-[10px] text-slate-400 leading-tight">International</p>
+                                    </div>
+                                </div>
+                                @if(app()->getLocale() == 'en')
+                                    <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                @endif
+                            </a>
+                            <a href="{{ route('lang.switch', 'km') }}" class="flex items-center justify-between gap-3 px-3 py-2.5 mx-1.5 rounded-xl {{ app()->getLocale() == 'km' ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50' }} transition-colors group">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="text-xl leading-none">🇰🇭</span>
+                                    <div>
+                                        <p class="text-sm font-semibold leading-tight">ភាសាខ្មែរ</p>
+                                        <p class="text-[10px] text-slate-400 leading-tight">Khmer</p>
+                                    </div>
+                                </div>
+                                @if(app()->getLocale() == 'km')
+                                    <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                @endif
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="relative" x-data="{ 
+                        notifOpen: false, 
+                        unreadCount: {{ auth()->user()->unreadNotifications->count() }} 
+                    }">
+                        <button @click="notifOpen = !notifOpen" @click.away="notifOpen = false" 
+                            class="relative p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all focus:outline-none">
+                            <i class="fa-regular fa-bell text-xl"></i>
+                            <template x-if="unreadCount > 0">
+                                <span class="absolute top-1.5 right-1.5 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white animate-pulse"></span>
+                            </template>
+                        </button>
+
+                        <!-- Notification Dropdown -->
+                        <div x-show="notifOpen" x-cloak
+                             x-transition:enter="transition ease-out duration-150" 
+                             x-transition:enter-start="transform opacity-0 scale-95 translate-y-2" 
+                             x-transition:enter-end="transform opacity-100 scale-100 translate-y-0" 
+                             x-transition:leave="transition ease-in duration-100" 
+                             x-transition:leave-start="transform opacity-100 scale-100" 
+                             x-transition:leave-end="transform opacity-0 scale-95" 
+                             class="absolute right-0 mt-3 w-80 sm:w-96 rounded-2xl bg-white shadow-2xl border border-slate-100 z-50 overflow-hidden">
+                            
+                            <div class="px-5 py-4 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                                <h3 class="text-sm font-bold text-slate-800">{{ __('Notifications') }}</h3>
+                                <template x-if="unreadCount > 0">
+                                    <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold" x-text="unreadCount + ' New'"></span>
+                                </template>
+                            </div>
+
+                            <div class="max-h-[400px] overflow-y-auto custom-scrollbar">
+                                @forelse(auth()->user()->notifications->take(10) as $notification)
+                                    <a href="{{ $notification->data['link'] ?? '#' }}" class="block px-5 py-4 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 {{ $notification->read_at ? 'opacity-60' : '' }}">
+                                        <div class="flex gap-4">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-xl {{ $notification->data['color'] ?? 'bg-blue-100 text-blue-600' }} flex items-center justify-center text-lg">
+                                                <i class="{{ $notification->data['icon'] ?? 'fa-solid fa-bell' }}"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-sm font-bold text-slate-800 leading-tight mb-1">{{ $notification->data['title'] ?? 'New Update' }}</p>
+                                                <p class="text-xs text-slate-500 line-clamp-2">{{ $notification->data['message'] ?? 'You have a new notification.' }}</p>
+                                                <p class="text-[10px] text-slate-400 mt-2 font-medium">{{ $notification->created_at->diffForHumans() }}</p>
+                                            </div>
+                                            @if(!$notification->read_at)
+                                                <div class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shadow-sm shadow-blue-500/50"></div>
+                                            @endif
+                                        </div>
+                                    </a>
+                                @empty
+                                    <div class="py-12 text-center">
+                                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i class="fa-regular fa-bell-slash text-2xl text-slate-400"></i>
+                                        </div>
+                                        <p class="text-sm font-bold text-slate-800">{{ __('All caught up!') }}</p>
+                                        <p class="text-xs text-slate-500 mt-1">{{ __('No new notifications at the moment.') }}</p>
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            @if(auth()->user()->notifications->count() > 0)
+                                <div class="p-3 border-t border-slate-50 text-center bg-slate-50/30">
+                                    <a href="#" class="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors">{{ __('View All Notifications') }}</a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
 
                     <!-- Profile Dropdown -->
-                    <div class="relative" x-data="{ userMenuOpen: false }">
+                    <div class="relative" x-data="{ userMenuOpen: false, profileModalOpen: false }">
                         <button @click="userMenuOpen = !userMenuOpen" @click.away="userMenuOpen = false" class="flex items-center gap-3 focus:outline-none">
                             <div class="text-right hidden md:block">
                                 <div class="text-sm font-bold text-slate-800">{{ auth()->user()->name }}</div>
                                 <div class="text-xs text-slate-500">{{ auth()->user()->roles->first()->name ?? 'User' }}</div>
                             </div>
-                            <div class="h-10 w-10 rounded-full bg-slate-200 border-2 border-white shadow-sm overflow-hidden">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=0D8ABC&color=fff" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover">
+                            <div class="h-10 w-10 rounded-full bg-slate-200 border-2 border-white shadow-sm overflow-hidden cursor-pointer">
+                                <img @click.stop="profileModalOpen = true" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=0D8ABC&color=fff" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover">
                             </div>
                             <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
                         </button>
@@ -249,6 +469,61 @@
                     </div>
                 </div>
             </header>
+
+            <!-- Profile Modal (opened from header avatar) -->
+            <div x-show="profileModalOpen" x-cloak x-transition class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div @click.away="profileModalOpen = false" class="w-full max-w-2xl mx-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-4 flex items-start justify-between">
+                        <div class="flex items-center gap-4">
+                            <img class="w-20 h-20 rounded-full border-4 border-white shadow-md" src="/images/avatar-default.jpg" alt="Avatar">
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ auth()->user()->name }}</h2>
+                                <p class="text-sm text-gray-500 dark:text-gray-300">{{ auth()->user()->roles->first()->name ?? 'User' }}</p>
+                            </div>
+                        </div>
+                        <button @click="profileModalOpen = false" class="text-gray-500 hover:text-gray-700">✕</button>
+                    </div>
+
+                    <div class="px-6 pb-6">
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Bio: Passionate about building clean, accessible interfaces.</p>
+
+                        <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
+                                <div class="text-sm text-gray-500 dark:text-gray-300">Attendance</div>
+                                <div class="mt-1 text-xl font-bold text-gray-900 dark:text-white">98%</div>
+                            </div>
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
+                                <div class="text-sm text-gray-500 dark:text-gray-300">Leaves</div>
+                                <div class="mt-1 text-xl font-bold text-gray-900 dark:text-white">2 / 12</div>
+                            </div>
+                            <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
+                                <div class="text-sm text-gray-500 dark:text-gray-300">Overtime</div>
+                                <div class="mt-1 text-xl font-bold text-gray-900 dark:text-white">5h</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
+                            <div class="lg:col-span-2 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                                <h3 class="font-medium text-gray-800 dark:text-gray-100">Recent Activity</h3>
+                                <ul class="mt-3 space-y-3 text-sm text-gray-600 dark:text-gray-300">
+                                    <li class="flex justify-between"><span>Checked in</span><span class="text-gray-500">Today · 08:02</span></li>
+                                    <li class="flex justify-between"><span>Requested leave</span><span class="text-gray-500">Mar 01</span></li>
+                                    <li class="flex justify-between"><span>Overtime approved</span><span class="text-gray-500">Feb 27</span></li>
+                                </ul>
+                            </div>
+
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                                <h3 class="font-medium text-gray-800 dark:text-gray-100">Contact</h3>
+                                <div class="mt-3 text-sm text-gray-600 dark:text-gray-300 space-y-2">
+                                    <div>Email: {{ auth()->user()->email }}</div>
+                                    <div>Phone: +855 12 345 678</div>
+                                    <div>Department: {{ auth()->user()->employee?->department?->name ?? '-' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Main Content -->
             <main class="flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-6 lg:p-8">

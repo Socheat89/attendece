@@ -22,6 +22,8 @@ class AttendanceController extends Controller
     public function index(Request $request)
     {
         $employee = auth()->user()->employee;
+        $employee->load(['schedules', 'branch.schedules']);
+        
         $monthInput = (string) $request->input('month', now()->format('Y-m'));
         $month = preg_match('/^\d{4}-\d{2}$/', $monthInput) ? $monthInput : now()->format('Y-m');
 
@@ -45,11 +47,30 @@ class AttendanceController extends Controller
 
         $calendarData = [];
         foreach ($sessions as $session) {
-            $status = $session->late_minutes > 0 ? 'late' : 'present';
+            $lateMinutes = $session->late_minutes;
+
+            // Recalculate late minutes dynamically for imported legacy records
+            if ($lateMinutes == 0) {
+                $dayOfWeek = $session->attendance_date->dayOfWeek;
+                $schedule = $employee->schedules->firstWhere('day_of_week', $dayOfWeek) 
+                         ?? $employee->branch?->schedules->firstWhere('day_of_week', $dayOfWeek);
+
+                $morningLog = $session->logs->firstWhere('scan_type', 'morning_in');
+                if ($morningLog && $schedule && $schedule->morning_in) {
+                    $expected = \Carbon\Carbon::parse($session->attendance_date->toDateString() . ' ' . $schedule->morning_in);
+                    $graceLimit = (clone $expected)->addMinutes((int) $schedule->late_grace_minutes);
+                    
+                    if ($morningLog->scanned_at->gt($graceLimit)) {
+                        $lateMinutes = (int) $expected->diffInMinutes($morningLog->scanned_at);
+                    }
+                }
+            }
+
+            $status = $lateMinutes > 0 ? 'late' : 'present';
             $calendarData[$session->attendance_date->toDateString()] = [
                 'status' => $status,
                 'work_hours' => round($session->work_minutes / 60, 2),
-                'late_minutes' => $session->late_minutes,
+                'late_minutes' => $lateMinutes,
                 'overtime_hours' => round($session->overtime_minutes / 60, 2),
                 'gps_status' => $session->has_fake_gps_flag ? 'Flagged' : 'Verified',
                 'scans' => [
@@ -184,6 +205,52 @@ class AttendanceController extends Controller
                     'message' => 'Unable to process scan right now. Please try again.',
                 ]);
         }
+    }
+
+    public function trackLocation(Request $request)
+    {
+        $validated = $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'accuracy' => 'nullable|numeric',
+            'speed' => 'nullable|numeric',
+            'heading' => 'nullable|numeric',
+        ]);
+
+        $employee = auth()->user()->employee;
+        
+        $session = \App\Models\AttendanceSession::query()
+            ->where('employee_id', $employee->id)
+            ->whereDate('attendance_date', now()->toDateString())
+            ->first();
+
+        if (!$session) {
+            // Not checked in yet
+            return response()->json(['message' => 'Not checked in yet.'], 403);
+        }
+
+        // Optional server-side guard: stop tracking if they have finished for the day
+        $hasCheckedOut = $session->logs()->whereIn('scan_type', ['evening_out', 'lunch_out'])->latest()->first();
+        // If they checked out (evening out) we stop completely. If lunch out, maybe pause? 
+        // We'll just stop if evening_out exists, or check the latest log.
+        // Let's just stop if evening_out exists.
+        $isEveningOut = $session->logs()->where('scan_type', 'evening_out')->exists();
+        if ($isEveningOut) {
+            return response()->json(['message' => 'Tracking stopped, already checked out.'], 403);
+        }
+
+        \App\Models\EmployeeLocation::create([
+            'employee_id'           => $employee->id,
+            'attendance_session_id' => $session->id,
+            'latitude'              => $validated['latitude'],
+            'longitude'             => $validated['longitude'],
+            'accuracy'              => $validated['accuracy'],
+            'speed'                 => $validated['speed'],
+            'heading'               => $validated['heading'],
+            'tracked_at'            => now(),
+        ]);
+
+        return response()->json(['status' => 'success', 'message' => 'Location tracked']);
     }
 
     public function export(Request $request)

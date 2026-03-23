@@ -239,7 +239,7 @@
                     <line x1="16" y1="16" x2="21" y2="16"/><line x1="16" y1="19" x2="19" y2="19"/><line x1="19" y1="16" x2="19" y2="21"/>
                 </svg>
             </div>
-            <h2>Scan QR Code</h2>
+            <h2>ស្កេន QR កូដ (Scan QR Code)</h2>
             <span class="sb-sub" id="btnScanSub">
                 @if($isCheckIn)
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14"/></svg>
@@ -255,15 +255,15 @@
             <div id="qrReader"></div>
             <div class="qr-overlay">
                 <div class="qr-status-bar">
-                    <p id="qrStatus">Align QR code within frame</p>
+                    <p id="qrStatus">តម្រឹម QR Code ក្នុងស៊ុម (Align QR code)</p>
                 </div>
                 <div class="qr-frame"><span></span></div>
                 <div class="qr-type-sel" id="typeSel">
                     @if($nextCheckIn)
-                    <button type="button" class="qr-type-btn {{ $autoDefault == $nextCheckIn ? 'active-in' : '' }}" id="typeOptIn" data-type="{{ $nextCheckIn }}">CHECK IN</button>
+                    <button type="button" class="qr-type-btn {{ $autoDefault == $nextCheckIn ? 'active-in' : '' }}" id="typeOptIn" data-type="{{ $nextCheckIn }}">ចូល (CHECK IN)</button>
                     @endif
                     @if($nextCheckOut)
-                    <button type="button" class="qr-type-btn {{ $autoDefault == $nextCheckOut ? 'active-out' : '' }}" id="typeOptOut" data-type="{{ $nextCheckOut }}">CHECK OUT</button>
+                    <button type="button" class="qr-type-btn {{ $autoDefault == $nextCheckOut ? 'active-out' : '' }}" id="typeOptOut" data-type="{{ $nextCheckOut }}">ចេញ (CHECK OUT)</button>
                     @endif
                 </div>
             </div>
@@ -277,8 +277,8 @@
             <div class="all-done-icon">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
             </div>
-            <h2>You're all set!</h2>
-            <p>All scans for today have been completed.<br>Have a great rest of your day.</p>
+            <h2>រួចរាល់ទាំងអស់! (All set!)</h2>
+            <p>អ្នកបានស្កេនចប់សព្វគ្រប់សម្រាប់ថ្ងៃនេះហើយ។ <br>សូមមានថ្ងៃដ៏ល្អ។ (Have a great rest of your day)</p>
         </div>
     @endif
 
@@ -287,7 +287,7 @@
     <!-- Today's Activity -->
     <div class="activity-card" id="scanSummary">
         <div class="activity-head">
-            <h3>Today's Activity</h3>
+            <h3>សកម្មភាពថ្ងៃនេះ (Today's Activity)</h3>
         </div>
         @php
             $summaryRowsMap = [
