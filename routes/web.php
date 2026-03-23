@@ -24,6 +24,7 @@ use App\Http\Controllers\Employee\AttendanceController;
 use App\Http\Controllers\Employee\LeaveController;
 use App\Http\Controllers\Employee\PanelController;
 use App\Http\Controllers\Employee\SalaryController;
+use App\Http\Controllers\Employee\BankQrController;
 use App\Http\Controllers\ProfilePhotoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -129,6 +130,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             // Employee specific scan history
             Route::get('employees/{employee}/scan-history', [\App\Http\Controllers\Admin\EmployeeController::class, 'scanHistory'])->name('employees.scan-history');
 
+            // Admin remove employee bank QR
+            Route::delete('employees/{employee}/bank-qr', [\App\Http\Controllers\Admin\EmployeeController::class, 'removeEmployeeBankQr'])->name('employees.bank-qr.destroy');
+
             Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription.index');
             Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'download'])->name('invoices.download');
             Route::get('/settings', [SettingController::class, 'edit'])->name('settings.edit');
@@ -196,6 +200,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/changedayoff/store', [App\Http\Controllers\Employee\ChangeDayoffRequestController::class, 'store'])->name('changedayoff.store');    
             Route::get('/salary', [SalaryController::class, 'index'])->name('salary.index');        
             Route::get('/salary/{payroll}/download', [SalaryController::class, 'download'])->name('salary.download');
+
+            // Employee self-upload bank QR
+            Route::post('/bank-qr', [BankQrController::class, 'update'])->name('bank-qr.update');
+            Route::delete('/bank-qr', [BankQrController::class, 'destroy'])->name('bank-qr.destroy');
         });
     });
 

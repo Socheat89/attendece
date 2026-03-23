@@ -26,6 +26,7 @@ class Employee extends Model
         'employment_status',
         'join_date',
         'leave_balance_days',
+        'bank_qr_path',
     ];
 
     protected function casts(): array

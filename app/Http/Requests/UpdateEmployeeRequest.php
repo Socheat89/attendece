@@ -31,6 +31,8 @@ class UpdateEmployeeRequest extends FormRequest
             'employment_status' => ['required', 'in:active,suspended,resigned'],
             'join_date' => ['required', 'date'],
             'photo' => ['nullable', 'image', 'max:2048'],
+            'bank_qr_image' => ['nullable', 'image', 'max:4096'],
+            'remove_bank_qr' => ['nullable', 'boolean'],
             'role' => ['required', 'in:Admin / HR,Employee'],
         ];
     }

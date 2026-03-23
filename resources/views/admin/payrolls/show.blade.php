@@ -92,4 +92,35 @@
             </table>
         </div>
     </div>
+
+    {{-- Bank QR Code --}}
+    @if($payroll->employee->bank_qr_path)
+    <div class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                </svg>
+                Bank QR Code — {{ $payroll->employee->user->name }}
+            </h3>
+            <span class="text-xs text-slate-400">Scan to pay salary</span>
+        </div>
+        <div class="p-6 flex flex-col sm:flex-row items-center gap-6">
+            <div class="border border-slate-200 rounded-xl p-3 bg-slate-50 flex-shrink-0">
+                <img src="{{ asset('storage/' . $payroll->employee->bank_qr_path) }}"
+                     alt="Bank QR Code"
+                     class="w-48 h-48 object-contain">
+            </div>
+            <div class="flex flex-col gap-2">
+                <p class="text-sm font-semibold text-slate-700">{{ $payroll->employee->user->name }}</p>
+                <p class="text-xs text-slate-500">{{ $payroll->employee->employee_id }}</p>
+                <p class="text-xs text-slate-400 mt-2">សូម Scan QR Code ខាងឆ្វេងដើម្បីផ្ទេរប្រាក់ខែឱ្យបុគ្គលិក។</p>
+                <p class="text-sm font-bold text-emerald-700 mt-1">Net: ${{ number_format($payroll->net_salary, 2) }}</p>
+            </div>
+        </div>
+    </div>
+    @endif
+
 </x-layouts.admin>
+

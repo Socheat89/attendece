@@ -108,9 +108,39 @@ class EmployeeController extends Controller
             'leave_deduction_per_day' => $validated['leave_deduction_per_day'] ?? null,
             'employment_status' => $validated['employment_status'],
             'join_date' => $validated['join_date'],
+            'bank_qr_path' => $this->resolveBankQrPath($request, $employee),
         ]);
 
         return redirect()->route('admin.employees.index')->with('status', 'Employee updated successfully.');
+    }
+
+    public function removeEmployeeBankQr(Employee $employee)
+    {
+        if ($employee->bank_qr_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($employee->bank_qr_path);
+            $employee->update(['bank_qr_path' => null]);
+        }
+
+        return back()->with('status', 'Bank QR removed.');
+    }
+
+    private function resolveBankQrPath(Request $request, Employee $employee): ?string
+    {
+        if ($request->boolean('remove_bank_qr')) {
+            if ($employee->bank_qr_path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($employee->bank_qr_path);
+            }
+            return null;
+        }
+
+        if ($request->hasFile('bank_qr_image')) {
+            if ($employee->bank_qr_path) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($employee->bank_qr_path);
+            }
+            return $request->file('bank_qr_image')->store('bank-qr', 'public');
+        }
+
+        return $employee->bank_qr_path;
     }
 
     public function destroy(Employee $employee)

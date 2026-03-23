@@ -176,6 +176,51 @@
                 </div>
             </div>
 
+            {{-- Bank QR Code Section --}}
+            <div class="p-8 border-t border-slate-100">
+                <h3 class="text-lg font-bold text-slate-800 border-b border-slate-100 pb-3 mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-qrcode text-slate-400"></i> Bank QR Code
+                    <span class="text-xs font-normal text-slate-400 tracking-normal lowercase ml-1">(សម្រាប់ទូទាត់ប្រាក់ខែ)</span>
+                </h3>
+
+                @if($editing && $employee->bank_qr_path)
+                    <div class="flex flex-col sm:flex-row items-start gap-6 mb-6">
+                        <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
+                            <img src="{{ asset('storage/' . $employee->bank_qr_path) }}"
+                                 alt="Bank QR Code"
+                                 class="w-40 h-40 object-contain rounded-lg">
+                        </div>
+                        <div class="flex flex-col gap-3 justify-center">
+                            <p class="text-sm text-emerald-600 font-semibold flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check"></i> QR Code uploaded
+                            </p>
+                            <p class="text-xs text-slate-400">Upload a new image below to replace it, or remove it.</p>
+                            <form method="POST" action="{{ route('admin.employees.bank-qr.destroy', $employee) }}"
+                                  onsubmit="return confirm('Remove this bank QR code?')">
+                                @csrf @method('DELETE')
+                                <button type="submit"
+                                        class="text-xs font-medium text-red-500 hover:text-red-700 flex items-center gap-1 transition-colors">
+                                    <i class="fa-solid fa-trash"></i> Remove QR Code
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endif
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                        {{ $editing && $employee->bank_qr_path ? 'Replace' : 'Upload' }} Bank QR Image
+                        <span class="text-slate-400 font-normal lowercase tracking-normal ml-1">(Optional – PNG/JPG, max 4MB)</span>
+                    </label>
+                    <input type="file"
+                           class="w-full border-slate-200 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500/20 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 text-slate-500"
+                           name="bank_qr_image"
+                           id="bank_qr_image"
+                           accept="image/*">
+                    <p class="mt-2 text-xs text-slate-400">Upload a QR code image of the employee's bank account for payroll payment reference.</p>
+                </div>
+            </div>
+
             <!-- Action Buttons -->
             <div class="bg-slate-50/50 px-6 py-5 border-t border-slate-100 flex items-center justify-end gap-3 rounded-b-xl">
                 <a href="{{ route('admin.employees.index') }}" class="text-slate-600 hover:text-slate-800 text-sm font-medium px-4 py-2.5 transition-colors">
@@ -189,3 +234,4 @@
         </form>
     </div>
 </x-layouts.admin>
+
