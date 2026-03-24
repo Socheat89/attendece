@@ -204,6 +204,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             // Employee self-upload bank QR
             Route::post('/bank-qr', [BankQrController::class, 'update'])->name('bank-qr.update');
             Route::delete('/bank-qr', [BankQrController::class, 'destroy'])->name('bank-qr.destroy');
+
+            // Employee Profile
+            Route::get('/profile', fn() => view('employee.profile.index', ['user' => request()->user()]))->name('profile.index');
         });
     });
 

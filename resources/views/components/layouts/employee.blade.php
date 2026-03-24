@@ -920,7 +920,7 @@
     </div>
 </div>
 @php($showSalary = $uiCompanySetting?->payroll_enabled ?? true)
-@php($navCount = $showSalary ? 5 : 4)
+@php($navCount = $showSalary ? 6 : 5)
 @php($routeName = request()->route()?->getName())
 @php($routeDetails = [
     'employee.dashboard' => ['ផ្ទាំងគ្រប់គ្រង (Dashboard)', 'តាមដានស្ថានភាពវត្តមាននិងប្រសិទ្ធភាពការងារប្រចាំថ្ងៃ (Track attendance from dashboard).'],
@@ -928,7 +928,8 @@
     'employee.attendance.index' => ['វត្តមានរបស់ខ្ញុំ (My Attendance)', 'ពិនិត្យសកម្មភាពប្រចាំខែ និងប្រវត្តិស្កេន (Review calendar activity and logs).'],
     'employee.leave.index' => ['សំណើរបស់ខ្ញុំ (My Requests)', 'បង្កើតសំណើច្បាប់ឈប់សម្រាក ថែមម៉ោង ឬប្តូរថ្ងៃ (Create new leave or dayoff requests).'],
     'employee.salary.index' => ['ប្រាក់ខែរបស់ខ្ញុំ (My Salary)', 'ពិនិត្យប្រវត្តិប្រាក់ខែ និងទាញយកសន្លឹកបើកប្រាក់ខែ (View payroll history and details).'],
-    'profile.edit' => ['គណនី (Profile)', 'គ្រប់គ្រងព័ត៌មានផ្ទាល់ខ្លួន និងសុវត្ថិភាព (Manage personal details and security).'],
+    'employee.profile.index' => ['គណនីរបស់ខ្ញុំ (My Profile)', 'គ្រប់គ្រងព័ត៌មានផ្ទាល់ខ្លួន និងការកំណត់សុវត្ថិភាព (Manage your personal details and security configuration).'],
+    'profile.edit' => ['គណនី (Profile)', 'គ្រប់គ្រងព័ត៌មានផ្ទាល់ខ្លួន និងការកំណត់សុវត្ថិភាព (Manage personal details and security).'],
 ])
 @php([$fallbackTitle, $fallbackDescription] = $routeDetails[$routeName] ?? ['Employee Panel', 'Manage daily HR actions from one workspace.'])
 
@@ -1052,6 +1053,10 @@
                 <span>{{ __('Payroll') }}</span>
             </a>
         @endif
+        <a href="{{ route('employee.profile.index') }}" class="{{ request()->routeIs('employee.profile.*') ? 'active' : '' }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M18 21v-2a4 4 0 0 0-4-4H10a4 4 0 0 0-4 4v2"/></svg>
+            <span>{{ __('Profile') }}</span>
+        </a>
     </nav>
 
 
