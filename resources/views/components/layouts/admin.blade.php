@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'HRM') }} - Admin</title>
+    <title>{{ $uiCompanySetting->company_name ?? config('app.name', 'HRM') }} - Admin Portal</title>
+    
+    @php
+        $faviconUrl = auth()->check() 
+            ? (auth()->user()->photo_path ? route('users.photo', auth()->user()) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=0D8ABC&color=fff')
+            : asset('favicon.ico');
+    @endphp
+    <link rel="icon" type="image/png" href="{{ $faviconUrl }}">
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
@@ -22,12 +29,15 @@
     <!-- Page Loading Overlay -->
     <div x-show="pageLoading" 
          style="display: flex;"
-         class="fixed inset-0 z-[60] flex items-center justify-center bg-white transition-opacity duration-500"
+         class="fixed inset-0 z-[60] flex items-center justify-center bg-slate-50/90 backdrop-blur-sm transition-opacity duration-500"
          x-transition:leave="transition ease-in duration-300"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0">
         <div class="flex flex-col items-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div class="relative w-16 h-16 mb-2">
+                <div class="absolute inset-0 rounded-full border-t-2 border-blue-600 animate-[spin_1s_linear_infinite]"></div>
+                <div class="absolute inset-2 rounded-full border-r-2 border-indigo-400 animate-[spin_1.5s_linear_infinite_reverse]"></div>
+            </div>
             <p class="mt-4 text-sm text-slate-500 font-medium animate-pulse">Loading...</p>
         </div>
     </div>
@@ -43,13 +53,13 @@
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" 
-               class="fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:flex-shrink-0 flex flex-col shadow-2xl overflow-y-auto">
+               class="fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:flex-shrink-0 flex flex-col shadow-2xl overflow-y-auto custom-scrollbar">
             
             <!-- Brand -->
             <div class="flex h-20 shrink-0 items-center px-6 bg-slate-950/50 border-b border-white/5">
                 <div class="flex items-center gap-3 w-full">
-                    <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg ring-1 ring-white/10">
-                        {{ substr($uiCompanySetting->company_name ?? 'H', 0, 1) }}
+                    <div class="h-10 w-10 rounded-xl bg-slate-800 flex items-center justify-center text-white font-bold text-xl shadow-lg ring-1 ring-white/10 overflow-hidden">
+                        <img src="{{ $faviconUrl }}" alt="Logo" class="w-full h-full object-cover">
                     </div>
                     <div class="flex flex-col overflow-hidden">
                         <span class="text-lg font-bold text-white tracking-wide truncate leading-none">{{ $uiCompanySetting->company_name ?? config('app.name') }}</span>
@@ -270,7 +280,7 @@
         <!-- Main Content area -->
         <div class="flex flex-1 flex-col overflow-hidden">
             <!-- Topbar -->
-            <header class="flex h-20 flex-shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 shadow-sm z-20">
+            <header class="flex h-20 flex-shrink-0 items-center justify-between border-b border-slate-200/60 bg-white/80 backdrop-blur-xl px-6 shadow-sm z-20">
                 <div class="flex items-center">
                     <button @click="sidebarOpen = true" class="text-slate-500 hover:text-slate-800 lg:hidden mr-6 focus:outline-none transition-colors">
                         <i class="fa-solid fa-bars text-xl"></i>
@@ -295,13 +305,15 @@
 
                     <!-- Profile Dropdown -->
                     <div class="relative" x-data="{ userMenuOpen: false }">
-                        <button @click="userMenuOpen = !userMenuOpen" @click.away="userMenuOpen = false" class="flex items-center gap-3 focus:outline-none">
+                        <button @click="userMenuOpen = !userMenuOpen" @click.away="userMenuOpen = false" class="group flex items-center gap-3 focus:outline-none">
                             <div class="text-right hidden md:block">
                                 <div class="text-sm font-bold text-slate-800">{{ auth()->user()->name }}</div>
                                 <div class="text-xs text-slate-500">{{ auth()->user()->roles->first()->name ?? 'User' }}</div>
                             </div>
-                            <div class="h-10 w-10 rounded-full bg-slate-200 border-2 border-white shadow-sm overflow-hidden">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=0D8ABC&color=fff" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover">
+                            <div class="h-10 w-10 rounded-full bg-slate-200 border-2 border-white shadow-sm ring-2 ring-transparent group-hover:ring-blue-100 transition-all overflow-hidden duration-300">
+                                <img src="{{ auth()->user()->photo_path ? route('users.photo', auth()->user()) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=0D8ABC&color=fff' }}" 
+                                     alt="{{ auth()->user()->name }}" 
+                                     class="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500">
                             </div>
                             <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
                         </button>

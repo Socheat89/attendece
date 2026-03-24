@@ -55,44 +55,67 @@
                          x-transition:enter-end="opacity-100 translate-x-0"
                          class="space-y-10">
                         
-                        <!-- Header Bento Card -->
-                        <div class="flex items-center gap-8 mb-4">
-                            <div class="relative group/avatar">
-                                <div class="absolute -inset-1 bg-gradient-to-tr from-indigo-500 to-blue-500 rounded-2xl blur opacity-0 group-hover/avatar:opacity-30 transition duration-500"></div>
-                                <div class="relative w-20 h-20 rounded-2xl bg-white/5 p-1 border border-white/10 ring-1 ring-black shadow-2xl">
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=111&color=6366f1&size=200" 
-                                         class="w-full h-full rounded-xl object-cover grayscale group-hover/avatar:grayscale-0 transition-all duration-700">
-                                </div>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-black text-white italic tracking-tighter">{{ Auth::user()->name }}</h3>
-                                <div class="flex items-center gap-3 mt-1.5">
-                                    <span class="text-[9px] font-black text-indigo-400 tracking-[0.2em] uppercase">{{ Auth::user()->roles->first()->name ?? 'Operator' }}</span>
-                                    <div class="w-1 h-1 rounded-full bg-white/10"></div>
-                                    <span class="text-[9px] font-black text-white/20 tracking-[0.2em]">ID:{{ Auth::user()->id }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <form method="POST" action="{{ route('profile.update') }}" class="space-y-6">
+                        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-6">
                             @csrf
                             @method('PATCH')
+
+                            <!-- Header Bento Card with Photo Upload -->
+                            <div class="flex items-center gap-8 mb-4 border-b border-white/5 pb-6"
+                                 x-data="{ 
+                                     photoPreview: null,
+                                     updatePreview(event) {
+                                         const file = event.target.files[0];
+                                         if(file) {
+                                             this.photoPreview = URL.createObjectURL(file);
+                                         }
+                                     }
+                                 }">
+                                <div class="relative group/avatar cursor-pointer" @click="$refs.photoInput.click()">
+                                    <div class="absolute -inset-1 bg-gradient-to-tr from-indigo-500 to-blue-500 rounded-2xl blur opacity-0 group-hover/avatar:opacity-30 transition duration-500"></div>
+                                    <div class="relative w-20 h-20 rounded-2xl bg-white/5 p-1 border @error('photo') border-red-500/50 @else border-white/10 @enderror ring-1 ring-white/5 shadow-2xl overflow-hidden flex items-center justify-center">
+                                        <img :src="photoPreview ?? '{{ Auth::user()->photo_path ? route('users.photo', Auth::user()) : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=111&color=6366f1&size=200' }}'" 
+                                             class="w-full h-full rounded-xl object-cover grayscale group-hover/avatar:grayscale-0 transition-all duration-700">
+                                        <div class="absolute inset-0 bg-black/60 rounded-xl flex flex-col items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-300">
+                                            <i class="fa-solid fa-camera text-white/90 text-lg mb-1"></i>
+                                            <span class="text-[8px] font-black text-white/90 uppercase tracking-[0.2em]">{{ __('Upload') }}</span>
+                                        </div>
+                                    </div>
+                                    <input type="file" name="photo" x-ref="photoInput" @change="updatePreview" class="hidden" accept="image/*">
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-black text-white italic tracking-tighter">{{ Auth::user()->name }}</h3>
+                                    <div class="flex items-center gap-3 mt-1.5">
+                                        <span class="text-[9px] font-black text-indigo-400 tracking-[0.2em] uppercase">{{ Auth::user()->roles->first()->name ?? 'Operator' }}</span>
+                                        <div class="w-1 h-1 rounded-full bg-white/10"></div>
+                                        <span class="text-[9px] font-black text-white/20 tracking-[0.2em]">ID:{{ Auth::user()->id }}</span>
+                                    </div>
+                                    @error('photo')
+                                        <p class="text-[10px] text-red-400 font-bold mt-2">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
 
                             <div class="space-y-4">
                                 <div class="space-y-2">
                                     <label class="text-[9px] font-black text-white/30 ml-1 tracking-[0.2em]">{{ __('Identity_Name') }}</label>
                                     <input name="name" type="text" value="{{ old('name', Auth::user()->name) }}" required 
-                                        class="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-xl text-white font-bold text-xs focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all outline-none placeholder-white/10 ring-1 ring-transparent focus:ring-indigo-500/10 shadow-inner" />
+                                        class="w-full px-5 py-4 bg-white/[0.03] border @error('name') border-red-500/50 @else border-white/5 @enderror rounded-xl text-white font-bold text-xs focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all outline-none placeholder-white/10 ring-1 ring-transparent focus:ring-indigo-500/10 shadow-inner" />
+                                    @error('name')
+                                        <p class="text-[10px] text-red-400 font-bold ml-1 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div class="space-y-2">
                                     <label class="text-[9px] font-black text-white/30 ml-1 tracking-[0.2em]">{{ __('Identity_Email') }}</label>
                                     <input name="email" type="email" value="{{ old('email', Auth::user()->email) }}" required 
-                                        class="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-xl text-white font-bold text-xs focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all outline-none placeholder-white/10 ring-1 ring-transparent focus:ring-indigo-500/10 shadow-inner" />
+                                        class="w-full px-5 py-4 bg-white/[0.03] border @error('email') border-red-500/50 @else border-white/5 @enderror rounded-xl text-white font-bold text-xs focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all outline-none placeholder-white/10 ring-1 ring-transparent focus:ring-indigo-500/10 shadow-inner" />
+                                    @error('email')
+                                        <p class="text-[10px] text-red-400 font-bold ml-1 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
-                            <button type="submit" class="w-full py-4.5 bg-white text-black hover:bg-indigo-50 rounded-xl text-[9px] font-black uppercase tracking-[0.3em] transition-all active:scale-[0.98] shadow-[0_10px_20px_rgba(255,255,255,0.05)] border border-white/20">
+                            <button type="submit" class="w-full py-4 bg-white text-black hover:bg-indigo-50 hover:scale-[1.02] rounded-xl text-[9px] font-black uppercase tracking-[0.3em] transition-all active:scale-[0.98] shadow-[0_10px_20px_rgba(255,255,255,0.05)] border border-white/20">
                                 {{ __('Commit Changes') }}
                             </button>
                         </form>
@@ -123,14 +146,20 @@
                                 <div class="space-y-2">
                                     <label class="text-[9px] font-black text-white/30 ml-1 tracking-[0.2em]">{{ __('Access_Password') }}</label>
                                     <input name="current_password" type="password" placeholder="••••••••••••"
-                                        class="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-xl text-white font-bold text-xs focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all outline-none ring-1 ring-transparent focus:ring-indigo-500/10 shadow-inner" />
+                                        class="w-full px-5 py-4 bg-white/[0.03] border @error('current_password', 'updatePassword') border-red-500/50 @else border-white/5 @enderror rounded-xl text-white font-bold text-xs focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all outline-none ring-1 ring-transparent focus:ring-indigo-500/10 shadow-inner" />
+                                    @error('current_password', 'updatePassword')
+                                        <p class="text-[10px] text-red-400 font-bold ml-1 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="space-y-2">
                                         <label class="text-[9px] font-black text-white/30 ml-1 tracking-[0.2em]">{{ __('New_Key') }}</label>
                                         <input name="password" type="password" placeholder="••••••••"
-                                            class="w-full px-5 py-4 bg-white/[0.03] border border-white/5 rounded-xl text-white font-bold text-xs focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all outline-none" />
+                                            class="w-full px-5 py-4 bg-white/[0.03] border @error('password', 'updatePassword') border-red-500/50 @else border-white/5 @enderror rounded-xl text-white font-bold text-xs focus:border-indigo-500/50 focus:bg-white/[0.05] transition-all outline-none" />
+                                        @error('password', 'updatePassword')
+                                            <p class="text-[10px] text-red-400 font-bold ml-1 mt-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-[9px] font-black text-white/30 ml-1 tracking-[0.2em]">{{ __('Verify_Key') }}</label>
@@ -140,7 +169,7 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="w-full py-4.5 bg-white text-black hover:bg-indigo-50 rounded-xl text-[9px] font-black uppercase tracking-[0.3em] transition-all active:scale-[0.98] shadow-[0_10px_20px_rgba(255,255,255,0.05)] border border-white/20">
+                            <button type="submit" class="w-full py-4 bg-white text-black hover:bg-indigo-50 hover:scale-[1.02] rounded-xl text-[9px] font-black uppercase tracking-[0.3em] transition-all active:scale-[0.98] shadow-[0_10px_20px_rgba(255,255,255,0.05)] border border-white/20">
                                 {{ __('Fortify Account') }}
                             </button>
                         </form>
