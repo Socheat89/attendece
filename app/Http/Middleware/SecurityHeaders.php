@@ -43,11 +43,16 @@ class SecurityHeaders
         // Content Security Policy — restrict resource origins
         $csp = implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com",
-            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com",
+            // Scripts: allow CDNs used by Leaflet map + app
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com",
+            // Styles: allow CDNs + Leaflet on unpkg
+            "style-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com",
+            // Fonts
             "font-src 'self' data: https://cdnjs.cloudflare.com https://fonts.gstatic.com",
-            "img-src 'self' data: blob: https:",
-            "connect-src 'self'",
+            // Images: allow map tiles (CartoDB, OpenStreetMap) + data URIs + blobs
+            "img-src 'self' data: blob: https: https://*.basemaps.cartocdn.com https://*.cartocdn.com https://*.tile.openstreetmap.org https://unpkg.com",
+            // Fetch/XHR: allow tile servers + own API
+            "connect-src 'self' https://*.basemaps.cartocdn.com https://*.cartocdn.com https://*.tile.openstreetmap.org",
             "frame-ancestors 'self'",
             "base-uri 'self'",
             "form-action 'self'",
