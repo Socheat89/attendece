@@ -4,6 +4,9 @@ use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\LogActivity;
 use App\Http\Middleware\IpRestriction;
 use App\Http\Middleware\RequiresTwoFactor;
+use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\DdosProtection;
+use App\Http\Middleware\VerifyTelegramWebhook;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -25,9 +28,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'super_admin'          => \App\Http\Middleware\CheckSuperAdmin::class,
             'two_factor'           => RequiresTwoFactor::class,
             'ip_restrict'          => IpRestriction::class,
+            'telegram.verify'      => VerifyTelegramWebhook::class,
         ]);
 
         $middleware->web(append: [
+            DdosProtection::class,        // 1st — drop floods before any DB work
+            SecurityHeaders::class,        // 2nd — inject security headers on all responses
             \App\Http\Middleware\SetLocale::class,
             LogActivity::class,
             IpRestriction::class,

@@ -38,16 +38,18 @@ Route::post('/register-company/{plan}', [\App\Http\Controllers\Saas\Registration
 Route::get('/terms', fn() => view('saas.terms'))->name('terms');
 Route::get('/privacy', fn() => view('saas.privacy'))->name('privacy');
 
-// Quick setup route for Hosting Server
+
+// Quick setup route for Hosting Server — Super Admin only
 Route::get('/hosting-setup', function () {
     try {
         \Illuminate\Support\Facades\Artisan::call('storage:link');
         \Illuminate\Support\Facades\Artisan::call('optimize:clear');
-        return 'Success: Storage linked and Cache cleared! <br> You can remove this route for security.';
+        return 'Success: Storage linked and Cache cleared!';
     } catch (\Exception $e) {
         return 'Error: ' . $e->getMessage();
     }
-});
+})->middleware(['auth', 'super_admin']);
+
 
 Route::get('/lang/{lang}', [\App\Http\Controllers\LanguageController::class, 'switchLang'])->name('lang.switch');
 

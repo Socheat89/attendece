@@ -19,8 +19,8 @@
         {{-- Email --}}
         <div>
             <label class="auth-label" for="email">{{ __('Email Address') }}</label>
-            <div class="auth-input-wrap">
-                <i class="fa-solid fa-envelope auth-input-icon"></i>
+            <div class="auth-input-wrap" style="position:relative">
+                <i class="fa-solid fa-envelope auth-input-icon" style="pointer-events:none;position:absolute;left:.95rem;top:50%;transform:translateY(-50%);z-index:1;color:#60a5fa;font-size:.85rem"></i>
                 <input
                     id="email"
                     type="email"
@@ -31,6 +31,7 @@
                     autocomplete="username"
                     placeholder="you@company.com"
                     class="auth-input"
+                    style="position:relative;z-index:2;cursor:text"
                 >
             </div>
             @error('email')
@@ -48,22 +49,36 @@
                     </a>
                 @endif
             </div>
-            <div class="auth-input-wrap">
-                <i class="fa-solid fa-lock auth-input-icon"></i>
+            <div class="auth-input-wrap" style="position:relative">
+                <i class="fa-solid fa-lock auth-input-icon" style="pointer-events:none;position:absolute;left:.95rem;top:50%;transform:translateY(-50%);z-index:1;color:#60a5fa;font-size:.85rem"></i>
                 <input
                     id="password"
                     type="password"
                     name="password"
                     required
                     autocomplete="current-password"
-                    placeholder="••••••••"
+                    placeholder="Min 8 chars, uppercase, number, symbol"
                     class="auth-input"
-                    style="padding-right:2.8rem"
+                    style="padding-right:2.8rem;position:relative;z-index:2"
+                    oninput="checkPasswordStrength(this.value)"
                 >
-                <button type="button" class="pw-toggle" onclick="togglePw('password','pwEye')" tabindex="-1">
+                <button type="button" class="pw-toggle" onclick="togglePw('password','pwEye')" tabindex="-1" style="z-index:3;position:absolute;right:.6rem;top:50%;transform:translateY(-50%)">
                     <i class="fa-solid fa-eye" id="pwEye"></i>
                 </button>
             </div>
+
+            {{-- Password Strength Meter --}}
+            <div id="pwStrengthWrap" style="display:none;margin-top:.5rem">
+                <div style="display:flex;gap:4px;margin-bottom:.3rem">
+                    <div id="bar1" style="height:4px;flex:1;border-radius:4px;background:#1e293b;transition:background .3s"></div>
+                    <div id="bar2" style="height:4px;flex:1;border-radius:4px;background:#1e293b;transition:background .3s"></div>
+                    <div id="bar3" style="height:4px;flex:1;border-radius:4px;background:#1e293b;transition:background .3s"></div>
+                    <div id="bar4" style="height:4px;flex:1;border-radius:4px;background:#1e293b;transition:background .3s"></div>
+                </div>
+                <p id="pwStrengthText" style="font-size:.72rem;margin:0;color:#64748b"></p>
+                <ul id="pwHints" style="font-size:.72rem;margin:.3rem 0 0;padding-left:1.1rem;color:#64748b;line-height:1.7"></ul>
+            </div>
+
             @error('password')
                 <div class="auth-error"><i class="fa-solid fa-circle-exclamation"></i>{{ $message }}</div>
             @enderror
@@ -116,7 +131,66 @@
             }
         }
 
-        document.getElementById('loginForm').addEventListener('submit', function () {
+        let pwScore = 0;
+
+        function checkPasswordStrength(value) {
+            const wrap = document.getElementById('pwStrengthWrap');
+            const text = document.getElementById('pwStrengthText');
+            const hints = document.getElementById('pwHints');
+            const bars = [
+                document.getElementById('bar1'),
+                document.getElementById('bar2'),
+                document.getElementById('bar3'),
+                document.getElementById('bar4'),
+            ];
+
+            if (!value) {
+                wrap.style.display = 'none';
+                pwScore = 0;
+                return;
+            }
+            wrap.style.display = 'block';
+
+            // Check criteria
+            const checks = {
+                len:    value.length >= 8,
+                upper:  /[A-Z]/.test(value),
+                number: /[0-9]/.test(value),
+                symbol: /[^A-Za-z0-9]/.test(value),
+            };
+
+            pwScore = Object.values(checks).filter(Boolean).length;
+
+            // Colors per level
+            const colors = ['#ef4444','#f97316','#eab308','#22c55e'];
+            const labels = ['Weak','Fair','Good','Strong'];
+
+            bars.forEach((bar, i) => {
+                bar.style.background = i < pwScore ? colors[pwScore - 1] : '#1e293b';
+            });
+
+            text.textContent = labels[pwScore - 1] ?? '';
+            text.style.color = colors[pwScore - 1] ?? '#64748b';
+
+            let hintList = [];
+            if (!checks.len)    hintList.push('At least 8 characters');
+            if (!checks.upper)  hintList.push('At least 1 uppercase letter (A-Z)');
+            if (!checks.number) hintList.push('At least 1 number (0-9)');
+            if (!checks.symbol) hintList.push('At least 1 symbol (e.g. !@#$%)');
+            hints.innerHTML = hintList.map(h => `<li>${h}</li>`).join('');
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            const pwInput = document.getElementById('password');
+            if (pwInput.value && pwScore < 4) {
+                e.preventDefault();
+                // Flash the strength bar
+                document.getElementById('pwStrengthWrap').style.display = 'block';
+                checkPasswordStrength(pwInput.value);
+                pwInput.focus();
+                return;
+            }
+
             const btn = document.getElementById('loginBtn');
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="font-size:.85rem"></i> {{ __('Authenticating...') }}';
             btn.disabled = true;
