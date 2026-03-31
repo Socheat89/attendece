@@ -195,14 +195,10 @@
                                 <i class="fa-solid fa-circle-check"></i> QR Code uploaded
                             </p>
                             <p class="text-xs text-slate-400">Upload a new image below to replace it, or remove it.</p>
-                            <form method="POST" action="{{ route('admin.employees.bank-qr.destroy', $employee) }}"
-                                  onsubmit="return confirm('Remove this bank QR code?')">
-                                @csrf @method('DELETE')
-                                <button type="submit"
-                                        class="text-xs font-medium text-red-500 hover:text-red-700 flex items-center gap-1 transition-colors">
-                                    <i class="fa-solid fa-trash"></i> Remove QR Code
-                                </button>
-                            </form>
+                            <button type="submit" form="removeQrForm"
+                                    class="text-xs font-medium text-red-500 hover:text-red-700 flex items-center gap-1 transition-colors">
+                                <i class="fa-solid fa-trash"></i> Remove QR Code
+                            </button>
                         </div>
                     </div>
                 @endif
@@ -233,5 +229,10 @@
             </div>
         </form>
     </div>
-</x-layouts.admin>
 
+    @if($editing && $employee->bank_qr_path)
+        <form id="removeQrForm" method="POST" action="{{ route('admin.employees.bank-qr.destroy', $employee) }}" onsubmit="return confirm('Remove this bank QR code?')">
+            @csrf @method('DELETE')
+        </form>
+    @endif
+</x-layouts.admin>
