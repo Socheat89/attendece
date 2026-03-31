@@ -44,7 +44,7 @@ class SecurityHeaders
         $csp = implode('; ', [
             "default-src 'self'",
             // Scripts: allow CDNs used by Leaflet map + app
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://static.cloudflareinsights.com https://cloudflareinsights.com",
             // Styles: allow CDNs + Leaflet on unpkg
             "style-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com",
             // Fonts
@@ -52,7 +52,7 @@ class SecurityHeaders
             // Images: allow map tiles (CartoDB, OpenStreetMap) + data URIs + blobs
             "img-src 'self' data: blob: https: https://*.basemaps.cartocdn.com https://*.cartocdn.com https://*.tile.openstreetmap.org https://unpkg.com",
             // Fetch/XHR: allow tile servers + own API
-            "connect-src 'self' https://*.basemaps.cartocdn.com https://*.cartocdn.com https://*.tile.openstreetmap.org",
+            "connect-src 'self' https://*.basemaps.cartocdn.com https://*.cartocdn.com https://*.tile.openstreetmap.org https://cloudflareinsights.com",
             "frame-ancestors 'self'",
             "base-uri 'self'",
             "form-action 'self'",
