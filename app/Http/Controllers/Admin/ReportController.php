@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 class ReportController extends Controller
 {
-    public function index()
+    private function getReportData()
     {
         $now       = Carbon::now();
         $companyId = auth()->user()->company_id;
@@ -42,7 +42,7 @@ class ReportController extends Controller
                 ->get()
         );
 
-        $monthlyPayroll = Cache::remember(
+        $monthlyPayroll = (float) Cache::remember(
             "report_payroll_total_{$companyId}_{$monthKey}",
             $ttl,
             fn () => Payroll::query()
@@ -51,6 +51,69 @@ class ReportController extends Controller
                 ->sum('net_salary')
         );
 
-        return view('admin.reports.index', compact('attendanceByBranch', 'leaveByType', 'monthlyPayroll'));
+        return compact('attendanceByBranch', 'leaveByType', 'monthlyPayroll', 'now');
+    }
+
+    public function index()
+    {
+        return view('admin.reports.index', $this->getReportData());
+    }
+
+    public function exportPdf()
+    {
+        $data = $this->getReportData();
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.reports.pdf', $data);
+        return $pdf->download('HR_Report_'.$data['now']->format('M_Y').'.pdf');
+    }
+
+    public function exportExcel()
+    {
+        $data = $this->getReportData();
+        
+        $filename = "HR_Report_" . $data['now']->format('M_Y') . ".csv";
+        $headers = [
+            "Content-type"        => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use($data) {
+            $file = fopen('php://output', 'w');
+            
+            // Add UTF-8 BOM for proper excel rendering
+            fputs($file, $bom =(chr(0xEF) . chr(0xBB) . chr(0xBF)));
+            
+            fputcsv($file, ['Category', 'Item / Name', 'Total / Amount']);
+
+            fputcsv($file, ['PAYROLL', 'Monthly Estimated Payroll', '$' . number_format($data['monthlyPayroll'], 2)]);
+            fputcsv($file, ['', '', '']);
+
+            fputcsv($file, ['ATTENDANCE BY BRANCH', '', '']);
+            if ($data['attendanceByBranch']->isEmpty()) {
+                fputcsv($file, ['', 'No data available', '0']);
+            } else {
+                foreach ($data['attendanceByBranch'] as $row) {
+                    $name = $row->branch ? $row->branch->name : 'N/A';
+                    fputcsv($file, ['', $name, $row->total]);
+                }
+            }
+            fputcsv($file, ['', '', '']);
+
+            fputcsv($file, ['LEAVE BY TYPE', '', '']);
+            if ($data['leaveByType']->isEmpty()) {
+                fputcsv($file, ['', 'No data available', '0']);
+            } else {
+                foreach ($data['leaveByType'] as $row) {
+                    $name = $row->leaveType ? $row->leaveType->name : 'N/A';
+                    fputcsv($file, ['', $name, $row->total]);
+                }
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

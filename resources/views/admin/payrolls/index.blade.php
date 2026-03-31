@@ -4,10 +4,18 @@
             <h2 class="text-2xl font-bold text-slate-800 tracking-tight">{{ __('Payroll') }}</h2>
             <p class="text-sm text-slate-500 mt-1">{{ __('Manage and generate employee payrolls.') }}</p>
         </div>
-        <a href="{{ route('admin.payrolls.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            {{ __('Generate Payroll') }}
-        </a>
+        <div class="flex items-center gap-2 flex-wrap">
+            <a href="{{ route('admin.payrolls.export.excel') }}" class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-4 py-2 rounded-lg text-sm font-semibold transition-colors border border-emerald-200">
+                <i class="fa-solid fa-file-excel w-4 h-4"></i> Excel
+            </a>
+            <a href="{{ route('admin.payrolls.export.pdf') }}" class="inline-flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg text-sm font-semibold transition-colors border border-red-200">
+                <i class="fa-solid fa-file-pdf w-4 h-4"></i> PDF
+            </a>
+            <a href="{{ route('admin.payrolls.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                {{ __('Generate Payroll') }}
+            </a>
+        </div>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-slate-200">

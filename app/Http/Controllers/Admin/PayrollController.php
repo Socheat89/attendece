@@ -24,6 +24,52 @@ class PayrollController extends Controller
         return view('admin.payrolls.index', compact('payrolls'));
     }
 
+    public function exportPdf()
+    {
+        $payrolls = Payroll::query()->with('employee.user')->latest()->get();
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.payrolls.export_pdf', compact('payrolls'));
+        return $pdf->download('Payroll_List_'.now()->format('M_Y').'.pdf');
+    }
+
+    public function exportExcel()
+    {
+        $payrolls = Payroll::query()->with('employee.user')->latest()->get();
+        
+        $filename = "Payroll_List_" . now()->format('M_Y') . ".csv";
+        $headers = [
+            "Content-type"        => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use($payrolls) {
+            $file = fopen('php://output', 'w');
+            fputs($file, $bom =(chr(0xEF) . chr(0xBB) . chr(0xBF)));
+            
+            fputcsv($file, ['ID', 'Employee ID', 'Name', 'Period Start', 'Period End', 'Gross Salary', 'Net Salary', 'Status']);
+
+            foreach ($payrolls as $payroll) {
+                fputcsv($file, [
+                    $payroll->id,
+                    $payroll->employee->employee_id ?? 'N/A',
+                    $payroll->employee->user->name ?? 'N/A',
+                    $payroll->period_start->format('Y-m-d'),
+                    $payroll->period_end->format('Y-m-d'),
+                    $payroll->gross_salary,
+                    $payroll->net_salary,
+                    $payroll->status
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+
     public function create()
     {
         $employees = Employee::query()->with('user')->orderBy('employee_id')->get();

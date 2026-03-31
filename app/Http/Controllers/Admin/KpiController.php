@@ -9,6 +9,54 @@ use Illuminate\Http\Request;
 
 class KpiController extends Controller
 {
+    public function exportPdf()
+    {
+        $categories = KpiCategory::with(['kpis' => fn($q) => $q->orderBy('name')])
+            ->where('company_id', auth()->user()->company_id)
+            ->orderBy('name')
+            ->get();
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.performance.kpi.export_pdf', compact('categories'));
+        return $pdf->download('KPI_List_'.now()->format('M_Y').'.pdf');
+    }
+
+    public function exportExcel()
+    {
+        $categories = KpiCategory::with(['kpis' => fn($q) => $q->orderBy('name')])
+            ->where('company_id', auth()->user()->company_id)
+            ->orderBy('name')
+            ->get();
+        
+        $filename = "KPI_List_" . now()->format('M_Y') . ".csv";
+        $headers = [
+            "Content-type"        => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use($categories) {
+            $file = fopen('php://output', 'w');
+            fputs($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, ['Category', 'KPI Name', 'Description', 'Weight', 'Status']);
+
+            foreach ($categories as $cat) {
+                foreach ($cat->kpis as $kpi) {
+                    fputcsv($file, [
+                        $cat->name,
+                        $kpi->name,
+                        $kpi->description,
+                        $kpi->weight . '%',
+                        $kpi->is_active ? 'Active' : 'Inactive'
+                    ]);
+                }
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function index()
     {
         $categories = KpiCategory::with(['kpis' => fn($q) => $q->orderBy('name')])

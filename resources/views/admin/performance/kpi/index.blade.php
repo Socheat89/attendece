@@ -7,11 +7,19 @@
                 <h1 class="text-2xl font-bold text-slate-800">📊 {{ __('KPI Management') }}</h1>
                 <p class="text-sm text-slate-500 mt-1">{{ __('Define Key Performance Indicators for employee evaluation.') }}</p>
             </div>
-            {{-- Create Category Button --}}
-            <button @click="showCategoryModal = true"
-                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-bold shadow-md shadow-blue-200 hover:shadow-blue-300 hover:-translate-y-0.5 transition-all">
-                <i class="fa-solid fa-folder-plus"></i> {{ __('New Category') }}
-            </button>
+            <div class="flex items-center gap-2 flex-wrap">
+                <a href="{{ route('admin.performance.kpi.export.excel') }}" class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm border border-emerald-200">
+                    <i class="fa-solid fa-file-excel"></i> Excel
+                </a>
+                <a href="{{ route('admin.performance.kpi.export.pdf') }}" class="inline-flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm border border-red-200">
+                    <i class="fa-solid fa-file-pdf"></i> PDF
+                </a>
+                {{-- Create Category Button --}}
+                <button @click="showCategoryModal = true"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-bold shadow-md shadow-blue-200 hover:shadow-blue-300 hover:-translate-y-0.5 transition-all">
+                    <i class="fa-solid fa-folder-plus"></i> {{ __('New Category') }}
+                </button>
+            </div>
         </div>
 
         {{-- New Category Modal --}}

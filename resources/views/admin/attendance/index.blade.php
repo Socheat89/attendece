@@ -1,6 +1,14 @@
 <x-layouts.admin>
-    <div class="mb-6">
+    <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h2 class="text-2xl font-bold text-slate-800 tracking-tight">{{ __('Attendance Management') }}</h2>
+        <div class="flex items-center gap-2 flex-wrap">
+            <a href="{{ route('admin.attendance.export.excel', request()->all()) }}" class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-4 py-2 rounded-lg text-sm font-semibold transition-colors border border-emerald-200">
+                <i class="fa-solid fa-file-excel w-4 h-4"></i> Excel
+            </a>
+            <a href="{{ route('admin.attendance.export.pdf', request()->all()) }}" class="inline-flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg text-sm font-semibold transition-colors border border-red-200">
+                <i class="fa-solid fa-file-pdf w-4 h-4"></i> PDF
+            </a>
+        </div>
     </div>
 
     <!-- Summary Widgets -->

@@ -14,11 +14,62 @@ use Illuminate\Support\Facades\Cache;
 
 class AttendanceController extends Controller
 {
-    public function index(Request $request)
+    public function exportPdf(Request $request)
     {
         $date      = $request->input('date', now()->toDateString());
-        $tab       = $request->input('tab', 'all'); // all | late
-        $companyId = auth()->user()->company_id;
+        $attendanceLogs = AttendanceLog::query()
+            ->with(['employee.user', 'employee.branch', 'employee.department'])
+            ->whereDate('scanned_at', $date)
+            ->latest('scanned_at')
+            ->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.attendance.export_pdf', compact('attendanceLogs', 'date'));
+        return $pdf->download('Attendance_'.$date.'.pdf');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $date = $request->input('date', now()->toDateString());
+        $attendanceLogs = AttendanceLog::query()
+            ->with(['employee.user', 'employee.branch', 'employee.department', 'attendanceSession'])
+            ->whereDate('scanned_at', $date)
+            ->latest('scanned_at')
+            ->get();
+        
+        $filename = "Attendance_" . $date . ".csv";
+        $headers = [
+            "Content-type"        => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use($attendanceLogs, $date) {
+            $file = fopen('php://output', 'w');
+            fputs($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            
+            fputcsv($file, ['Employee ID', 'Name', 'Branch', 'Department', 'Date', 'Type', 'Time']);
+
+            foreach ($attendanceLogs as $log) {
+                fputcsv($file, [
+                    $log->employee->employee_id ?? 'N/A',
+                    $log->employee->user->name ?? 'N/A',
+                    $log->employee->branch->name ?? 'N/A',
+                    $log->employee->department->name ?? 'N/A',
+                    $date,
+                    $log->scan_type ?? 'Scan',
+                    $log->scanned_at ? $log->scanned_at->format('H:i') : 'N/A'
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function index(Request $request)
+    {
 
         $attendanceLogs = AttendanceLog::query()
             ->with(['employee.user', 'employee.branch', 'employee.department', 'attendanceSession'])

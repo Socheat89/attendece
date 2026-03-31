@@ -4,6 +4,16 @@
             <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Reports & Analytics</h2>
             <p class="text-sm text-slate-500 mt-1">Overview of payroll, attendance, and leave statistics</p>
         </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.reports.excel') }}" class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors border border-emerald-200">
+                <i class="fa-solid fa-file-excel"></i>
+                Export Excel
+            </a>
+            <a href="{{ route('admin.reports.pdf') }}" class="inline-flex items-center gap-2 bg-red-50 text-red-700 hover:bg-red-100 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors border border-red-200">
+                <i class="fa-solid fa-file-pdf"></i>
+                Export PDF
+            </a>
+        </div>
     </div>
 
     <!-- Top Stats -->

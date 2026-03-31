@@ -93,6 +93,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::get('/attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');
             Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.pdf');
+            Route::get('/reports/export/excel', [ReportController::class, 'exportExcel'])->name('reports.excel');
 
             Route::resource('employees', EmployeeController::class)->except(['show']);
             Route::resource('departments', DepartmentController::class)->except(['show']);
@@ -107,7 +109,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/change-dayoff-requests', [App\Http\Controllers\Admin\ChangeDayoffRequestController::class, 'index'])->name('change-dayoff-requests.index');
             Route::patch('/change-dayoff-requests/{changeDayoffRequest}/status', [App\Http\Controllers\Admin\ChangeDayoffRequestController::class, 'updateStatus'])->name('change-dayoff-requests.status');
 
+            Route::get('/attendance/export/pdf', [AdminAttendanceController::class, 'exportPdf'])->name('attendance.export.pdf');
+            Route::get('/attendance/export/excel', [AdminAttendanceController::class, 'exportExcel'])->name('attendance.export.excel');
+
             Route::get('/payrolls', [PayrollController::class, 'index'])->name('payrolls.index');
+            Route::get('/payrolls/export/pdf', [PayrollController::class, 'exportPdf'])->name('payrolls.export.pdf');
+            Route::get('/payrolls/export/excel', [PayrollController::class, 'exportExcel'])->name('payrolls.export.excel');
             Route::get('/payrolls/generate', [PayrollController::class, 'create'])->name('payrolls.create');
             Route::post('/payrolls/generate', [PayrollController::class, 'generate'])->name('payrolls.generate');
             Route::get('/payrolls/{payroll}', [PayrollController::class, 'show'])->name('payrolls.show');
@@ -170,6 +177,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::prefix('performance')->as('performance.')->group(function () {
                 // KPI setup
                 Route::get('kpi',                                    [KpiController::class, 'index'])->name('kpi.index');
+                Route::get('kpi/export/pdf',                         [KpiController::class, 'exportPdf'])->name('kpi.export.pdf');
+                Route::get('kpi/export/excel',                       [KpiController::class, 'exportExcel'])->name('kpi.export.excel');
                 Route::post('kpi/category',                          [KpiController::class, 'storeCategory'])->name('kpi.category.store');
                 Route::post('kpi',                                   [KpiController::class, 'storeKpi'])->name('kpi.store');
                 Route::patch('kpi/{kpi}/toggle',                     [KpiController::class, 'toggleKpi'])->name('kpi.toggle');
