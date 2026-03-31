@@ -1,2 +1,29 @@
 User-agent: *
-Disallow:
+
+# Block all authenticated/private routes
+Disallow: /admin/
+Disallow: /employee/
+Disallow: /api/
+Disallow: /super-admin/
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /settings
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+Disallow: /two-factor
+Disallow: /attendance/
+Disallow: /payroll/
+Disallow: /reports/
+Disallow: /notifications/
+Disallow: /storage/
+
+# Allow public pages only
+Allow: /
+Allow: /pricing
+Allow: /terms
+Allow: /privacy
+Allow: /about
+
+# Sitemap location
+Sitemap: https://besthrm.app/sitemap.xml
