@@ -3,8 +3,78 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mekong CyberUnit | Modern HR Management System</title>
-    <meta name="description" content="Mekong CyberUnit - Smart Human Resource Management: Attendance, Payroll, and Reports">
+
+    {{-- ══ PRIMARY SEO ══ --}}
+    <title>BestHRM | Smart HR Management System — Attendance, Payroll & Reports</title>
+    <meta name="description" content="BestHRM by Mekong CyberUnit — the all-in-one HR platform for Cambodian businesses. Manage employees, QR attendance, automated payroll, and analytics reports in one system. Start free today.">
+    <meta name="keywords" content="HR management system, attendance system, payroll software, employee management, Cambodia HRM, QR attendance, besthrm">
+    <meta name="author" content="Mekong CyberUnit">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://besthrm.app/">
+
+    {{-- ══ OPEN GRAPH (Facebook, LinkedIn, Google preview card) ══ --}}
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://besthrm.app/">
+    <meta property="og:title" content="BestHRM | Smart HR Management System">
+    <meta property="og:description" content="Manage employees, QR attendance, automated payroll, and reports — all in one smart system. Built for growing Cambodian businesses.">
+    <meta property="og:image" content="https://besthrm.app/images/og-cover.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="BestHRM Dashboard Preview">
+    <meta property="og:site_name" content="BestHRM">
+    <meta property="og:locale" content="en_US">
+
+    {{-- ══ TWITTER CARD ══ --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://besthrm.app/">
+    <meta name="twitter:title" content="BestHRM | Smart HR Management System">
+    <meta name="twitter:description" content="Manage employees, QR attendance, automated payroll, and reports — all in one smart system.">
+    <meta name="twitter:image" content="https://besthrm.app/images/og-cover.png">
+
+    {{-- ══ FAVICON ══ --}}
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+
+    {{-- ══ JSON-LD STRUCTURED DATA (Google Rich Results) ══ --}}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "BestHRM",
+      "url": "https://besthrm.app",
+      "description": "Smart Human Resource Management System for Cambodian businesses — QR attendance, automated payroll, employee management, and reports.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Mekong CyberUnit",
+        "url": "https://besthrm.app",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://besthrm.app/images/og-cover.png"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "url": "https://t.me/SOCHEAT_DOEM"
+        }
+      },
+      "featureList": [
+        "QR Code Attendance Tracking",
+        "Automated Payroll Calculation",
+        "Employee Management",
+        "Leave Management",
+        "Analytical Reports",
+        "Telegram Notifications",
+        "Multi-company Support"
+      ]
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
