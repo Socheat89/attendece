@@ -38,28 +38,28 @@
     {{-- ══ JSON-LD STRUCTURED DATA (Google Rich Results) ══ --}}
     <script type="application/ld+json">
     {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
+      "@@context": "https://schema.org",
+      "@@type": "SoftwareApplication",
       "name": "BestHRM",
       "url": "https://besthrm.app",
       "description": "Smart Human Resource Management System for Cambodian businesses — QR attendance, automated payroll, employee management, and reports.",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "Web",
       "offers": {
-        "@type": "Offer",
+        "@@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
       },
       "publisher": {
-        "@type": "Organization",
+        "@@type": "Organization",
         "name": "Mekong CyberUnit",
         "url": "https://besthrm.app",
         "logo": {
-          "@type": "ImageObject",
+          "@@type": "ImageObject",
           "url": "https://besthrm.app/images/og-cover.png"
         },
         "contactPoint": {
-          "@type": "ContactPoint",
+          "@@type": "ContactPoint",
           "contactType": "customer support",
           "url": "https://t.me/SOCHEAT_DOEM"
         }
