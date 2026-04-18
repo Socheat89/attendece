@@ -1,0 +1,344 @@
+﻿<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HRM System Manual - User Flow Guide</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Khmer:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Khmer', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      scroll-behavior: smooth;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+    }
+  </style>
+</head>
+<body class="text-slate-600 antialiased selection:bg-brand-100 selection:text-brand-900">
+
+  <!-- Navigation / Header -->
+  <nav class="fixed top-0 w-full z-50 glass-effect border-b border-slate-200 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-brand-500/30">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <span class="font-bold text-slate-800 text-lg tracking-tight">HRM Manual</span>
+      </div>
+      <div class="text-xs font-medium bg-slate-100 text-slate-500 px-3 py-1 rounded-full border border-slate-200">
+        v1.0 • Laravel 12
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+    <div class="bg-gradient-to-br from-brand-800 to-brand-600 rounded-3xl p-8 sm:p-12 text-white shadow-xl shadow-brand-900/10 relative overflow-hidden group">
+      <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition duration-700"></div>
+      <div class="relative z-10">
+        <h1 class="text-3xl sm:text-4xl font-bold mb-4 leading-tight">HRM System User Flow Guide</h1>
+        <p class="text-brand-100 text-lg max-w-2xl leading-relaxed mb-6">
+          ឯកសារណែនាំសង្ខេបសម្រាប់អ្នកប្រើប្រាស់ (User) និងអ្នកគ្រប់គ្រង (Admin) ក្នុងការប្រើប្រាស់ប្រព័ន្ធគ្រប់គ្រងធនធានមនុស្ស។
+        </p>
+        <div class="flex flex-wrap gap-3 text-sm">
+          <span class="bg-white/20 backdrop-blur px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
+            <i class="fa-solid fa-server"></i> Laravel 12
+          </span>
+          <span class="bg-white/20 backdrop-blur px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
+            <i class="fa-solid fa-database"></i> MySQL
+          </span>
+          <span class="bg-white/20 backdrop-blur px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved"></i> Spatie Permission
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 space-y-10">
+
+    <!-- Section 1: Quick Start -->
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-lg">1</div>
+        <h2 class="text-2xl font-bold text-slate-800">របៀបប្រើ System (Quick Start)</h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Admin Card -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-lg shadow-slate-200/50 hover:border-brand-200 transition duration-300">
+          <h3 class="flex items-center gap-2 text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">
+            <i class="fa-solid fa-user-tie text-brand-600"></i> For Admin / HR
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex gap-3 text-sm">
+              <i class="fa-solid fa-check text-green-500 mt-1"></i>
+              <span>Login ជា <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700 font-mono text-xs border border-slate-200">Super Admin</code> ឬ <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700 font-mono text-xs border border-slate-200">HR</code> → ចូល <span class="font-semibold text-slate-700">Dashboard</span></span>
+            </li>
+            <li class="flex gap-3 text-sm">
+              <i class="fa-solid fa-check text-green-500 mt-1"></i>
+              <span>កំណត់ <span class="font-semibold text-slate-700">Branches</span> និង <span class="font-semibold text-slate-700">Departments</span></span>
+            </li>
+            <li class="flex gap-3 text-sm">
+              <i class="fa-solid fa-check text-green-500 mt-1"></i>
+              <span>ចុះឈ្មោះបុគ្គលិក (<span class="font-semibold text-slate-700">Employees</span>) និងកំណត់ Role</span>
+            </li>
+            <li class="flex gap-3 text-sm">
+              <i class="fa-solid fa-check text-green-500 mt-1"></i>
+              <span>កំណត់ម៉ោងការងារ (<span class="font-semibold text-slate-700">Schedules</span>)</span>
+            </li>
+            <li class="flex gap-3 text-sm">
+              <i class="fa-solid fa-check text-green-500 mt-1"></i>
+              <span>Generate <span class="font-semibold text-slate-700">Attendance QR</span> (បើប្រើ QR)</span>
+            </li>
+            <li class="flex gap-3 text-sm">
+              <i class="fa-solid fa-check text-green-500 mt-1"></i>
+              <span>គ្រប់គ្រង Payroll & Reports</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Employee Card -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-lg shadow-slate-200/50 hover:border-brand-200 transition duration-300">
+          <h3 class="flex items-center gap-2 text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">
+            <i class="fa-solid fa-user text-brand-600"></i> For Employee
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex gap-3 text-sm">
+              <i class="fa-solid fa-check text-green-500 mt-1"></i>
+              <span>Login → <span class="font-semibold text-slate-700">User Dashboard</span></span>
+            </li>
+            <li class="flex gap-3 text-sm">
+              <i class="fa-solid fa-check text-green-500 mt-1"></i>
+              <span>ចូល <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700 font-mono text-xs border border-slate-200">/scan</code> ដើម្បី Check-In/Out</span>
+            </li>
+            <li class="flex gap-3 text-sm">
+              <i class="fa-solid fa-check text-green-500 mt-1"></i>
+              <span>ស្នើសុំច្បាប់ (<span class="font-semibold text-slate-700">Leave Requests</span>)</span>
+            </li>
+            <li class="flex gap-3 text-sm">
+              <i class="fa-solid fa-check text-green-500 mt-1"></i>
+              <span>ស្នើសុំថែមម៉ោង (<span class="font-semibold text-slate-700">Overtime</span>)</span>
+            </li>
+            <li class="flex gap-3 text-sm">
+              <i class="fa-solid fa-check text-green-500 mt-1"></i>
+              <span>មើលប្រាក់ខែ (<span class="font-semibold text-slate-700">Payslip</span>)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: End-to-End Flow -->
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-lg">2</div>
+        <h2 class="text-2xl font-bold text-slate-800">End-to-End Flow Detail</h2>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Flow Item -->
+        <div class="group bg-white rounded-xl p-5 border-l-4 border-brand-500 shadow-sm hover:shadow-md transition">
+          <h4 class="font-bold text-brand-700 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-lock text-sm"></i> Authentication & Routing
+          </h4>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            User ចូល <code class="text-xs bg-slate-100 p-1 rounded">/login</code> → System authenticate → ពិនិត្យ Role → Redirect ទៅ Dashboard តាមតួនាទី។ Route ទាំងអស់ត្រូវបានការពារដោយ Middleware។
+          </p>
+        </div>
+
+        <!-- Flow Item -->
+        <div class="group bg-white rounded-xl p-5 border-l-4 border-yellow-500 shadow-sm hover:shadow-md transition">
+          <h4 class="font-bold text-yellow-700 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-qrcode text-sm"></i> Attendance Scan
+          </h4>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Scan → System resolve ប្រភេទស្កេន (In/Out) → ពិនិត្យ Status, Leave, Duplicate, GPS, QR → Save to <code class="text-xs bg-slate-100 p-1 rounded">attendance_logs</code> → ជូនដំណឹងតាម Telegram។
+          </p>
+        </div>
+
+        <!-- Flow Item -->
+        <div class="group bg-white rounded-xl p-5 border-l-4 border-green-500 shadow-sm hover:shadow-md transition">
+          <h4 class="font-bold text-green-700 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-paper-plane text-sm"></i> Requests (Leave / OT)
+          </h4>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Employee submit (Pending) → Admin Review → Approve/Reject + Comment → Update Record & Notify Employee.
+          </p>
+        </div>
+
+        <!-- Flow Item -->
+        <div class="group bg-white rounded-xl p-5 border-l-4 border-purple-500 shadow-sm hover:shadow-md transition">
+          <h4 class="font-bold text-purple-700 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-money-bill-wave text-sm"></i> Payroll Generation
+          </h4>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Admin select period → System loop employees → គណនា Base Salary + OT - Late - Leave → Save Payroll → Allow Employee Download.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Visual Flow Charts -->
+    <section>
+       <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-lg">3</div>
+        <h2 class="text-2xl font-bold text-slate-800">Visual Process Flow</h2>
+      </div>
+      
+      <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-xl shadow-slate-200/50">
+        
+        <!-- Flow A -->
+        <div class="mb-10">
+          <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">A. ដំណើរការប្រចាំថ្ងៃ (Attendance)</h3>
+          <div class="flex flex-col md:flex-row items-center gap-4 text-sm font-medium">
+            <div class="bg-slate-50 border border-slate-200 text-slate-700 px-5 py-3 rounded-lg w-full md:w-auto text-center shadow-sm">
+              <i class="fa-solid fa-right-to-bracket mb-1 block text-brand-500"></i> Open App
+            </div>
+            <i class="fa-solid fa-arrow-down md:fa-arrow-right text-slate-300"></i>
+            <div class="bg-slate-50 border border-slate-200 text-slate-700 px-5 py-3 rounded-lg w-full md:w-auto text-center shadow-sm">
+              <i class="fa-solid fa-qrcode mb-1 block text-brand-500"></i> Scan QR / GPS
+            </div>
+            <i class="fa-solid fa-arrow-down md:fa-arrow-right text-slate-300"></i>
+            <div class="bg-brand-50 border border-brand-100 text-brand-700 px-5 py-3 rounded-lg w-full md:w-auto text-center shadow-sm relative">
+                <span class="absolute -top-2 -right-2 w-4 h-4 bg-green-500 rounded-full animate-pulse"></span>
+              <i class="fa-solid fa-server mb-1 block"></i> System Validate
+            </div>
+            <i class="fa-solid fa-arrow-down md:fa-arrow-right text-slate-300"></i>
+            <div class="bg-green-50 border border-green-200 text-green-700 px-5 py-3 rounded-lg w-full md:w-auto text-center shadow-sm">
+              <i class="fa-solid fa-check mb-1 block"></i> Success / Notified
+            </div>
+          </div>
+        </div>
+
+        <!-- Flow B -->
+        <div>
+          <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">B. ដំណើរការបើកប្រាក់ខែ (Payroll)</h3>
+          <div class="flex flex-col md:flex-row items-center gap-4 text-sm font-medium">
+            <div class="bg-slate-50 border border-slate-200 text-slate-700 px-5 py-3 rounded-lg w-full md:w-auto text-center shadow-sm">
+              Select Period
+            </div>
+            <i class="fa-solid fa-arrow-down md:fa-arrow-right text-slate-300"></i>
+            <div class="bg-slate-50 border border-slate-200 text-slate-700 px-5 py-3 rounded-lg w-full md:w-auto text-center shadow-sm">
+              Generate
+            </div>
+            <i class="fa-solid fa-arrow-down md:fa-arrow-right text-slate-300"></i>
+            <div class="p-3 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50 w-full md:w-auto">
+                <div class="text-xs text-slate-500 text-center mb-1">Logic Calculation</div>
+                <div class="flex gap-2 justify-center">
+                    <span class="px-2 py-1 bg-white border rounded text-xs">Salary</span>
+                    <span class="px-2 py-1 bg-white border rounded text-xs">+ OT</span>
+                    <span class="px-2 py-1 bg-white border rounded text-xs text-red-500">- Late</span>
+                </div>
+            </div>
+            <i class="fa-solid fa-arrow-down md:fa-arrow-right text-slate-300"></i>
+            <div class="bg-purple-50 border border-purple-200 text-purple-700 px-5 py-3 rounded-lg w-full md:w-auto text-center shadow-sm">
+              <i class="fa-solid fa-file-invoice-dollar mb-1 block"></i> Payslip Ready
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 4: Route Map -->
+    <section>
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-lg">4</div>
+        <h2 class="text-2xl font-bold text-slate-800">Route Map</h2>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-lg shadow-slate-200/50">
+        <!-- Badges -->
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex gap-2 flex-wrap">
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">Web Interface</span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 border border-indigo-200">Admin Panel</span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">Employee Panel</span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-200 text-slate-700 border border-slate-300">API v1</span>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th scope="col" class="px-6 py-4 font-semibold">Area</th>
+                <th scope="col" class="px-6 py-4 font-semibold">Route Path</th>
+                <th scope="col" class="px-6 py-4 font-semibold">Key Purpose</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-slate-50/50 transition">
+                <td class="px-6 py-4 font-medium text-slate-800">Root</td>
+                <td class="px-6 py-4 text-slate-600 font-mono text-xs">/, /dashboard</td>
+                <td class="px-6 py-4 text-slate-600">Redirect users based on role</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 transition">
+                <td class="px-6 py-4 font-medium text-indigo-700">Admin</td>
+                <td class="px-6 py-4 text-slate-600 font-mono text-xs">/admin/*</td>
+                <td class="px-6 py-4 text-slate-600">Full control: Settings, HR, Reports, Payroll</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 transition">
+                <td class="px-6 py-4 font-medium text-emerald-700">Employee</td>
+                <td class="px-6 py-4 text-slate-600 font-mono text-xs">/employee/*</td>
+                <td class="px-6 py-4 text-slate-600">Self-service: Scan, Leave, Salary view</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 transition">
+                <td class="px-6 py-4 font-medium text-slate-800">API</td>
+                <td class="px-6 py-4 text-slate-600 font-mono text-xs">/api/v1/*</td>
+                <td class="px-6 py-4 text-slate-600">External/Mobile integration points</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 mt-20">
+    <div class="max-w-5xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-center text-center text-sm text-slate-400">
+      <p>&copy; 2026 HRM System Manual. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

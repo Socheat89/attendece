@@ -434,6 +434,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
       <li><a href="#features">Features</a></li>
       <li><a href="#how">How it Works</a></li>
       <li><a href="#pricing">Pricing</a></li>
+      <li><a href="/system_manual.html" target="_blank">User Manual</a></li>
       <li><a href="https://t.me/SOCHEAT_DOEM" target="_blank">Contact Support</a></li>
     </ul>
     <div class="nav-actions">
@@ -463,6 +464,9 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
     </a>
     <a href="#features" class="btn-hero btn-hero-outline">
       <i class="fa-solid fa-play" style="font-size:.8rem"></i> Learn More
+    </a>
+    <a href="/system_manual.html" target="_blank" class="btn-hero btn-hero-outline">
+      <i class="fa-solid fa-book" style="font-size:.8rem;"></i> User Manual
     </a>
   </div>
 
@@ -706,6 +710,7 @@ footer{background:var(--dark2);border-top:1px solid var(--border);padding:5rem 2
         <ul>
           <li><a href="#features">Features</a></li>
           <li><a href="#pricing">Pricing</a></li>
+          <li><a href="/system_manual.html" target="_blank">User Manual</a></li>
           <li><a href="#">API</a></li>
           <li><a href="#">Changelog</a></li>
         </ul>
